@@ -1,0 +1,81 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+
+<?php $_code=$this->getMethodCode() ?>
+<ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
+    <li>
+        <div style="" class="widget-container">
+            <label>Please select your credit card type</label>
+            <input type="hidden" name="payment[cko_cc_token]" id="cko-cc-token" value="">
+            <input type="hidden" name="payment[cko_cc_email]" id="cko-cc-email" value="" />
+
+
+            <script>
+                if(Checkout.hasOwnProperty('render')) {
+                    Checkout.render({
+                        publicKey: "<?php echo $this->getPublicKey() ?>",
+                        userEmail: '<?php echo $this->getEmailAddress() ?>',
+                        amount: "<?php echo $this->getAmount()?>",
+                        currency: "<?php echo $this->getCurrency()?>",
+                        widgetContainerSelector: '.widget-container',
+                        widgetRendered: function (event) {
+
+                            if ($$('.cko-pay-now')[0]) {
+                                $$('.cko-pay-now')[0].hide();
+                            }
+                        },
+                        cardTokenReceived: function (event) {
+                            document.getElementById('cko-cc-token').value = event.data.cardToken;
+                            document.getElementById('cko-cc-email').value = event.data.email;
+                            payment.save();
+                        }
+                    });
+                }
+            </script>
+
+        </div>
+    <input type="hidden" name="brige_validator" id="brige_validator" value="0" class="token-brige-validate"/>
+        <script type="text/javascript">
+            Translator.add('An error has occur with saving your payment selection. Please try again',
+                '<?php echo $this->__('An error has occur with saving your payment selection. Please try again'); ?>');
+
+            Validation.add('token-brige-validate',  Translator.translate('An error has occur with saving your payment selection. Please try again'),function(value) {
+
+                    var  $_tokenEl = document.getElementById('cko-cc-token'),
+                        $_emailEl =document.getElementById('cko-cc-email') ;
+
+
+                    if($_tokenEl.value !='' && $_emailEl.value!='') {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            )
+        </script>
+    </li>
+</ul>

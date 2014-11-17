@@ -1,0 +1,11 @@
+<layout version="0.1.0">
+    <checkout_onepage_index>
+        <reference name="before_body_end">
+            <block name="checkoutapi.jsinit" type="checkoutapi_chargePayment/checkoutjs" ifconfig="payment/creditcard/active">
+                <action method="setTemplate">
+                    <template>chargepayment/jsinit.phtml</template>
+                </action>
+            </block>
+        </reference>
+    </checkout_onepage_index>
+</layout>
