@@ -4,24 +4,24 @@ class Controller_Abstract extends Controller
 
     public $_methodInstance;
 
-//    private function __construct()
-//    {
-//
-//        $this->language->load('payment/checkoutapipayment');
-//        //$methodType = $this->config->get('pci_enable');
-//        die('test');
-//
-//        switch ($methodType)
-//        {
-//            case 'yes':
-//                $this->setMethodInstance(new Controller_Method_creditcardpci());
-//                break;
-//
-//            default:
-//                $this->setMethodInstance(new Controller_Method_creditcard());
-//                break;
-//        }
-//    }
+    private function __construct()
+    {
+
+        //$this->language->load('payment/checkoutapipayment');
+        //$methodType = $this->config->get('pci_enable');
+        die('test');
+
+        switch ($methodType)
+        {
+            case 'yes':
+                $this->setMethodInstance(new Controller_Method_creditcardpci());
+                break;
+
+            default:
+                $this->setMethodInstance(new Controller_Method_creditcard());
+                break;
+        }
+    }
 
     protected function index()
     {
