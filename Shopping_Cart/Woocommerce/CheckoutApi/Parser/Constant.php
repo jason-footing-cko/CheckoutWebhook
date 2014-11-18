@@ -1,0 +1,9 @@
+<?php
+final class CheckoutApi_Parser_Constant
+{
+	const API_RESPOND_TYPE_JSON = 'JSON';
+	const API_RESPOND_TYPE_XML = 'XML';
+	const API_RESPOND_TYPE_HTTP = 'HTTP';
+}
+
+?>
