@@ -3,14 +3,17 @@
 $_['heading_title']		  = 'Checkout.com (Gateway 3.0)';
 //$_['text_checkapipayment'] = '<a onclick="window.open(\'http://dev.checkout.com\');"><img src="view/image/payment/checkout-logo@2x.png" alt="www.checkout.com" title="www.checkout.com" style="border: 1px solid #EEEEEE;height:22px;width:92px;" /></a>';
 //$_['text_checkapipayment'] = '<a onclick="window.open(\'https://www.checkout.com\');"><img src="https://www.checkout.com/wp-content/uploads/2014/08/logo.png" alt="www.checkout.com" title="www.checkout.com" style="border: 1px solid #EEEEEE;height:22px;width:92px;" /></a>';
-$_['text_checkapipayment'] = '<a onclick="window.open(\'https://www.checkout.com\');"><img src="https://www.checkout.com/wp-content/uploads/2014/08/logo.png" alt="www.checkout.com" title="www.checkout.com" style="border: 1px solid #EEEEEE;height:22px;width:92px;" /></a>';
+$_['text_checkapipayment'] = '<a onclick="window.open(\'https://www.checkout.com\');">
+                              <img src="https://www.checkout.com/wp-content/uploads/2014/08/logo.png"
+                              alt="www.checkout.com" title="www.checkout.com" style="border: 1px solid #EEEEEE;height:22px;width:92px;" />
+                              </a>';
 
 // Text
 $_['text_payment']		  = 'Payment';
 $_['text_success']	      = 'Success: You have modified Checkout.com (Gateway 3.0) Payment Module!';
 $_['text_page_title']     = 'Setting for Checkout.com Gateway 3.0';
-$_['text_status_on']      = 'On';
-$_['text_status_off']     = 'Off';
+$_['text_status_on']      = 'Enable';
+$_['text_status_off']     = 'Disable';
 $_['text_mode_test']      = 'Test';
 $_['text_mode_prod']      = 'Preprod';
 $_['text_mode_live']      = 'Live';
@@ -18,6 +21,7 @@ $_['text_auth_only']      = 'Authorize only';
 $_['text_auth_capture']   = 'Authorize and Capture';
 $_['text_pci_yes']        = 'Yes';
 $_['text_pci_no']         = 'No';
+$_['text_gateway_timeout']= '0';
 
 // Entry
 $_['entry_test_mode']               = 'Production Mode*';
@@ -34,7 +38,8 @@ $_['entry_successful_order_status'] = 'Successful Order Status*';
 $_['entry_failed_order_status']     = 'Failed Order Status*';
 $_['entry_sort_order']			    = 'Sort Order';
 $_['entry_status']                  = 'Status';
-$_['entry_sort_order']                  = 'Sort Order';
+$_['entry_sort_order']              = 'Sort Order';
+$_['entry_gateway_timeout']            = 'Gateway timeout';
 
 
 // Error

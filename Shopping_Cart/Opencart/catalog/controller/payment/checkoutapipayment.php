@@ -1,19 +1,13 @@
 <?php
-include ('checkoutApi/autoload.php');
+include ('includes/autoload.php');
 class ControllerPaymentcheckoutapipayment extends Controller_Abstract
 {
     protected function index()
     {
-        //parent::index();
+        parent::index();
+        $this->document->addScript('http://ckofe.com/js/Checkout.js');
+
         $this->render();
-    }
-
-    public function send()
-    {
-        $this->load->model('checkout/order');
-
-        print_r ('test');
-        die();
     }
 
 }
