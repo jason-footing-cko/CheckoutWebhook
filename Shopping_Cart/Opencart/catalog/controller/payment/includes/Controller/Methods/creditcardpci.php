@@ -1,12 +1,12 @@
 <?php
-class Controller_Method_creditcardpci extends Controller
+class Controller_Methods_creditcardpci extends Controller implements Controller_Interface
 {
 
-    protected function index()
+    public function getData()
     {
+
         $this->language->load('payment/checkoutapipayment');
 
-        die('die here');
 
         $toReturn = array(
                         'text_card_details'    => $this->language->get('text_card_details'),
@@ -49,13 +49,34 @@ class Controller_Method_creditcardpci extends Controller
 
         }
 
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/creditcardpci.tpl')) {
-            $this->template = $this->config->get('config_template') . '/template/payment/creditcardpci.tpl';
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/checkoutapi/creditcardpci.tpl')) {
+            $this->template = $this->config->get('config_template') . '/template/payment/checkoutapi/creditcardpci.tpl';
         } else {
-            $this->template = 'default/template/payment/creditcardpci.tpl';
+            $this->template = 'default/template/payment/checkoutapi/creditcardpci.tpl';
         }
 
         $toReturn['tpl'] =   $this->render();
         return $toReturn;
     }
+
+    public function createCharge($config,$order_info)
+    {
+
+        $config['postedParam']['card']  = array(
+
+            'phoneNumber'   =>   $order_info['telephone'] ,
+            'name'          =>   str_replace(' ', '', $this->request->post['cc_owner']),
+            'number'        =>   str_replace(' ', '', $this->request->post['cc_number']),
+            'expiryMonth'   =>   str_replace(' ', '', $this->request->post['cc_expire_date_month']),
+            'expiryYear'    =>   str_replace(' ', '', $this->request->post['cc_expire_date_year']),
+            'cvv'           =>   str_replace(' ', '', $this->request->post['cc_cvv2']),
+
+        );
+
+        return $config;
+    }
+
+
+
+
 }

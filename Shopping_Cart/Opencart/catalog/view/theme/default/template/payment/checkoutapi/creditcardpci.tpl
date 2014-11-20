@@ -1,6 +1,3 @@
-
-
-
 <div class="content" id="payment">
    <table class ="form">
        <tr>

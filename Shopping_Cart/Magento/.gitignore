@@ -1,3 +1,4 @@
 lib/CheckoutApi
 lib/.modman
 .modman/
+.idea

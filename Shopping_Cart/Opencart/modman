@@ -4,7 +4,7 @@ admin/view/image/payment/checkoutapi/ admin/view/image/payment/checkoutapi/
 admin/view/javascript/checkoutapi admin/view/javascript/checkoutapi
 admin/view/stylesheet/checkoutapi admin/view/stylesheet/checkoutapi
 admin/view/template/payment/checkoutapi admin/view/template/payment/checkoutapi
-catalog/controller/payment/checkoutapipayment catalog/controller/payment/checkoutapipayment
+catalog/controller/payment/includes catalog/controller/payment/includes
 catalog/controller/payment/checkoutapipayment.php catalog/controller/payment/checkoutapipayment.php
 catalog/language/english/payment/checkoutapipayment.php catalog/language/english/payment/checkoutapipayment.php
 catalog/model/payment/checkoutapipayment.php catalog/model/payment/checkoutapipayment.php

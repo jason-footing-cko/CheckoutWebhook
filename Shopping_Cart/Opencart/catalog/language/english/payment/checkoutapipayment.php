@@ -2,7 +2,7 @@
 //Text
 $_['text_title']           = 'Credit / Debit Card (Checkout.com)';
 $_['text_card_details']    = 'Secured credit/debit card payment with Checkout.com';
-$_['text_wait']            = 'Please wait!';
+$_['text_wait']            = 'Please wait while we process your payment!';
 
 //Entry
 $_['entry_cc_owner']       = 'Card Owner';

@@ -19,20 +19,21 @@ class ControllerPaymentcheckoutapipayment extends Controller
             $this->redirect($this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'));
         }
 
-        $this->data['heading_title']         = $this->language->get('heading_title');
-        $this->data['text_checkapipayment']  = $this->language->get('text_checkapipayment');
-        $this->data['text_payment']          = $this->language->get('text_payment');
-        $this->data['text_success']          = $this->language->get('text_success');
-        $this->data['text_page_title']       = $this->language->get('text_page_title');
-        $this->data['text_status_on']        = $this->language->get('text_status_on');
-        $this->data['text_status_off']       = $this->language->get('text_status_off');
-        $this->data['text_mode_test']        = $this->language->get('text_mode_test');
-        $this->data['text_mode_prod']        = $this->language->get('text_mode_prod');
-        $this->data['text_mode_live']        = $this->language->get('text_mode_live');
-        $this->data['text_auth_only']        = $this->language->get('text_auth_only');
-        $this->data['text_auth_capture']     = $this->language->get('text_auth_capture');
-        $this->data['text_pci_yes']          = $this->language->get('text_pci_yes');
-        $this->data['text_pci_no']           = $this->language->get('text_pci_no');
+        $this->data['heading_title']                 = $this->language->get('heading_title');
+        $this->data['text_checkapipayment']          = $this->language->get('text_checkapipayment');
+        $this->data['text_payment']                  = $this->language->get('text_payment');
+        $this->data['text_success']                  = $this->language->get('text_success');
+        $this->data['text_page_title']               = $this->language->get('text_page_title');
+        $this->data['text_status_on']                = $this->language->get('text_status_on');
+        $this->data['text_status_off']               = $this->language->get('text_status_off');
+        $this->data['text_mode_test']                = $this->language->get('text_mode_test');
+        $this->data['text_mode_prod']                = $this->language->get('text_mode_prod');
+        $this->data['text_mode_live']                = $this->language->get('text_mode_live');
+        $this->data['text_auth_only']                = $this->language->get('text_auth_only');
+        $this->data['text_auth_capture']             = $this->language->get('text_auth_capture');
+        $this->data['text_pci_yes']                  = $this->language->get('text_pci_yes');
+        $this->data['text_pci_no']                   = $this->language->get('text_pci_no');
+        $this->data['text_gateway_timeout']             = $this->language->get('text_gateway_timeout');
 
         $this->data['entry_test_mode']               = $this->language->get('entry_test_mode');
         $this->data['entry_secret_key']              = $this->language->get('entry_secret_key');
@@ -49,34 +50,26 @@ class ControllerPaymentcheckoutapipayment extends Controller
         $this->data['entry_sort_order']              = $this->language->get('entry_sort_order');
         $this->data['entry_status']                  = $this->language->get('entry_status');
         $this->data['entry_sort_order']              = $this->language->get('entry_sort_order');
+        $this->data['entry_gateway_timeout']            = $this->language->get('entry_gateway_timeout');
 
-        $this->data['button_save'] = $this->language->get('button_save');
-        $this->data['button_cancel'] = $this->language->get('button_cancel');
+        $this->data['button_save']                   = $this->language->get('button_save');
+        $this->data['button_cancel']                 = $this->language->get('button_cancel');
 
-        if (isset($this->error['warning']))
-        {
+        if (isset($this->error['warning'])) {
             $this->data['error_warning'] = $this->error['warning'];
-        }
-        else
-        {
+        } else {
             $this->data['error_warning'] = '';
         }
 
-        if (isset($this->error['secret_key']))
-        {
+        if (isset($this->error['secret_key'])) {
             $this->data['error_secret_key'] = $this->error['secret_key'];
-        }
-        else
-        {
+        } else {
             $this->data['error_secret_key'] = '';
         }
 
-        if (isset($this->error['public_key']))
-        {
+        if (isset($this->error['public_key'])) {
             $this->data['error_public_key'] = $this->error['public_key'];
-        }
-        else
-        {
+        } else {
             $this->data['error_public_key'] = '';
         }
 
@@ -103,75 +96,63 @@ class ControllerPaymentcheckoutapipayment extends Controller
 
         $this->data['cancel'] = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
 
-        if (isset($this->request->post['test_mode']))
-        {
+        if (isset($this->request->post['test_mode'])) {
             $this->data['test_mode'] = $this->request->post['test_mode'];
-        }
-        else
-        {
+        } else {
             $this->data['test_mode'] = $this->config->get('test_mode');
         }
 
-        if (isset($this->request->post['secret_key']))
-        {
+        if (isset($this->request->post['secret_key'])) {
             $this->data['secret_key'] = $this->request->post['secret_key'];
-        }
-        else
-        {
+        } else {
             $this->data['secret_key'] = $this->config->get('secret_key');
         }
 
-        if (isset($this->request->post['public_key']))
-        {
+        if (isset($this->request->post['public_key'])) {
             $this->data['public_key'] = $this->request->post['public_key'];
-        }
-        else
-        {
+        } else {
             $this->data['public_key'] = $this->config->get('public_key');
         }
 
-        if (isset($this->request->post['localpayment_enable']))
-        {
+        if (isset($this->request->post['localpayment_enable'])) {
             $this->data['localpayment_enable'] = $this->request->post['localpayment_enable'];
-        }
-        else
-        {
+        } else {
             $this->data['localpayment_enable'] = $this->config->get('localpayment_enable');
         }
 
-        if (isset($this->request->post['pci_enable']))
-        {
+        if (isset($this->request->post['pci_enable'])) {
             $this->data['pci_enable'] = $this->request->post['pci_enable'];
-        }
-        else
-        {
+        } else {
             $this->data['pci_enable'] = $this->config->get('pci_enable');
         }
 
-        if (isset($this->request->post['autocapture_delay']))
-        {
-            $this->data['autocapture_delay'] = $this->request->post['autocapture_delay'];
+        if (isset($this->request->post['payment_action'])) {
+            $this->data['payment_action'] = $this->request->post['payment_action'];
+        } else {
+            $this->data['payment_action'] = $this->config->get('payment_action');
         }
-        else
-        {
+
+        if (isset($this->request->post['autocapture_delay'])) {
+            $this->data['autocapture_delay'] = $this->request->post['autocapture_delay'];
+        } else {
             $this->data['autocapture_delay'] = $this->config->get('autocapture_delay');
         }
 
-        if (isset($this->request->post['checkout_successful_order']))
-        {
-            $this->data['checkout_successful_order'] = $this->request->post['checkout_successful_order'];
+        if (isset($this->request->post['gateway_timeout'])) {
+            $this->data['gateway_timeout'] = $this->request->post['gateway_timeout'];
+        } else {
+            $this->data['gateway_timeout'] = $this->config->get('gateway_timeout');
         }
-        else
-        {
+
+        if (isset($this->request->post['checkout_successful_order'])) {
+            $this->data['checkout_successful_order'] = $this->request->post['checkout_successful_order'];
+        } else {
             $this->data['checkout_successful_order'] = $this->config->get('checkout_successful_order');
         }
 
-        if (isset($this->request->post['checkout_failed_order']))
-        {
+        if (isset($this->request->post['checkout_failed_order'])) {
             $this->data['checkout_failed_order'] = $this->request->post['checkout_failed_order'];
-        }
-        else
-        {
+        } else {
             $this->data['checkout_failed_order'] = $this->config->get('checkout_failed_order');
         }
 
@@ -193,7 +174,7 @@ class ControllerPaymentcheckoutapipayment extends Controller
 
         $this->data['callback'] = HTTP_CATALOG . 'index.php?route=payment/checkoutapipayment/callback';
 
-        $this->template = 'payment/checkoutapipayment.tpl';
+        $this->template = 'payment/checkoutapi/checkoutapipayment.tpl';
         $this->children = array(
             'common/header',
             'common/footer'
