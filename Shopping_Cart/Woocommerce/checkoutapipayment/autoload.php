@@ -18,8 +18,15 @@ class Api_Autoloader {
       $includePath = get_include_path();
       set_include_path($includePath);
       $path = '';
+      $exludePath  = array('WC','WooCommerce', 'wp');
+      foreach ($exludePath as $key => $class) {
+        if(is_array($classNameArray) && in_array($class,$classNameArray)) {
 
-      if(!empty($classNameArray)) {
+          return false;
+        }
+      }
+
+      if(!empty($classNameArray) ) {
 
           $path = __DIR__.DIRECTORY_SEPARATOR.implode(DIRECTORY_SEPARATOR, $classNameArray). '.php';
 
@@ -27,15 +34,9 @@ class Api_Autoloader {
 
               require_once $path;
 
-          } else {
-
-            throw new Exception("Unable to locate file $path for $class.");
           }
 
-      } else {
-         
-         throw new Exception("Unable to load $class.");
-      }
+      } 
 
   }
 
