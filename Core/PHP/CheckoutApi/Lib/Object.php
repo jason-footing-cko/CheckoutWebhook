@@ -1,23 +1,26 @@
-<?php 
+<?php
 
+/**
+ *  CheckoutApi_Lib_Object
+ * This class is a base class for the other class
+ * it provide common feature that exist between other classes
+ * @package     CheckoutApi
+ * @category     Api
+ * @author       Dhiraj Gangoosirdar <dhiraj.gangoosirdar@checkout.com>
+ * @copyright 2014 Integration team (http://www.checkout.com)
+ */
 class CheckoutApi_Lib_Object  {
 
-    /** 
-	* Parameters array
-	*
-	* @var array
-    **/
-
+    /** @var array $_config an array that containt all configuration for a class */
     protected $_config = array();
 
 
     /**
-    * Return parameter value
-    *
-    * @var $key string
-    *
-    * @return  mixed
-    **/
+     * A method that get the configuration for an object
+     * @param null $key name of configuration you wnat to retrive
+     * @return array|null
+     *
+     */
 
     public function getConfig($key = null) 
     {	
@@ -33,14 +36,11 @@ class CheckoutApi_Lib_Object  {
         return null;
     }
 
-   /**
-    * Set parameter $_config value
-    *
-    * @var array
-    *
-    * @return mixed
-    * 
-    **/
+    /**
+     * A settter. it get an array and update or add new configuration value to object
+     * @param array $config configuration value
+     * @throws Exception
+     */
 
     public function setConfig($config = array()) 
     { 
@@ -61,6 +61,10 @@ class CheckoutApi_Lib_Object  {
 
     }
 
+    /**
+     *  reset config attribute
+     * @return $this
+     */
     public function resetConfig()
     {
         $this->_config = array();
@@ -69,9 +73,9 @@ class CheckoutApi_Lib_Object  {
 
     /**
      * setting and logging error message
-     * @param $errorMsg
-     * @param array $trace
-     * @param bool $error
+     * @param string $errorMsg error message you wan to log
+     * @param array $trace stack trace
+     * @param bool $error state of the error. true for important error
      * @return mixed
      * @throws Exception
      */
@@ -97,6 +101,11 @@ class CheckoutApi_Lib_Object  {
         
     }
 
+    /**
+     * Reset the attribute config for an object
+     * @throws Exception
+     *
+     */
     public function flushState()
     {
         $classException = "CheckoutApi_Lib_ExceptionState";
@@ -112,8 +121,14 @@ class CheckoutApi_Lib_Object  {
         } 
         $class->flushState();
 
+
     }
 
+    /**
+     * Return an a singleton instance of a CheckoutApi_Lib_ExceptionState object
+     * @return CheckoutApi_Lib_ExceptionState|null
+     * @throws Exception
+     */
     public function getExceptionState()
     {
         $classException = "CheckoutApi_Lib_ExceptionState";

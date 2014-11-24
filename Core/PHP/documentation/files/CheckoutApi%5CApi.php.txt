@@ -1,0 +1,50 @@
+<?php
+/**
+ * Class final  CheckoutApi_Api
+ * Factory class that generate  instance of a CheckoutApi_Client_Client
+ * @package     CheckoutApi
+ * @category     Api
+ * @author       Dhiraj Gangoosirdar <dhiraj.gangoosirdar@checkout.com>
+ */
+final class CheckoutApi_Api 
+{
+    /** @var string $_apiClass  The name of the gateway to be used  */
+	private static $_apiClass = 'CheckoutApi_Client_ClientGW3';
+
+
+    /**
+     * Static method to return an instance of gateway
+     * @param array $arguments A set arguments for initialising class constructor
+     * @param null|string $_apiClass Gateway class name
+     * @return CheckoutApi_Client_Client An singleton instance of CheckoutApi_Client_Client
+     * @throws Exception
+     */
+
+    public static function getApi(array $arguments = array(),$_apiClass = null)
+    {
+    	if($_apiClass) {
+    		self::setApiClass($_apiClass);
+    	}
+        return CheckoutApi_Lib_Factory::getSingletonInstance(self::getApiClass(),$arguments);
+    }
+
+    /**
+     * Setter for $_apiClass
+     * @param CheckoutApi_Client_Client $apiClass Setter
+     */
+
+    public static function setApiClass($apiClass)
+    {
+    	self::$_apiClass = $apiClass;
+    }
+
+    /**
+     * getter for $_apiClass
+     * @return CheckoutApi_Client_Client  $_apiClass
+     */
+
+    public static function getApiClass()
+    {
+    	return self::$_apiClass;
+    }
+}

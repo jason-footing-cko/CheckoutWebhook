@@ -1,25 +1,23 @@
 <?php 
 
 /**
-* An adapter for class Api_CheckoutApi_Client_Apdapter
-* @package api
-
-**/
+* This class is an adapter that allow to make call over http protocol via curl
+ * @package     CheckoutApi
+ * @category     Adapter
+ * @author       Dhiraj Gangoosirdar <dhiraj.gangoosirdar@checkout.com>
+ * @copyright 2014 Integration team (http://www.checkout.com)
+*/
 
 class CheckoutApi_Client_Adapter_Curl extends CheckoutApi_Client_Adapter_Abstract implements CheckoutApi_Client_Adapter_Interface 
 {
+    /**  @var int $_timeout  timeout for gateway  */
+    private $_timeout = 60;
 
-
-	/**
-	 * constructor for curl class
-	 * 
-	 * @var $uri string|null
-	 * @var $config array|null
-	 * 
-	 **/
-
-	private $_timeout = 60;
-
+    /**
+     * CheckoutApi_ constructor for curl class
+     * @param array $arguments configuration for setting the curl connection
+     * @throws Exception
+     */
 	public function __construct( array $arguments = array())
 	{
 
@@ -35,11 +33,11 @@ class CheckoutApi_Client_Adapter_Curl extends CheckoutApi_Client_Adapter_Abstrac
 
 
 	/**
-	* Read respond on the server
-	*
-	* @return object
-	* 
-	**/
+	* A method that do a request on provide uri and return itsel
+	* @return CheckoutApi_Client_Adapter_Curl return self
+	* Simple usage:
+     *      $adapter->request()->getRespond()
+     */
 
 	public function request() 
 	{
@@ -158,6 +156,10 @@ class CheckoutApi_Client_Adapter_Curl extends CheckoutApi_Client_Adapter_Abstrac
 		parent::close();
 	}
 
+    /**
+     *  return a method type POST|GET|PUT|DELETE
+     * @return  string default CheckoutApi_Client_Adapter_Constant::API_POST
+     */
 	public function getMethod()
 	{
 		$method = $this->getConfig('method');
@@ -169,6 +171,10 @@ class CheckoutApi_Client_Adapter_Curl extends CheckoutApi_Client_Adapter_Abstrac
 		return $method;
 	}
 
+    /**
+     * gateway timeout value
+     * @return int timeout
+     */
 	public function getTimeout()
 	{
 		$timeout = $this->_timeout;

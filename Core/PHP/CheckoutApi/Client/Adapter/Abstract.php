@@ -1,41 +1,31 @@
 <?php 
 /**
-* An abstract class for CheckoutApi_Client adapters
-*
-*@package api
-**/
-
+ * CheckoutApi_Client_Adapter_Abstract
+ *
+ * CheckoutApi_Client_Adapter_Abstract An abstract class for CheckoutApi_Client adapters.
+ * An adapter can be define a method of transmitting message over http protocol
+ * It encapsulate all basic and core method required by an adpater
+ *
+ * @package     CheckoutApi
+ * @category     Cleint
+ * @author       Dhiraj Gangoosirdar <dhiraj.gangoosirdar@checkout.com>
+ * @copyright 2014 Integration team (http://www.checkout.com)
+ */
 abstract class CheckoutApi_Client_Adapter_Abstract extends CheckoutApi_Lib_Object 
 {
-	/**
-	* server identifier
-	*
-	* @var string
-	**/
+	/** @var string$_uri CheckoutApi_ server identifier */
 
 	protected $_uri = null;
-
-	/**
-	* The server session handler
-	*
-	* @var resource|null
-	**/
-	
+	/** @var resource|null $_resource  CheckoutApi_ The server session handler */
 	protected $_resource = null;
-    
-    /**
-    * Respond return by the server
-    *
-    * @var mixed
-    */
-   
+    /**  @var mixed $_respond  CheckoutApi_ Respond return by the server */
     protected $_respond = null;
 
 
     /**
      *
      * Constructor for Adapters
-     * @param array $arguments
+     * @param array $arguments Array of configuration for constructor
      * @throws Exception
      */
 
@@ -52,13 +42,11 @@ abstract class CheckoutApi_Client_Adapter_Abstract extends CheckoutApi_Lib_Objec
    
     }
 
-
      /**
-     * Set/Get attribute wrapper
+     *  Set/Get attribute wrapper
      *
-     * @param   string $method
-     * @param   array $args
-      *
+     * @param   string $method Method being call
+     * @param   array $args Argument being pass
       * @return mixed
      */
 
@@ -93,9 +81,8 @@ abstract class CheckoutApi_Client_Adapter_Abstract extends CheckoutApi_Lib_Objec
     }
 
     /**
-    * setter for $_uri
-    * 
-    * @var string
+    *  setter for $_uri
+    * @param string $uri  setting the url value
     **/
 
     public function setUri($uri)
@@ -105,8 +92,7 @@ abstract class CheckoutApi_Client_Adapter_Abstract extends CheckoutApi_Lib_Objec
     }
 
     /**
-     * Getter for $_uri
-     * 
+     *  Getter for $_uri
      * @return string
      **/
 
@@ -117,8 +103,7 @@ abstract class CheckoutApi_Client_Adapter_Abstract extends CheckoutApi_Lib_Objec
 
     /**
      * Setter for $_resource
-     * 
-     * @var resource
+     * @var resource $resource
      **/
 
     public function setResource($resource) 
@@ -139,9 +124,8 @@ abstract class CheckoutApi_Client_Adapter_Abstract extends CheckoutApi_Lib_Objec
     }
 
     /**
-     * Setter for respond
-     * 
-     * @var mixed
+     * CheckoutApi_ Setter for respond
+     * @param mixed $respond responnd obtain by gateway
      * 
      **/
 
@@ -151,7 +135,7 @@ abstract class CheckoutApi_Client_Adapter_Abstract extends CheckoutApi_Lib_Objec
     }
 
     /**
-     * Getter for respond
+     * CheckoutApi_ Getter for respond
      * 
      * @return mixed
      * 
@@ -162,20 +146,27 @@ abstract class CheckoutApi_Client_Adapter_Abstract extends CheckoutApi_Lib_Objec
     	return $this->_respond;
     }
 
+    /**
+     * Create a connection using the adapter
+     * @return $this CheckoutApi_Client_Adapter_Abstract
+     */
     public function connect() 
     {
         return $this;
     }
 
+    /**
+     * Close all resource
+     */
     public function close()
     {
         $this->setResource(null);
         $this->setRespond(null);
-
     }
 
 
     /**
+     * Return request made by the adapter
      * @return  CheckoutApi_Lib_RespondObj
      */
     abstract function request();

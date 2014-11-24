@@ -1,0 +1,2869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>API Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">114</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">3</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1625595683"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-1625595683" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/CheckoutApi_Client_Adapter_Interface.html">CheckoutApi_Client_Adapter_Interface</a></li>
+                                                                                                    <li class="class"><a href="../classes/CheckoutApi_Api.html">CheckoutApi_Api</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Client_Adapter_Abstract.html">CheckoutApi_Client_Adapter_Abstract</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Client_Adapter_Constant.html">CheckoutApi_Client_Adapter_Constant</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Client_Adapter_Curl.html">CheckoutApi_Client_Adapter_Curl</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Client_Client.html">CheckoutApi_Client_Client</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Client_ClientGW3.html">CheckoutApi_Client_ClientGW3</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Client_Constant.html">CheckoutApi_Client_Constant</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Client_Validation_GW3.html">CheckoutApi_Client_Validation_GW3</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Lib_ExceptionState.html">CheckoutApi_Lib_ExceptionState</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Lib_Factory.html">CheckoutApi_Lib_Factory</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Lib_Object.html">CheckoutApi_Lib_Object</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Lib_RespondObj.html">CheckoutApi_Lib_RespondObj</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Lib_Validator.html">CheckoutApi_Lib_Validator</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Parser_Constant.html">CheckoutApi_Parser_Constant</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Parser_JSON.html">CheckoutApi_Parser_JSON</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Parser_Parser.html">CheckoutApi_Parser_Parser</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Utility_Constant.html">CheckoutApi_Utility_Constant</a></li>
+                                                    <li class="class"><a href="../classes/CheckoutApi_Utility_Utilities.html">CheckoutApi_Utility_Utilities</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/default.html">\</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\</small>CheckoutApi_Client_ClientGW3</h1>
+                    <p><em>Class CheckoutApi_Client_ClientGW3
+This class in an interface to the Checkout Gateway 3.0.</em></p>
+                    <p>It provide access to all endpoint setup by the gateway.
+The simplest usage would be example creating a card token:</p>
+<pre><code> $secretKey = 'sk_test_CC937715-4F68-4306-BCBE-640B249A4D50';
+ $cardTokenConfig = array();
+ $cardTokenConfig['authorization'] = "$publicKey" ;
+ $Api = CheckoutApi_Api::getApi();
+ $cardTokenConfig['postedParam'] = array (
+                                         'email' =&gt;'dhiraj@checkout.com',
+                                          'card' =&gt; array(
+                                          'phoneNumber'=&gt;'0123465789',
+                                          'name'=&gt;'test name',
+                                          'number' =&gt; '4543474002249996',
+                                          'expiryMonth' =&gt; 06,
+                                          'expiryYear' =&gt; 2017,
+                                          'cvv' =&gt; 956,
+                                          )
+                                      );
+$respondCardToken = $Api-&gt;getCardToken( $cardTokenConfig );
+if($respondCardToken-&gt;isValid()) {
+   echo $respondCardToken-&gt;getId();
+} else {
+     echo $respondCardToken-&gt;printError();
+ }</code></pre>
+<p>Those couple of lines , will create an instance of the CheckoutApi_Client_ClientGW3.
+It will then will request a card token to the token, with a set of arguments.
+if the repond is valid , we can print out the result else we can print out the errors</p>
+                    
+                                        
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#method___call" class="">__call()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#method_getAdapter" class="">getAdapter()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#method_getParser" class="">getParser()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#method_setParser" class="">setParser()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#method_setHeaders" class="">setHeaders()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#method_getHeaders" class="">getHeaders()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#method_setProcessType" class="">setProcessType()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#method_getProcessType" class="">getProcessType()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#method_getRespondType" class="">getRespondType()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#method_initParser" class="">initParser()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#method_setUri" class="">setUri()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#method_getUri" class="">getUri()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Lib_Object.html#method_getConfig" class="">getConfig()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Lib_Object.html#method_setConfig" class="">setConfig()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Lib_Object.html#method_resetConfig" class="">resetConfig()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Lib_Object.html#method_exception" class="">exception()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_flushState" class="">flushState()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Lib_Object.html#method_getExceptionState" class="">getExceptionState()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getCardToken" class="">getCardToken()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getSessionToken" class="">getSessionToken()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_createCharge" class="">createCharge()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_refundCharge" class="">refundCharge()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_captureCharge" class="">captureCharge()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_updateCharge" class="">updateCharge()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_createLocalPaymentCharge" class="">createLocalPaymentCharge()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_createCustomer" class="">createCustomer()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getCustomer" class="">getCustomer()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_updateCustomer" class="">updateCustomer()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getListCustomer" class="">getListCustomer()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_deleteCustomer" class="">deleteCustomer()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_createCard" class="">createCard()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_updateCard" class="">updateCard()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getCard" class="">getCard()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getCardList" class="">getCardList()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_deleteCard" class="">deleteCard()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getLocalPaymentList" class="">getLocalPaymentList()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getLocalPaymentProvider" class="">getLocalPaymentProvider()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getCardProvidersList" class="">getCardProvidersList()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getCardProvider" class="">getCardProvider()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_setMode" class="">setMode()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getMode" class="">getMode()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_setUriCharge" class="">setUriCharge()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getUriCharge" class="">getUriCharge()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_setUriToken" class="">setUriToken()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getUriToken" class="">getUriToken()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_setUriCustomer" class="">setUriCustomer()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getUriCustomer" class="">getUriCustomer()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_setUriProvider" class="">setUriProvider()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getUriProvider" class="">getUriProvider()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No public properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#property__uri" class="">$_uri</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#property__headers" class="">$_headers</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#property__processType" class="">$_processType</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#property__respondType" class="">$_respondType</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_Client.html#property__parserObj" class="">$_parserObj</a><br />
+                                                                    <a href="../classes/CheckoutApi_Lib_Object.html#property__config" class="">$_config</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#property__uriCharge" class="">$_uriCharge</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#property__uriToken" class="">$_uriToken</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#property__uriCustomer" class="">$_uriCustomer</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#property__uriProvider" class="">$_uriProvider</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_request" class="">request()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_initHeader" class="">initHeader()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_getUriPrefix" class="">getUriPrefix()</a><br />
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#method_throwException" class="">throwException()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/CheckoutApi_Client_ClientGW3.html#property__mode" class="">$_mode</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/Client.ClientGW3.html"><div class="path-wrapper">Client\ClientGW3.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">Default</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                        <div class="namespace-wrapper"><a href="../classes/CheckoutApi_Lib_Object.html">\CheckoutApi_Lib_Object</a></div>
+                                                                    
+                                        <div class="namespace-wrapper"><a href="../classes/CheckoutApi_Client_Client.html">\CheckoutApi_Client_Client</a></div>
+                                                                                                    <div class="namespace-wrapper">\CheckoutApi_Client_ClientGW3</div>
+                            </dd>
+
+                        
+                        
+                        
+                        
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr><td colspan="2"><em>None found</em></td></tr>
+                                        </table>
+                </aside>
+            </div>
+
+                        
+                                    <a id="properties" name="properties"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Properties</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__uri" name="property__uri" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$_uri</h3>
+                <pre class="signature">$_uri : null</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                null
+                &mdash; Uri to where request should be made                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__headers" name="property__headers" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$_headers</h3>
+                <pre class="signature">$_headers : array</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                array
+                &mdash; Hold headers that should be pass to api                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__processType" name="property__processType" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$_processType</h3>
+                <pre class="signature">$_processType : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                string
+                &mdash; Type of adapter to be called                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__respondType" name="property__respondType" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$_respondType</h3>
+                <pre class="signature">$_respondType : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                string
+                &mdash; Type of respond expecting from the server                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__parserObj" name="property__parserObj" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$_parserObj</h3>
+                <pre class="signature">$_parserObj : null|\CheckoutApi_Parser_Parser</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                null|<a href="../classes/CheckoutApi_Parser_Parser.html">\CheckoutApi_Parser_Parser</a>
+                &mdash; CheckoutApi_ use for keeping an instance of the paser                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__config" name="property__config" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$_config</h3>
+                <pre class="signature">$_config : array</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                array
+                &mdash; an array that containt all configuration for a class                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Lib_Object.html"><div class="path-wrapper">\CheckoutApi_Lib_Object</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__uriCharge" name="property__uriCharge" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$_uriCharge</h3>
+                <pre class="signature">$_uriCharge : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                string
+                &mdash; to store uri for charge url *                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__uriToken" name="property__uriToken" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$_uriToken</h3>
+                <pre class="signature">$_uriToken : </pre>
+                <p><em>*@var string  $_uriToken to store uri for token url *</em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__uriCustomer" name="property__uriCustomer" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$_uriCustomer</h3>
+                <pre class="signature">$_uriCustomer : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                string
+                &mdash; to store uri for customer url *                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__uriProvider" name="property__uriProvider" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$_uriProvider</h3>
+                <pre class="signature">$_uriProvider : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                string
+                &mdash; to store uri for customer url                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__mode" name="property__mode" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$_mode</h3>
+                <pre class="signature">$_mode : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                string
+                &mdash; dev|preprod|live the url that the library will use , dev , preprod or live                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct(array  <span class="argument">$config = array()</span>) </pre>
+                <p><em>Constructor</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$config </td>
+                                <td><p>configuration for class</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___call" name="method___call" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__call()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__call(string  <span class="argument">$method</span>, array  <span class="argument">$args</span>) : mixed</pre>
+                <p><em>Set/Get attribute wrapper</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$method </td>
+                                <td><p>method being call</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$args </td>
+                                <td><p>argument for method being called</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getAdapter" name="method_getAdapter" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getAdapter()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getAdapter(  <span class="argument">$adapterName</span>, array  <span class="argument">$arguments = array()</span>) : \CheckoutApi_Client_Adapter_Abstract|null</pre>
+                <p><em>CheckoutApi_ initialise return an adapter.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$adapterName </td>
+                                <td><p>Adapter Name</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$arguments </td>
+                                <td><p>argument for creating the adapter</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Client_Adapter_Abstract.html">\CheckoutApi_Client_Adapter_Abstract</a>|null
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getParser" name="method_getParser" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getParser()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getParser() : \CheckoutApi_Parser_Parser|null</pre>
+                <p><em>Getter for $_parserObje</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Parser_Parser.html">\CheckoutApi_Parser_Parser</a>|null
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setParser" name="method_setParser" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setParser()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setParser(string  <span class="argument">$parser</span>) </pre>
+                <p><em>Setter for $_parserObj</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$parser </td>
+                                <td><p>parser name</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setHeaders" name="method_setHeaders" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setHeaders()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setHeaders(array  <span class="argument">$headers</span>) </pre>
+                <p><em>set the headers array base on which paser we are using</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$headers </td>
+                                <td><p>extra headers</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getHeaders" name="method_getHeaders" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getHeaders()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getHeaders() : array</pre>
+                <p><em>getters for $_headers</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>$_headers headers</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setProcessType" name="method_setProcessType" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setProcessType()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setProcessType(string  <span class="argument">$processType</span>) </pre>
+                <p><em>set which adapter communicator to use</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$processType </td>
+                                <td><p>process type or adapter name</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getProcessType" name="method_getProcessType" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getProcessType()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getProcessType() : string</pre>
+                <p><em>return name of adpater</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>$_processType  name of adapter</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getRespondType" name="method_getRespondType" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getRespondType()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getRespondType() : string</pre>
+                <p><em>return the respond type default json</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_initParser" name="method_initParser" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">initParser()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">initParser() </pre>
+                <p><em>create and set a parser</em></p>
+                
+
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setUri" name="method_setUri" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setUri()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setUri(string  <span class="argument">$uri</span>) </pre>
+                <p><em>Setter for $_uri</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$uri </td>
+                                <td><p>endpoint name</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getUri" name="method_getUri" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getUri()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getUri() : string</pre>
+                <p><em>Getter for $_uri</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>$_uri</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Client_Client.html"><div class="path-wrapper">\CheckoutApi_Client_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getConfig" name="method_getConfig" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getConfig()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getConfig(null  <span class="argument">$key = null</span>) : array|null</pre>
+                <p><em>A method that get the configuration for an object</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>null</td>
+                                <td>$key </td>
+                                <td><p>name of configuration you wnat to retrive</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array|null
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Lib_Object.html"><div class="path-wrapper">\CheckoutApi_Lib_Object</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setConfig" name="method_setConfig" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setConfig()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setConfig(array  <span class="argument">$config = array()</span>) </pre>
+                <p><em>A settter. it get an array and update or add new configuration value to object</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$config </td>
+                                <td><p>configuration value</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Lib_Object.html"><div class="path-wrapper">\CheckoutApi_Lib_Object</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_resetConfig" name="method_resetConfig" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">resetConfig()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">resetConfig() : $this</pre>
+                <p><em>reset config attribute</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    $this
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Lib_Object.html"><div class="path-wrapper">\CheckoutApi_Lib_Object</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_exception" name="method_exception" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">exception()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">exception(string  <span class="argument">$errorMsg</span>, array  <span class="argument">$trace</span>, boolean  <span class="argument">$error = true</span>) : mixed</pre>
+                <p><em>setting and logging error message</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$errorMsg </td>
+                                <td><p>error message you wan to log</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$trace </td>
+                                <td><p>stack trace</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$error </td>
+                                <td><p>state of the error. true for important error</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Lib_Object.html"><div class="path-wrapper">\CheckoutApi_Lib_Object</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_flushState" name="method_flushState" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">flushState()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">flushState() </pre>
+                <p><em>flushing all config</em></p>
+                
+
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                                                            <p>need to remove singleton concept causing issue</p>
+                                                    </td>
+                    </tr>
+                                    <tr>
+                        <th>
+                            reset
+                        </th>
+                        <td>
+                                                                                            <p>all state</p>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getExceptionState" name="method_getExceptionState" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getExceptionState()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getExceptionState() : \CheckoutApi_Lib_ExceptionState|null</pre>
+                <p><em>Return an a singleton instance of a CheckoutApi_Lib_ExceptionState object</em></p>
+                
+
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_ExceptionState.html">\CheckoutApi_Lib_ExceptionState</a>|null
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CheckoutApi_Lib_Object.html"><div class="path-wrapper">\CheckoutApi_Lib_Object</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getCardToken" name="method_getCardToken" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getCardToken()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getCardToken(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Create Card Token</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload for creating a card token parameter</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage:</p>
+<pre><code>     $param['postedParam'] = array (
+                               'email'   =&gt;    'dhiraj@checkout.com',
+                               'card'    =&gt;    array(
+                                                       'phoneNumber'      =&gt; '0123465789',
+                                                        'name'             =&gt; 'test name',
+                                                        'number'           =&gt; 'XXXXXXXXX',
+                                                        'expiryYear'       =&gt; 2017,
+                                                         'cvv'              =&gt; 956
+                                                      )
+                              );
+     $respondCardToken = $Api-&gt;getCardToken( $param );</code></pre>
+<p>Use by having, first an instance of the gateway 3.0 and set of arguments as above</p></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getSessionToken" name="method_getSessionToken" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getSessionToken()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getSessionToken(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Create session token</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage:</p>
+<pre><code> $sessionConfig['postedParam'] = array( "amount"=&gt;100, "currency"=&gt;"GBP");
+ $sessionTokenObj = $Api-&gt;getSessionToken($sessionConfig);</code></pre>
+<p>Use by having, first an instance of the gateway 3.0 and set of argument base on documentation for creating a session token.</p></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_createCharge" name="method_createCharge" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">createCharge()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">createCharge(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Create Charge</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>This methods can be call to create charge for checkout.com gateway 3.0 by passing
+full card details :
+$param['postedParam'] = array ( 'email'=>'dhiraj@checkout.com',</p>
+<pre><code>                              'amount'=&gt;100,
+                               'currency'=&gt;'usd',
+                              'description'=&gt;'desc',
+                              'caputure'=&gt;false,
+
+                              'card' =&gt; array(
+
+                              'phoneNumber'=&gt;'0123465789',
+                              'name'=&gt;'test name',
+                              'number' =&gt; '4543474002249996',
+                              'expiryMonth' =&gt; 06,
+                              'expiryYear' =&gt; 2017,
+                              'cvv' =&gt; 956,</code></pre>
+<p>)
+);
+or by passing a card token:
+$param['postedParam'] = array ( 'email'=>'dhiraj@checkout.com',</p>
+<pre><code>                              'amount'=&gt;100,
+                               'currency'=&gt;'usd',
+                              'description'=&gt;'desc',
+                              'caputure'=&gt;false,
+                               'cardToken'=&gt;'card_tok_2d033cf7-1542-4a3d-bd08-bd9d26533551'
+                              )</code></pre>
+<p>or by passing a card id:
+$param['postedParam'] = array ( 'email'=>'dhiraj@checkout.com',</p>
+<pre><code>                              'amount'=&gt;100,
+                              'currency'=&gt;'usd',
+                              'description'=&gt;'desc',
+                              'caputure'=&gt;false,
+                              'cardId'=&gt;'card_fb10a0a5-05ef-4254-ac85-3aa221e8d50d'
+                              )</code></pre>
+<p>and then just call the method:</p>
+<pre><code>  $charge = $Api-&gt;createCharge($param);</code></pre></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_refundCharge" name="method_refundCharge" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">refundCharge()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">refundCharge(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Refund  Charge
+ This method refunds a Card Charge that has previously been created but not yet refunded
+ or void a charge that has been capture</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for refund a charge</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage:</p>
+<pre><code> $param['postedParam'] = array (</code></pre>
+<p>'amount'=>150
+);</p>
+<pre><code> $refundCharge = $Api-&gt;refundCharge($param);</code></pre></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_captureCharge" name="method_captureCharge" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">captureCharge()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">captureCharge(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Capture   Charge.</em></p>
+                <p>This method allow you to capture the payment of an existing, authorised, Card Charge</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for caputring a charge</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage:</p>
+<pre><code> $param['postedParam'] = array ( 'amount'=&gt;150 );
+ captureCharge = $Api-&gt;captureCharge($param);</code></pre></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_updateCharge" name="method_updateCharge" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">updateCharge()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">updateCharge(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Update   Charge.</em></p>
+                <p>Updates the specified Card Charge by setting the values of the parameters passed.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage:</p>
+<pre><code> $param['postedParam'] = array ('description'=&gt; 'dhiraj is doing some test');
+ $updateCharge = $Api-&gt;updateCharge($param);</code></pre></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_createLocalPaymentCharge" name="method_createLocalPaymentCharge" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">createLocalPaymentCharge()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">createLocalPaymentCharge(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Create LocalPayment Charge.</em></p>
+                <p>Creates a LocalPayment Charge using a Session Token and</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for creating a localpayment</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                            &mdash; <p>This can be call in this way:</p>
+<pre><code> $chargeLocalPaymentConfig['authorization'] = $publicKey ;
+ $param['postedParam'] = array(
+          'email'        =&gt;  'dhiraj.checkout@checkout.com',
+          'token'        =&gt;   $Api-&gt;getSessionToken($sessionConfig),
+          'localPayment' =&gt;  array(
+                                 'lppId'  =&gt; $Api-&gt;getLocalPaymentProvider($localPaymentConfig)-&gt;getId()
+                              )
+  ) ;
+ $chargeLocalPaymentObj = $Api-&gt;createLocalPaymentCharge($chargeLocalPaymentConfig);</code></pre>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_createCustomer" name="method_createCustomer" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">createCustomer()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">createCustomer(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Create a customer</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for creating a customer</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>This method can be call in the following way:</p>
+<pre><code> $customerConfig['postedParam'] = array (
+                                      'email'        =&gt; 'dhiraj@checkout.com',
+                                      'name'         =&gt; 'test customer',
+                                      'description'  =&gt; 'desc',
+                                      'card'         =&gt;  array(
+                                                          'name'        =&gt; 'test name',
+                                                          'number'      =&gt; '4543474002249996',
+                                                          'expiryMonth' =&gt; 06,
+                                                          'expiryYear'  =&gt; 2017,
+                                                          'cvv'         =&gt; 956,
+
+                                                         )
+                                     );
+ $customer = $Api-&gt;createCustomer($customerConfig);</code></pre></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getCustomer" name="method_getCustomer" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getCustomer()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getCustomer(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Get Customer</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for returning a single customer</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage :</p>
+<pre><code> $param['customerId'] = {customerId} ;
+ $getCustomer = $Api-&gt;getCustomer($param);</code></pre></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_updateCustomer" name="method_updateCustomer" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">updateCustomer()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">updateCustomer(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Update Customer</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for updating</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>This method can be call in the following way:</p>
+<pre><code> $param['customerId'] = {$customerId} ;
+ $param['postedParam'] = array (
+                     'email'         =&gt;  'dhiraj@checkout.com',
+                     'name'          =&gt;  'customer name',
+                     'description'   =&gt;  'desc',
+                     'card'          =&gt;   array(
+                                                 'name'        =&gt;  'test name',
+                                                 'number'      =&gt;  '4543474002249996',
+                                                 'expiryMonth' =&gt;  06,
+                                                 'expiryYear'  =&gt;  2017,
+                                                 'cvv'         =&gt;  956,
+
+                                                  )
+                     );
+ $customerUpdate = $Api-&gt;updateCustomer($param);</code></pre></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getListCustomer" name="method_getListCustomer" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getListCustomer()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getListCustomer(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Getting a list of customer</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for getting list of customer.</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple Usage:</p>
+<pre><code>  $param['count'] = 100 ;
+  $param['from_date'] = '09/30/2014' ;
+  $param['to_date'] = '10/02/2014' ;
+  $customerUpdate = $Api-&gt;getListCustomer($param);</code></pre></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_deleteCustomer" name="method_deleteCustomer" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">deleteCustomer()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">deleteCustomer(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Delete a customer</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for deleteing a customer</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>This method can be call this way:</p>
+<pre><code> $param['customerId'] = {$customerId} ;
+ $deleteCustomer = $Api-&gt;deleteCustomer($param);</code></pre></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_createCard" name="method_createCard" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">createCard()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">createCard(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Creating a card, link to a customer</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for creating a card</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage:</p>
+<pre><code> $param['customerId'] = $Api-&gt;createCustomer($customerConfig)-&gt;getId() ;
+ $param['postedParam'] = array (
+          'customerID'=&gt; $customerId,
+          'card' =&gt; array(
+          'name'=&gt;'test name',
+          'number' =&gt; '4543474002249996',
+          'expiryMonth' =&gt; 06,
+          'expiryYear' =&gt; 2017,
+          'cvv' =&gt; 956,
+          )
+  );
+ $cardObj = $Api-&gt;createCard($param);</code></pre>
+<p>The creadCard method can be call this way and it required a customer id</p></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_updateCard" name="method_updateCard" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">updateCard()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">updateCard(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Update a card</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for update a card</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage:</p>
+<pre><code> $param['customerId'] = $customerId ;
+  $param['cardId'] = $cardId ;
+ $param['postedParam'] = array (
+                         'card'        =&gt;  array(
+                         'name'        =&gt;  'New name',
+                         'number'      =&gt; '4543474002249996',
+                         'expiryMonth' =&gt; 08,
+                         'expiryYear'  =&gt; 2017,
+                         'cvv'         =&gt; 956,
+                         )
+             );
+ $updateCardObj = $Api-&gt;updateCard($param);</code></pre></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getCard" name="method_getCard" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getCard()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getCard(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Get a card</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for getting a card info</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage:</p>
+<pre><code>  $param['customerId'] = $customerId ;
+  $param['cardId'] = $cardId ;
+  $getCardObj = $Api-&gt;getCard($param);</code></pre>
+<p>Required a customer id and a card id to work</p></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getCardList" name="method_getCardList" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getCardList()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getCardList(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Get Card List</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for getting a list of cart</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage:</p>
+<pre><code> $param['customerId'] = $customerId ;
+ $getCardListObj = $Api-&gt;getCardList($param);</code></pre>
+<p>Require a customer id</p></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_deleteCard" name="method_deleteCard" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">deleteCard()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">deleteCard(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Get Card List</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage:</p>
+<pre><code>  $param['customerId'] = $customerId ;
+  $param['cardId'] = $cardId ;
+  $deleteCard = $Api-&gt;deleteCard($param);</code></pre></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getLocalPaymentList" name="method_getLocalPaymentList" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getLocalPaymentList()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getLocalPaymentList(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Get LocalPayment Provider list</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for retriving a list of local payment provider</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage:</p>
+<pre><code>  $param['token'] = $sessionToken ;
+  $localPaymentListObj = $Api-&gt;getLocalPaymentList($param);</code></pre>
+<p>refer to create sesssionToken for getting the session token value</p></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getLocalPaymentProvider" name="method_getLocalPaymentProvider" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getLocalPaymentProvider()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getLocalPaymentProvider(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Get LocalPayment Provider</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for getting a local payment provider dettail</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage:</p>
+<pre><code>     $param['token'] = $sessionToken ;</code></pre>
+<p>$param['providerId'] = $providerId ;
+$localPaymentObj = $Api->getLocalPaymentProvider($param);</p></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getCardProvidersList" name="method_getCardProvidersList" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getCardProvidersList()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getCardProvidersList(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Get Card Provider list</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>Simple usage:</p>
+<pre><code>  $cardProviderListObj = $Api-&gt;getCardProvidersList($param);</code></pre></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getCardProvider" name="method_getCardProvider" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getCardProvider()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getCardProvider(array  <span class="argument">$param</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Get a list of card provider</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param for retriving a list of card by providers</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                            &mdash; <p>Simple usage:</p>
+<pre><code> $param['providerId'] = $providerId ;
+ $cardProvidersObj = $Api-&gt;getCardProvider($param);</code></pre>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setMode" name="method_setMode" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setMode()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setMode(string  <span class="argument">$mode</span>) </pre>
+                <p><em>Setting which mode we are running live, preprod or dev</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$mode </td>
+                                <td><p>setting in which mode will be the request</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getMode" name="method_getMode" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getMode()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getMode() : string</pre>
+                <p><em>return the mode . can be either dev or preprod or live</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setUriCharge" name="method_setUriCharge" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setUriCharge()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setUriCharge(string  <span class="argument">$uri = &#039;&#039;</span>) </pre>
+                <p><em>A method that set it charge url</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$uri </td>
+                                <td><p>set the endpoint url</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getUriCharge" name="method_getUriCharge" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getUriCharge()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getUriCharge() : string</pre>
+                <p><em>return $_uriCharge value</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setUriToken" name="method_setUriToken" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setUriToken()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setUriToken(null|string  <span class="argument">$uri = null</span>) </pre>
+                <p><em>set uri token</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>null|string</td>
+                                <td>$uri </td>
+                                <td><p>the uri for the token</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getUriToken" name="method_getUriToken" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getUriToken()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getUriToken() : string</pre>
+                <p><em>return uri token</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setUriCustomer" name="method_setUriCustomer" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setUriCustomer()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setUriCustomer(null|string  <span class="argument">$uri = null</span>) </pre>
+                <p><em>set customer uri</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>null|string</td>
+                                <td>$uri </td>
+                                <td><p>endpoint url for customer</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getUriCustomer" name="method_getUriCustomer" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getUriCustomer()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getUriCustomer() : string</pre>
+                <p><em>return customer uri</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setUriProvider" name="method_setUriProvider" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setUriProvider()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setUriProvider(null|string  <span class="argument">$uri = null</span>) </pre>
+                <p><em>set provider uri</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>null|string</td>
+                                <td>$uri </td>
+                                <td><p>endpoint url for provider</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getUriProvider" name="method_getUriProvider" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getUriProvider()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getUriProvider() : string</pre>
+                <p><em>return provider uri</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_request" name="method_request" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">request()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">request(string  <span class="argument">$uri</span>, array  <span class="argument">$param</span>, boolean  <span class="argument">$state</span>) : \CheckoutApi_Lib_RespondObj</pre>
+                <p><em>Build up the request to the gateway</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$uri </td>
+                                <td><p>endpoint to be used</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$param </td>
+                                <td><p>payload param</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$state </td>
+                                <td><p>if error occured don't send charge</p></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/CheckoutApi_Lib_RespondObj.html">\CheckoutApi_Lib_RespondObj</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_initHeader" name="method_initHeader" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">initHeader()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">initHeader() : array</pre>
+                <p><em>initialising  headers for transport layer</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>headers value</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getUriPrefix" name="method_getUriPrefix" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">getUriPrefix()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getUriPrefix() : string</pre>
+                <p><em>return which uri prefix to be used base on mode type</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_throwException" name="method_throwException" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">throwException()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">throwException(string  <span class="argument">$message</span>, array  <span class="argument">$stackTrace</span>, boolean  <span class="argument">$error = true</span>) </pre>
+                <p><em>setting exception state log</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$message </td>
+                                <td><p>error message</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$stackTrace </td>
+                                <td><p>statck trace</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$error </td>
+                                <td><p>if it's an error</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">ClientGW3.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/Client\ClientGW3.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on November 24th, 2014 at 04:14.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

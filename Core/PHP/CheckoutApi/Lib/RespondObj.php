@@ -1,9 +1,28 @@
-<?php 
+<?php
+
+/**
+ *  CheckoutApi_Lib_RespondObj
+ * This class is responsible of mapping anytime of respond into an object with attribute and magic getters
+ * @package     CheckoutApi
+ * @category     Api
+ * @author       Dhiraj Gangoosirdar <dhiraj.gangoosirdar@checkout.com>
+ * @copyright 2014 Integration team (http://www.checkout.com)
+ */
 class CheckoutApi_Lib_RespondObj 
 {
+    /** @var array $_config configuration value */
 
     protected $_config = array();
-    
+
+    /**
+     * A method that caputer all getter or setters and use them to either set or get value from attribute config
+     * @param $method
+     * @param $args
+     * @throws Exception
+     * CheckoutApi_ a php magical method
+     * @example http://php.net/manual/en/language.oop5.overloading.php#object.call
+     */
+
 	public function __call($method, $args)
     { 
         switch (substr($method, 0, 3)) {
@@ -27,7 +46,12 @@ class CheckoutApi_Lib_RespondObj
        throw new Exception("Respond does not support this method " .$method."(".print_r($args,1).")");
     }
 
-    
+    /**
+     * This method return value from the attribute config
+     * @param null $key attribute you want to retrive
+     * @return array|CheckoutApi_Lib_RespondObj|null
+     * @throws Exception
+     */
    private function getConfig($key = null) 
     {	
     	if($key!=null && isset($this->_config[$key])) { 
@@ -49,7 +73,8 @@ class CheckoutApi_Lib_RespondObj
     }
 
     /**
-     * @param array $config
+     * This method set the config value for an object
+     * @param array $config configuration to be set
      * @throws Exception
      */
 
@@ -76,7 +101,7 @@ class CheckoutApi_Lib_RespondObj
 
     /**
      * check if respond obj is valid
-     * @return mixed
+     * @return boolean
      * @throws Exception
      */
 
@@ -88,6 +113,12 @@ class CheckoutApi_Lib_RespondObj
          return $exceptionState->isValid();
     }
 
+    /**
+     * Print all error log by the CheckoutApi_Lib_ExceptionState object for the current request
+     * @throws Exception
+     * CheckoutApi_ print the error
+     */
+
     public function printError()
     {
          /** @var CheckoutApi_Lib_ExceptionState $exceptionState */
@@ -97,6 +128,12 @@ class CheckoutApi_Lib_RespondObj
           $exceptionState->flushState();
     }
 
+    /**
+     * Return an instance of CheckoutApi_Lib_ExceptionState
+     * @return CheckoutApi_Lib_ExceptionState|null
+     * @throws Exception
+     *
+     */
     public function getExceptionState()
     {
         $classException = "CheckoutApi_Lib_ExceptionState";
@@ -109,6 +146,11 @@ class CheckoutApi_Lib_RespondObj
 
         return $class;
     }
+
+    /**
+     * Return all configuration value for an object
+     * @return config value
+     */
 
     public function toArray()
     {

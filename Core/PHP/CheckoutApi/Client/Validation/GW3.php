@@ -1,6 +1,24 @@
 <?php
+
+/**
+ * CheckoutApi_Client_Validation_GW3
+ * CheckoutApi_ validator class for gateway 3.0 base on documentation on http://dev.checkout.com/ref/?shell#cards
+ * @package     CheckoutApi
+ * @category     Api
+ * @author       Dhiraj Gangoosirdar <dhiraj.gangoosirdar@checkout.com>
+ * @copyright 2014 Integration team (http://www.checkout.com)
+ */
 final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 {
+    /**
+     * A helper  method to check if email has been set in the payload and if it's a valid email
+     * @param array $postedParam
+     * @return boolean
+     * CheckoutApi_ check if email valid
+     * Simple usage:
+     *          CheckoutApi_Client_Validation_GW3::isEmailValid($postedParam);
+     */
+
 	public static function isEmailValid($postedParam) 
 	{
 		$isEmailEmpty = true;	
@@ -22,6 +40,14 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 
 	}
 
+    /**
+     * A helper method that is use to check if payload has set a customer id.
+     * @param array $postedParam
+     * @return boolean
+     * check if customer id is valid.
+     * Simple usage:
+     *          CheckoutApi_Client_Validation_GW3::CustomerIdValid($postedParam);
+     */
 
 	public static function isCustomerIdValid($postedParam)
 	{
@@ -40,7 +66,14 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 		return !$isCustomerIdEmpty && $isValidCustomerId;
 	}
 
-
+    /**
+     * A helper method that is use to valid if amount is correct in a payload.
+     * @param array $postedParam
+     * @return boolean
+     * CheckoutApi_ check if amount is valid.
+     * Simple usage:
+     *        CheckoutApi_Client_Validation_GW3::isAmountValid($postedParam)
+     */
 	public static function isAmountValid($postedParam)
 	{
 		$isValid = false;
@@ -63,6 +96,13 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 		return $isValid;
 	}
 
+    /**
+     * A helper method that is use check if payload has a currency set and if length of currency value is 3
+     * @param array $postedParam
+     * @return boolean
+     * Simple usage:
+     *      CheckoutApi_Client_Validation_GW3::isValidCurrency($postedParam);
+     */
 	public static function isValidCurrency($postedParam) 
 	{
 		$isValid = false;
@@ -84,6 +124,14 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 		return $isValid;
 	}
 
+    /**
+     * A helper method that check if a name is set in the payload
+     * @param array $postedParam
+     * @return boolean
+     * Simple usage:
+     *      CheckoutApi_Client_Validation_GW3::isNameValid($postedParam);
+     */
+
 	public static function isNameValid($postedParam)
 	{
 		$isValid = false;
@@ -101,6 +149,13 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 		return $isValid ;
 	}
 
+    /**
+     * A helper method that check if card number is set in payload.
+     * @param array $param
+     * @return bool
+     * Simple usage:
+     *      CheckoutApi_Client_Validation_GW3::isCardNumberValid($param)
+     */
 	public static function isCardNumberValid($param)
 	{
 		$isValid = false;
@@ -119,7 +174,13 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 		return $isValid;
 	}
 
-
+    /**
+     *  A helper method that check if month is properly set in payload card object
+     * @param array $card
+     * @return bool
+     * Simple usage:
+     *          CheckoutApi_Client_Validation_GW3::isMonthValid($card)
+     */
 	public static function isMonthValid($card)
 	{
 		$isValid = false;
@@ -136,6 +197,14 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 		return $isValid;
 	}
 
+    /**
+     *  A helper method that check if year is properly set in payload
+     * @param array $card
+     * @return bool
+     * Simple usage:
+     *      CheckoutApi_Client_Validation_GW3::isValidYear($card)
+     *
+     */
 	public static function isValidYear($card)
 	{
 		$isValid = false;
@@ -155,6 +224,15 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 		return $isValid;
 	}
 
+    /**
+     *  A helper method that check if cvv is properly set in payload
+     * @param array $card
+     * @return bool
+     *
+     * Simple usage:
+     *          CheckoutApi_Client_Validation_GW3::isValidCvv2($card)
+     */
+
 	public static function isValidCvv2($card) 
 	{
 		$isValid = false;
@@ -167,13 +245,18 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 			
 				$isValid = true;
 			
-			} 
-
-		} 
-
+			}
+		}
 		return $isValid;
 	}
 
+    /**
+     *  A helper method that check if card is properly set in payload. It check if expiry date , card number , cvv and name is set
+     * @param $param
+     * @return bool
+     * Simple usage:
+     *          CheckoutApi_Client_Validation_GW3::isCardValid($param)
+     */
 	public static function  isCardValid($param) 
 	{
 		$isValid = true;
@@ -218,6 +301,14 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 
 	}
 
+    /**
+     *  A helper method that check if card id was set in payload
+     * @param $param
+     * @return bool
+     * Simple usage:
+     *      CheckoutApi_Client_Validation_GW3::CardIdValid($param)
+     *
+     */
 	public static function isCardIdValid($param)
 	{
 		$isValid = false;
@@ -240,6 +331,15 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 
 	}
 
+    /**
+     *  A helper method that check if card id is set in payload.
+     * The difference between isCardIdValid and isGetCardIdValid is, isCardIdValid check if card id is set
+     * in postedparam where as isGetCardIdValid check if configuration pass has a card id
+     * @param array $param
+     * @return boolean
+     * Simple usage:
+     *         CheckoutApi_Client_Validation_GW3::isGetCardIdValid($param)
+     */
     public static function isGetCardIdValid($param)
     {
         $isValid = false;
@@ -252,6 +352,13 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
         return $isValid;
 
     }
+
+    /**
+     *  A helper method that check in payload if phone number was set
+     * @param array $postedParam
+     * @return boolean
+     *
+     */
 
 	public static function isPhoneNoValid($postedParam)
 	{
@@ -270,6 +377,13 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 
 	}
 
+    /**
+     *  A helper method that check that check if token is set in payload
+     * @param array $param
+     * @return boolean
+     * Simple usage:
+     *       CheckoutApi_Client_Validation_GW3::isCardToken($param)
+     */
 	public static function isCardToken($param)
 	{
 		$isValid = false;
@@ -284,6 +398,15 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 
 		return $isValid;
 	}
+
+    /**
+     *  A helper method that check that check if session token is set in payload
+     * @param array $param
+     * @return boolean
+     * Simple usage:
+     *      CheckoutApi_Client_Validation_GW3::isSessionToken($param)
+     *
+     */
 
 	public static function isSessionToken($param)
 	{
@@ -300,6 +423,13 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 		return $isValid;
 	}
 
+    /**
+     * A helper method that check if localpayment object is valid in payload. It check if lppId is set
+     * @param array $postedParam
+     * @return boolean
+     * Simple usage:
+     *       CheckoutApi_Client_Validation_GW3::isLocalPyamentHashValid($postedParam)
+     */
 
 	public static function isLocalPyamentHashValid($postedParam)
 	{
@@ -314,6 +444,14 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 		return $isValid;
 	}
 
+    /**
+     * A helper method that check if a charge id was set in the payload
+     * @param array $param
+     * @return boolean
+     *
+     * Simple usage:
+     *       CheckoutApi_Client_Validation_GW3::isChargeIdValid($param)
+     */
     public static function isChargeIdValid($param)
     {
         $isValid = false;
@@ -324,6 +462,13 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
         return $isValid;
     }
 
+    /**
+     * A helper method that check provider id is set in payload.
+     * @param $param
+     * @return bool
+     * Simple usage:
+     *      CheckoutApi_Client_Validation_GW3::isProvider($param)
+     */
     public static function isProvider($param)
     {
         $isValid = false;

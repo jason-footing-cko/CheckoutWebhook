@@ -1,0 +1,112 @@
+<?php
+
+/**
+ * Class CheckoutApi_Lib_Validator
+ * CheckoutApi_ class for validation
+ */
+final class CheckoutApi_Lib_Validator extends CheckoutApi_lib_Object
+{
+
+    /**
+     * @param $var
+     * @return bool
+     * CheckoutApi_ check if variable is empty
+     */
+	public static function isEmpty($var) 
+	{	
+		$toReturn = false;
+
+		if(is_array($var) && empty($var)) {
+			$toReturn = true;
+		}
+
+		if(is_string($var) && ($var =='' || is_null($var))) {
+			$toReturn = true;
+		}
+
+		if(is_integer($var) && ($var =='' || is_null($var)) ) {
+			$toReturn = true;
+		}
+
+		if(is_float($var) && ($var =='' || is_null($var)) ) {
+			$toReturn = true;
+		}
+
+		return $toReturn;
+	}
+
+    /**
+     * @param $int
+     * @return bool
+     * @check if integer
+     */
+
+	public static function isInteger($int) 
+	{
+		return is_integer($int);
+	}
+
+    /**
+     * @param $string
+     * @return bool
+     * CheckoutApi_ check if it is a string
+     */
+	public static function isString($string)
+	{
+		return is_string($string);
+	}
+
+    /**
+     * @param $string
+     * @return bool
+     * CheckoutApi_ check if it is a float
+     */
+
+	public static function isFloat($string)
+	{
+		return is_float($string);
+	}
+
+    /**
+     * @param $email
+     * @return int
+     * CheckoutApi_ validate email
+     * @todo find a better regex or build one for validate email
+     */
+	public static function isValidEmail($email) 
+	{
+		$emailReg = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/";
+		return preg_match ($emailReg,$email);
+	}
+
+    /**
+     * @param $var
+     * @param $length
+     * @return bool
+     * CheckoutApi_ validate email address
+     */
+	public static function isLength($var, $length)
+	{
+		
+
+		if(is_array($var)  ) {
+			return sizeof($var) == $length;
+
+		} else {
+			return strlen($var) == $length;
+
+		}
+
+	}
+
+    /**
+     * @param $cvv2
+     * @return int
+     * CheckoutApi_ validate cvv2
+     */
+	public static function isValidCvv2Len($cvv2)
+	{
+		$pattern = '/^[0-9]{3,4}$/';
+		return preg_match($pattern, $cvv2);
+	}
+}

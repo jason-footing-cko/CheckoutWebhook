@@ -1,33 +1,74 @@
-<?php 
+<?php
+
+/**
+ *
+ * CheckoutApi_Client_ClientGW3
+ * gateway 3.0 class
+ * @category     Adapter
+ * @author       Dhiraj Gangoosirdar <dhiraj.gangoosirdar@checkout.com>
+ * @copyright 2014 Integration team (http://www.checkout.com)
+ * @link http://dev.checkout.com/ref/?shell#introduction
+ */
+
+/**
+ * Class CheckoutApi_Client_ClientGW3
+ * This class in an interface to the Checkout Gateway 3.0.
+ * It provide access to all endpoint setup by the gateway.
+ * The simplest usage would be example creating a card token:
+ *      $secretKey = 'sk_test_CC937715-4F68-4306-BCBE-640B249A4D50';
+ *      $cardTokenConfig = array();
+ *      $cardTokenConfig['authorization'] = "$publicKey" ;
+ *      $Api = CheckoutApi_Api::getApi();
+ *      $cardTokenConfig['postedParam'] = array (
+ *                                              'email' =>'dhiraj@checkout.com',
+ *                                               'card' => array(
+ *                                               'phoneNumber'=>'0123465789',
+ *                                               'name'=>'test name',
+ *                                               'number' => '4543474002249996',
+ *                                               'expiryMonth' => 06,
+ *                                               'expiryYear' => 2017,
+ *                                               'cvv' => 956,
+ *                                               )
+ *                                           );
+ *     $respondCardToken = $Api->getCardToken( $cardTokenConfig );
+ *     if($respondCardToken->isValid()) {
+ *        echo $respondCardToken->getId();
+ *     } else {
+ *          echo $respondCardToken->printError();
+ *      }
+ *
+ *   Those couple of lines , will create an instance of the CheckoutApi_Client_ClientGW3.
+ *   It will then will request a card token to the token, with a set of arguments.
+ *   if the repond is valid , we can print out the result else we can print out the errors
+ *
+ *
+
+ */
 class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 {
-	/**
-	 *@var string to store uri for charge url
-	 **/
+	/** @var string $_uriCharge to store uri for charge url **/
 
 	protected $_uriCharge = null;
 
-	/**
-	 *@var string to store uri for token url
-	 **/
+	/** *@var string  $_uriToken to store uri for token url **/
 
     protected $_uriToken = null;
 
-	/**
-	 *@var string to store uri for customer url
-	 **/
+	/** @var string $_uriCustomer  to store uri for customer url **/
 
     protected $_uriCustomer = null;
 
-	/**
-	 *@var string to store uri for customer url
-	 **/
+	/** @var string $_uriProvider to store uri for customer url */
 
     protected $_uriProvider = null;
-
+    /** @var string  $_mode dev|preprod|live the url that the library will use , dev , preprod or live */
 	private $_mode = 'dev';
 
 
+    /**
+     * Constructor
+     * @param array $config configuration for class
+     */
 	public function __construct(array $config = array())
 	{
 
@@ -45,9 +86,22 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Create Card Token
-     * @param array $param
-     * @return CheckoutApi_Lib_RespondObj object
+     * @param array $param payload for creating a card token parameter
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * Simple usage:
+     *          $param['postedParam'] = array (
+     *                                    'email'   =>    'dhiraj@checkout.com',
+     *                                    'card'    =>    array(
+     *                                                            'phoneNumber'      => '0123465789',
+     *                                                             'name'             => 'test name',
+     *                                                             'number'           => 'XXXXXXXXX',
+     *                                                             'expiryYear'       => 2017,
+     *                                                              'cvv'              => 956
+     *                                                           )
+     *                                   );
+     *          $respondCardToken = $Api->getCardToken( $param );
+     *  Use by having, first an instance of the gateway 3.0 and set of arguments as above
      */
 
     public function getCardToken(array $param)
@@ -76,9 +130,15 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Create session token
-     * @param array $param
-     * @return mixed
+     * @param array $param payload param
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     *
+     * Simple usage:
+     *      $sessionConfig['postedParam'] = array( "amount"=>100, "currency"=>"GBP");
+     *      $sessionTokenObj = $Api->getSessionToken($sessionConfig);
+     * Use by having, first an instance of the gateway 3.0 and set of argument base on documentation for creating a session token.
+     *
      */
 
     public  function  getSessionToken(array $param)
@@ -106,9 +166,48 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Create Charge
-     * @param array $param
-     * @return mixed
+     * @param array $param payload param
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * This methods can be call to create charge for checkout.com gateway 3.0 by passing
+     * full card details :
+     *  $param['postedParam'] = array ( 'email'=>'dhiraj@checkout.com',
+     *                                   'amount'=>100,
+     *                                    'currency'=>'usd',
+     *                                   'description'=>'desc',
+     *                                   'caputure'=>false,
+     *
+     *                                   'card' => array(
+     *
+     *                                   'phoneNumber'=>'0123465789',
+     *                                   'name'=>'test name',
+     *                                   'number' => '4543474002249996',
+     *                                   'expiryMonth' => 06,
+     *                                   'expiryYear' => 2017,
+     *                                   'cvv' => 956,
+     *
+                                        )
+                                     );
+     * or by passing a card token:
+     *  $param['postedParam'] = array ( 'email'=>'dhiraj@checkout.com',
+     *                                   'amount'=>100,
+     *                                    'currency'=>'usd',
+     *                                   'description'=>'desc',
+     *                                   'caputure'=>false,
+     *                                    'cardToken'=>'card_tok_2d033cf7-1542-4a3d-bd08-bd9d26533551'
+     *                                   )
+     *
+     * or by passing a card id:
+     * $param['postedParam'] = array ( 'email'=>'dhiraj@checkout.com',
+     *                                   'amount'=>100,
+     *                                   'currency'=>'usd',
+     *                                   'description'=>'desc',
+     *                                   'caputure'=>false,
+     *                                   'cardId'=>'card_fb10a0a5-05ef-4254-ac85-3aa221e8d50d'
+     *                                   )
+     * and then just call the method:
+     *       $charge = $Api->createCharge($param);
+     *
      */
     public function createCharge(array $param)
     {
@@ -191,9 +290,18 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Refund  Charge
-     * @param $param
-     * @return mixed
+     *  This method refunds a Card Charge that has previously been created but not yet refunded
+     *  or void a charge that has been capture
+     *
+     * @param array $param payload param for refund a charge
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * Simple usage:
+     *      $param['postedParam'] = array (
+                                        'amount'=>150
+                                    );
+     *      $refundCharge = $Api->refundCharge($param);
+     *
      */
 
     public function  refundCharge($param)
@@ -222,10 +330,14 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
     }
 
     /**
-     * Capture   Charge
-     * @param $param
-     * @return mixed
+     * Capture   Charge.
+     * This method allow you to capture the payment of an existing, authorised, Card Charge
+     * @param array $param payload param for caputring a charge
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * Simple usage:
+     *      $param['postedParam'] = array ( 'amount'=>150 );
+     *      captureCharge = $Api->captureCharge($param);
      */
 
     public function  captureCharge($param)
@@ -254,10 +366,14 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
     }
 
     /**
-     * Capture   Charge
-     * @param $param
-     * @return mixed
+     * Update   Charge.
+     * Updates the specified Card Charge by setting the values of the parameters passed.
+     * @param array $param payload param
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     *  Simple usage:
+     *      $param['postedParam'] = array ('description'=> 'dhiraj is doing some test');
+     *      $updateCharge = $Api->updateCharge($param);
      */
 
     public function  updateCharge($param)
@@ -282,6 +398,23 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
         return $this->request( $uri ,$param,!$hasError);
     }
+
+    /**
+     * Create LocalPayment Charge.
+     * Creates a LocalPayment Charge using a Session Token and
+     * @param array $param payload param for creating a localpayment
+     * @return CheckoutApi_Lib_RespondObj
+     * This can be call in this way:
+     *      $chargeLocalPaymentConfig['authorization'] = $publicKey ;
+     *      $param['postedParam'] = array(
+     *               'email'        =>  'dhiraj.checkout@checkout.com',
+     *               'token'        =>   $Api->getSessionToken($sessionConfig),
+     *               'localPayment' =>  array(
+     *                                      'lppId'  => $Api->getLocalPaymentProvider($localPaymentConfig)->getId()
+     *                                   )
+     *       ) ;
+     *      $chargeLocalPaymentObj = $Api->createLocalPaymentCharge($chargeLocalPaymentConfig);
+     */
 
     public function createLocalPaymentCharge($param)
     {
@@ -314,11 +447,27 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
         }
         return $this->request( $uri ,$param,!$hasError);
     }
+
     /**
      * Create a customer
-     * @param $param
-     * @return mixed
+     * @param array $param payload param for creating a customer
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * This method can be call in the following way:
+     *      $customerConfig['postedParam'] = array (
+     *                                           'email'        => 'dhiraj@checkout.com',
+     *                                           'name'         => 'test customer',
+     *                                           'description'  => 'desc',
+     *                                           'card'         =>  array(
+     *                                                               'name'        => 'test name',
+     *                                                               'number'      => '4543474002249996',
+     *                                                               'expiryMonth' => 06,
+     *                                                               'expiryYear'  => 2017,
+     *                                                               'cvv'         => 956,
+     *
+     *                                                              )
+     *                                          );
+     *      $customer = $Api->createCustomer($customerConfig);
      */
 
     public  function createCustomer($param)
@@ -357,11 +506,15 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
 
     /**
-     * Update Customer
-     * @param $param
-     * @return mixed
+     * Get Customer
+     * @param array $param payload param for returning a single customer
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * Simple usage :
+     *      $param['customerId'] = {customerId} ;
+     *      $getCustomer = $Api->getCustomer($param);
      */
+
     public  function getCustomer($param)
     {
         $hasError = false;
@@ -384,10 +537,28 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Update Customer
-     * @param $param
-     * @return mixed
+     * @param array $param payload param for updating
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * This method can be call in the following way:
+     *
+     *      $param['customerId'] = {$customerId} ;
+     *      $param['postedParam'] = array (
+     *                          'email'         =>  'dhiraj@checkout.com',
+     *                          'name'          =>  'customer name',
+     *                          'description'   =>  'desc',
+     *                          'card'          =>   array(
+     *                                                      'name'        =>  'test name',
+     *                                                      'number'      =>  '4543474002249996',
+     *                                                      'expiryMonth' =>  06,
+     *                                                      'expiryYear'  =>  2017,
+     *                                                      'cvv'         =>  956,
+     *
+     *                                                       )
+     *                          );
+     *      $customerUpdate = $Api->updateCustomer($param);
      */
+
     public  function updateCustomer($param)
     {
         $hasError = false;
@@ -410,9 +581,14 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Getting a list of customer
-     * @param $param
-     * @return mixed
+     * @param array $param payload param for getting list of customer.
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     *  Simple Usage:
+     *       $param['count'] = 100 ;
+     *       $param['from_date'] = '09/30/2014' ;
+     *       $param['to_date'] = '10/02/2014' ;
+     *       $customerUpdate = $Api->getListCustomer($param);
      */
 
     public function getListCustomer($param)
@@ -460,9 +636,12 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Delete a customer
-     * @param $param
-     * @return mixed
+     * @param array $param payload param for deleteing a customer
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * This method can be call this way:
+     *      $param['customerId'] = {$customerId} ;
+     *      $deleteCustomer = $Api->deleteCustomer($param);
      */
 
     public function deleteCustomer($param)
@@ -484,10 +663,25 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
     }
 
     /**
-     * Creating a card link to a customer
-     * @param $param
-     * @return mixed
+     * Creating a card, link to a customer
+     * @param array $param payload param for creating a card
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * Simple usage:
+     *
+     *      $param['customerId'] = $Api->createCustomer($customerConfig)->getId() ;
+     *      $param['postedParam'] = array (
+     *               'customerID'=> $customerId,
+     *               'card' => array(
+     *               'name'=>'test name',
+     *               'number' => '4543474002249996',
+     *               'expiryMonth' => 06,
+     *               'expiryYear' => 2017,
+     *               'cvv' => 956,
+     *               )
+     *       );
+     *      $cardObj = $Api->createCard($param);
+     * The creadCard method can be call this way and it required a customer id
      */
 
     public function createCard($param)
@@ -517,9 +711,22 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Update a card
-     * @param $param
-     * @return mixed
+     * @param array $param payload param for update a card
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     *  Simple usage:
+     *      $param['customerId'] = $customerId ;
+     *       $param['cardId'] = $cardId ;
+     *      $param['postedParam'] = array (
+     *                              'card'        =>  array(
+     *                              'name'        =>  'New name',
+     *                              'number'      => '4543474002249996',
+     *                              'expiryMonth' => 08,
+     *                              'expiryYear'  => 2017,
+     *                              'cvv'         => 956,
+     *                              )
+     *                  );
+     *      $updateCardObj = $Api->updateCard($param);
      */
 
     public function updateCard($param)
@@ -549,9 +756,16 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Get a card
-     * @param $param
-     * @return mixed
+     * @param array $param payload param for getting a card info
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * Simple usage:
+     *       $param['customerId'] = $customerId ;
+     *       $param['cardId'] = $cardId ;
+     *       $getCardObj = $Api->getCard($param);
+     *
+     * Required a customer id and a card id to work
+     *
      */
 
     public function getCard($param)
@@ -580,9 +794,13 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Get Card List
-     * @param $param
-     * @return mixed
+     * @param array $param payload param for getting a list of cart
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * Simple usage:
+     *      $param['customerId'] = $customerId ;
+     *      $getCardListObj = $Api->getCardList($param);
+     * Require a customer id
      */
 
     public function getCardList($param)
@@ -607,9 +825,13 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Get Card List
-     * @param $param
-     * @return mixed
+     * @param array $param payload param
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * Simple usage:
+     *       $param['customerId'] = $customerId ;
+     *       $param['cardId'] = $cardId ;
+     *       $deleteCard = $Api->deleteCard($param);
      */
 
     public function deleteCard($param)
@@ -638,9 +860,14 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Get LocalPayment Provider list
-     * @param $param
-     * @return mixed
+     * @param array $param payload param for retriving a list of local payment provider
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * Simple usage:
+     *       $param['token'] = $sessionToken ;
+     *       $localPaymentListObj = $Api->getLocalPaymentList($param);
+     * refer to create sesssionToken for getting the session token value
+     *
      */
     public function  getLocalPaymentList($param)
     {
@@ -690,10 +917,15 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Get LocalPayment Provider
-     * @param $param
-     * @return mixed
+     * @param array $param payload param for getting a local payment provider dettail
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * Simple usage:
+     *          $param['token'] = $sessionToken ;
+                 $param['providerId'] = $providerId ;
+                $localPaymentObj = $Api->getLocalPaymentProvider($param);
      */
+
     public  function getLocalPaymentProvider($param)
     {
         $this->flushState();
@@ -724,9 +956,11 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Get Card Provider list
-     * @param $param
-     * @return mixed
+     * @param array $param payload param
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
+     * Simple usage:
+     *       $cardProviderListObj = $Api->getCardProvidersList($param);
      */
 
     public function getCardProvidersList($param)
@@ -737,6 +971,14 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
         return $this->request( $uri ,$param,!$hasError);
     }
 
+    /**
+     *  Get a list of card provider
+     * @param array $param payload param for retriving a list of card by providers
+     * @return CheckoutApi_Lib_RespondObj
+     * Simple usage:
+     *      $param['providerId'] = $providerId ;
+     *      $cardProvidersObj = $Api->getCardProvider($param);
+     */
     public function getCardProvider($param)
     {
         $this->flushState();
@@ -756,10 +998,11 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
         return $this->request( $uri ,$param,!$hasError);
     }
     /**
-     * @param $uri
-     * @param array $param
-     * @param $state
-     * @return mixed
+     * Build up the request to the gateway
+     * @param string $uri endpoint to be used
+     * @param array $param payload param
+     * @param boolean $state if error occured don't send charge
+     * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
      */
 
@@ -812,27 +1055,15 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
                 $adapter->close();
             }
 
-        } //else {
-//
-//            $exceptionStateObj = $respond->getExceptionState();
-//            $messages = $exceptionStateObj ->getMessage();
-//            $critical = $exceptionStateObj ->getCritical();
-//
-//            if(is_array($messages) && sizeof($messages)>0) {
-//                foreach($messages as $index => $message ){
-//                    if(isset($critical[$index]) && $critical[$index]){
-//                        $respondArray['errorCode'] = 'validationFail';
-//                        $respondArray['message'] = $messages[$index];
-//                        break;
-//                    }
-//                }
-//                $respond->setConfig($respondArray);
-//            }
-//        }
+        }
 
         return $respond;
     }
 
+    /**
+     * initialising  headers for transport layer
+     * @return array headers value
+     */
      private  function initHeader()
      {
          $headers = array('Authorization: '. $this->getAuthorization());
@@ -842,7 +1073,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * Setting which mode we are running live, preprod or dev
-     * @param string $mode
+     * @param string $mode setting in which mode will be the request
      * @throws Exception
      */
 
@@ -868,7 +1099,8 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 	}
 
     /**
-     * @param  string  $uri
+     * A method that set it charge url
+     * @param  string  $uri set the endpoint url
      */
 	public function setUriCharge( $uri = '')
 	{
@@ -891,7 +1123,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * set uri token
-     * @param null|string $uri
+     * @param null|string $uri the uri for the token
      */
 
 	public function setUriToken($uri = null)
@@ -916,7 +1148,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * set customer uri
-     * @param null|string $uri
+     * @param null|string $uri endpoint url for customer
      */
 
 	public function setUriCustomer( $uri = null)
@@ -940,7 +1172,8 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * set provider uri
-     * @param null|string $uri
+     * @param null|string $uri  endpoint url for provider
+     *
      */
 
 	public function setUriProvider( $uri = null)
@@ -987,13 +1220,32 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
     /**
      * setting exception state log
-     * @param $message
-     * @param array $stackTrace
-     * @param bool $error
+     * @param string $message error message
+     * @param array $stackTrace statck trace
+     * @param boolean $error if it's an error
      */
 
     private function throwException($message,array $stackTrace , $error = true )
     {
         $this->exception($message,$stackTrace,$error);
+    }
+
+    /**
+     * flushing all config
+     * @todo need to remove singleton concept causing issue
+     * @reset all state
+     * @throws Exception
+     */
+    public function flushState()
+    {
+        parent::flushState();
+        if($mode = $this->getMode()) {
+            $this->setMode($mode);
+        }
+        $this->setUriCharge();
+        $this->setUriToken();
+        $this->setUriCustomer();
+        $this->setUriProvider();
+
     }
 }

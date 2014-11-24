@@ -1,4 +1,13 @@
-<?php 
+<?php
+
+/**
+ * CheckoutApi_Client_Constant
+ * A final class that manage constant value for all CheckoutApi_Client_Client instance
+ * @package     CheckoutApi_Client
+ * @category     Api
+ * @author       Dhiraj Gangoosirdar <dhiraj.gangoosirdar@checkout.com>
+ * @copyright 2014 Integration team (http://www.checkout.com)
+ */
 final class CheckoutApi_Client_Constant 
 {
 	const APIGW3_URI_PREFIX_PREPOD = 'http://preprod.checkout.com/api.gw3/';

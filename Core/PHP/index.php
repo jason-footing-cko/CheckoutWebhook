@@ -187,7 +187,7 @@ $customerConfig = array();
 $customerConfig['authorization'] = $secretKey ;
 
 $customerConfig['postedParam'] = array (
-                                'email'=> (rand().'dhiraj@checkout.com'),
+                                'email'=> ('dhiraj@checkout.com'),
                                  'name'=>'test customer',
                                  'description'=>'desc',
                                  'card' => array(

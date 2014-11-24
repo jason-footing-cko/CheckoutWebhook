@@ -1,0 +1,49 @@
+<?php 
+/**
+* This class is used as connectors for API_CheckoutApi_Client, performing the
+   tasks of connecting, reading and closing connection to the server.
+ * @package     CheckoutApi
+ * @category     Adapter
+ * @author       Dhiraj Gangoosirdar <dhiraj.gangoosirdar@checkout.com>
+**/
+interface CheckoutApi_Client_Adapter_Interface 
+{
+	/**
+	* CheckoutApi_ Read respond on the server
+	* 
+	* @return object
+	**/
+
+	public function request();
+    
+    /**
+    *CheckoutApi_ Close all open connections and release all set variables
+    **/
+
+	public function close();
+
+    /**
+    * CheckoutApi_ Open a connection to server/URI
+    * @return resource
+    **/
+
+	public function connect();
+
+	/**
+    * CheckoutApi_ Set parameter $_config value
+    * @param array $array config array
+    *
+    * @return mixed
+    * 
+    **/
+
+	public function setConfig($array = array());
+
+	/**
+    *CheckoutApi_  Return parameter value
+    * @param string $key config name to retrive
+    * @return  mixed
+    **/
+
+	public function getConfig($key = null);
+}

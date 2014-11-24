@@ -1,0 +1,130 @@
+<?php 
+
+class CheckoutApi_Lib_Object  {
+
+    /**
+     * @var $_config array
+     */
+
+    protected $_config = array();
+
+
+    /**
+     * @param null $key
+     * @return array|null
+     * CheckoutApi_ set configuration value per object
+     */
+
+    public function getConfig($key = null) 
+    {	
+    	if($key!=null && isset($this->_config[$key])) { 
+    		
+    		return $this->_config[$key];
+    	
+    	} elseif($key == null) {
+    		
+            return $this->_config;
+    	}
+
+        return null;
+    }
+
+    /**
+     * @param array $config
+     * @throws Exception
+     */
+
+    public function setConfig($config = array()) 
+    { 
+
+    	if(is_array($config) ) {
+
+    		if(!empty($config)) {
+    			foreach($config as $key=>$value) {
+
+    				$this->_config[$key] = $value;
+    			}
+    		}
+
+     	} else {
+    		
+    		throw new Exception( "Invalid parameter");
+    	}
+
+    }
+
+    /**
+     * CheckoutApi_ reset config value
+     * @return $this
+     */
+    public function resetConfig()
+    {
+        $this->_config = array();
+        return $this;
+    }
+
+    /**
+     * setting and logging error message
+     * @param $errorMsg
+     * @param array $trace
+     * @param bool $error
+     * @return mixed
+     * @throws Exception
+     */
+
+    public function exception($errorMsg,  array $trace, $error = true )
+    {
+        $classException = "CheckoutApi_Lib_ExceptionState";
+
+        if (class_exists($classException)) {
+
+            /** @var CheckoutApi_Lib_ExceptionState $class */
+            $class = CheckoutApi_Lib_Factory::getSingletonInstance($classException);
+              
+        } else {
+            
+            throw new Exception("Not a valid class ::  CheckoutApi_Lib_ExceptionState");
+            
+        } 
+
+        $class->setLog($errorMsg,$trace,$error);
+
+        return $class;
+        
+    }
+
+    /**
+     * @throws Exception
+     * CheckoutApi_ reset config by class
+     */
+    public function flushState()
+    {
+        $classException = "CheckoutApi_Lib_ExceptionState";
+
+        if (class_exists($classException)) {
+            /** @var CheckoutApi_Lib_ExceptionState $class */
+            $class = CheckoutApi_Lib_Factory::getSingletonInstance($classException);
+              
+        } else {
+            
+            throw new Exception("Not a valid class ::  CheckoutApi_Lib_ExceptionState");
+            
+        } 
+        $class->flushState();
+
+
+    }
+
+    public function getExceptionState()
+    {
+        $classException = "CheckoutApi_Lib_ExceptionState";
+        $class = null;
+        if (class_exists($classException)) {
+            /** @var CheckoutApi_Lib_ExceptionState $class */
+            $class = CheckoutApi_Lib_Factory::getSingletonInstance($classException);
+
+        }
+
+        return $class;
+    }
+}
