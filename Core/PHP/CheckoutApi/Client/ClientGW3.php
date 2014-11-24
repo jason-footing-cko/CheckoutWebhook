@@ -222,7 +222,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
         $isCardValid = CheckoutApi_Client_Validation_GW3::isCardValid($postedParam);
         $isCardIdValid = CheckoutApi_Client_Validation_GW3::isCardIdValid($postedParam);
         $isCardTokenValid = CheckoutApi_Client_Validation_GW3::isCardToken($postedParam);
-        $uri = $this->getUriCharge();
+
 
         if(!$isEmailValid && !$isCustomerIdValid) {
             $hasError =  true;
@@ -232,8 +232,9 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
         if($isCardTokenValid) {
             if(isset($postedParam['card'])) {
                 $this->throwException('unset card object', array('param'=>$postedParam),false);
-                unset($param['postedParam']['card']);
+               // unset($param['postedParam']['card']);
             }
+            $this->setUriCharge('','token');
 
         }elseif($isCardValid) {
 
@@ -241,38 +242,41 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
                 $this->throwException('unset invalid token object', array('param'=>$postedParam),false);
                 unset($param['postedParam']['token']);
             }
+            $this->setUriCharge('','card');
 
         }elseif($isCardIdValid) {
+            $this->setUriCharge('','card');
 
             if(isset($postedParam['token'])){
                 $this->throwException('unset invalid token object', array('param'=>$postedParam),false);
                 unset($param['postedParam']['token']);
             }
 
-            if(isset($postedParam['card'])){
-                $this->throwException('unset invalid token object', array('param'=>$postedParam),false);
+            if(isset($postedParam['card'])) {
+                $this->throwException('unset invalid token object', array('param' => $postedParam), false);
 
-                if(isset($param['postedParam']['card']['name'])) {
+                if (isset($param['postedParam']['card']['name'])) {
                     unset($param['postedParam']['card']['name']);
                 }
 
-                if(isset($param['postedParam']['card']['number'])) {
+                if (isset($param['postedParam']['card']['number'])) {
                     unset($param['postedParam']['card']['number']);
                 }
 
-                if(isset($param['postedParam']['card']['expiryMonth'])) {
+                if (isset($param['postedParam']['card']['expiryMonth'])) {
                     unset($param['postedParam']['card']['expiryMonth']);
                 }
 
-                if(isset($param['postedParam']['card']['expiryYear'])) {
+                if (isset($param['postedParam']['card']['expiryYear'])) {
                     unset($param['postedParam']['card']['expiryYear']);
                 }
-
-
-            }else {
-                $hasError =  true;
-                $this->throwException('Please provide  either a valid card token or a card object or a card id', array('pram'=>$param));
             }
+
+        } elseif($isEmailValid || $isCustomerIdValid){
+            $this->setUriCharge('','customer');
+        } else {
+            $hasError =  true;
+            $this->throwException('Please provide  either a valid card token or a card object or a card id', array('pram'=>$param));
         }
 
         if(!$isAmountValid) {
@@ -285,7 +289,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
             $this->throwException('Please provide a valid currency code (ISO currency code)', array('pram'=>$param));
         }
 
-        return $this->request( $uri ,$param,!$hasError);
+        return $this->request( $this->getUriCharge() ,$param,!$hasError);
     }
 
     /**
@@ -1101,13 +1105,18 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
     /**
      * A method that set it charge url
      * @param  string  $uri set the endpoint url
+     * @param  string $sufix a sufix to the cart token
      */
-	public function setUriCharge( $uri = '')
+	public function setUriCharge( $uri = '',$sufix ='')
 	{
 		$toSetUri = $uri;
 		if(!$uri) {
 			$toSetUri = $this->getUriPrefix().'charges';
 		}
+
+        if($sufix) {
+            $toSetUri .= "/$sufix";
+        }
 
 		$this->_uriCharge = $toSetUri;
 	}

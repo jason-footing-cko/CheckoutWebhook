@@ -99,7 +99,7 @@
         }
 
         $config['postedParam'] = array_merge($config['postedParam'],$extraConfig);
-        $config['postedParam']['token'] = parent::get_post('cko_cc_token');
+        $config['postedParam']['cardToken'] = parent::get_post('cko_cc_token');
 
         //var_dump($config);
 

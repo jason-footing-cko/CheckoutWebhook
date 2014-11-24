@@ -38,7 +38,7 @@ class models_methods_creditcard extends models_methods_Abstract
     public  function createCharge($config = array(),$cart)
     {
 
-        $config['postedParam']['token']  = Tools::getValue('cko_cc_token');
+        $config['postedParam']['cardToken']  = Tools::getValue('cko_cc_token');
         $config['postedParam']['email']  = Tools::getValue('cko_cc_email');
         return parent::_createCharge($config);
     }

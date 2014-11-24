@@ -388,8 +388,8 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 	{
 		$isValid = false;
 
-		if(isset($param['token'])){
-			$isTokenEmpty = CheckoutApi_Lib_Validator::isEmpty($param['token']);
+		if(isset($param['cardToken'])){
+			$isTokenEmpty = CheckoutApi_Lib_Validator::isEmpty($param['cardToken']);
 
 			if(!$isTokenEmpty) {
 				$isValid = true;

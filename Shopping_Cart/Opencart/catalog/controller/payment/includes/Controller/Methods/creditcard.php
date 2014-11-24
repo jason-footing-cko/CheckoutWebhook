@@ -37,7 +37,7 @@ class Controller_Methods_creditcard extends Controller implements Controller_Int
     public function createCharge($config,$order_info)
     {
 
-        $config['postedParam']['token']  = $this->request->post['cko_cc_token'];
+        $config['postedParam']['cardToken']  = $this->request->post['cko_cc_token'];
         $config['postedParam']['email']  = $this->request->post['cko_cc_email'];
         return $config;
     }

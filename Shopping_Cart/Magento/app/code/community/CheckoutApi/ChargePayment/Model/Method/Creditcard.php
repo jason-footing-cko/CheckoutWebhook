@@ -40,7 +40,7 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
              );
 
         $config['postedParam'] = array_merge($config['postedParam'],$extraConfig);
-        $config['postedParam']['token'] = $payment->getAdditionalData('cko_cc_token');
+        $config['postedParam']['cardToken'] = $payment->getAdditionalData('cko_cc_token');
 
         return $Api->createCharge($config);
 
