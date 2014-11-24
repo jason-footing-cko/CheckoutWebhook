@@ -32,6 +32,10 @@
 
  	}
 
+ 	public function validate_fields(){
+ 		$this->credit_card_form();
+ 	}
+
  	public function process_payment($order_id){
 
  		global $woocommerce;
@@ -48,23 +52,23 @@
 		);
 		$extraConfig = array();
 		if(CHECKOUTAPI_PAYMENTACTION == 'Capture'){
-			$extraConfig = $this->_captureConfig();
+			$extraConfig = parent::_captureConfig();
 		}
 		else {
-			$extraConfig= $this->_authorizeConfig();
+			$extraConfig= parent::_authorizeConfig();
 		}
 
 		$config['postedParam'] = array_merge($config['postedParam'],$extraConfig);
 
-		$cardnumber = preg_replace('/\D/', '', $this->get_post($this->id.'-card-number'));
-		$cardexpiry = explode(" / ", $this->get_post($this->id.'-card-expiry')) ;
+		$cardnumber = preg_replace('/\D/', '', parent::get_post($this->id.'-card-number'));
+		$cardexpiry = explode(" / ", parent::get_post($this->id.'-card-expiry')) ;
 
 		$config['postedParam']['card'] = array(
 			'name' => $order->billing_first_name .' '.$order->billing_last_name,
 			'number' => $cardnumber,
 			'expiryMonth' => $cardexpiry[0],
             'expiryYear' => $cardexpiry[1],
-            'cvv' => $this->get_post($this->id.'-card-cvc'),
+            'cvv' => parent::get_post($this->id.'-card-cvc'),
 			'addressLine1' => $order->billing_address_1,
 			'addressLine2' => $order->billing_address_2,
 			'addressPostcode' => $order->billing_postcode,
@@ -79,34 +83,6 @@
 		return parent::_validateChrage($order, $respondCharge);
 
  	}
-
- 	private function get_post( $name ) {
-		if ( isset( $_POST[ $name ] ) ){
-				return $_POST[ $name ];
-			}
-			return null;
-	}
-
-
-    private function _captureConfig()
-    {
-        $to_return['postedParam'] = array (
-            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE,
-            'autoCapTime' => CHECKOUTAPI_AUTOCAPTIME
-        );
-
-        return $to_return;
-    }
-
-    private function _authorizeConfig()
-    {
-        $to_return['postedParam'] = array (
-            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH,
-            'autoCapTime' => 0
-        );
-
-        return $to_return;
-    }
 
  }
 

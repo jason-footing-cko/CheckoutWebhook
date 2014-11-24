@@ -13,7 +13,6 @@ abstract class models_Checkoutapi extends WC_Payment_Gateway implements models_I
 
 	    public function __construct(){
 
-	    	$this->_setInstanceMethod();
 	    	$this->_init();
 	    	define("CHECKOUTAPI_SECRET_KEY", $this->checkoutapipayment_secretkey); 
 			define("CHECKOUTAPI_PUBLIC_KEY", $this->checkoutapipayment_publickey);
@@ -23,6 +22,8 @@ abstract class models_Checkoutapi extends WC_Payment_Gateway implements models_I
 			define("CHECKOUTAPI_TIMEOUT", $this->checkoutapipayment_timeout);
 			define("CHECKOUTAPI_ENDPOINT", $this->checkoutapipayment_endpoint);
 			define("CHECKOUTAPI_ISPCI", $this->checkoutapipayment_ispci);
+
+			$this->_setInstanceMethod();
 
 	    	add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 
@@ -57,7 +58,7 @@ abstract class models_Checkoutapi extends WC_Payment_Gateway implements models_I
 					  'yes' => 'YES',
 					  'no' => 'NO',
 					  ),
-				  'default'     => 'yes'
+				  'default'     => 'no'
 				  ),
 				'title' => array(
 				  'title' => __( 'Title', 'woocommerce' ),
@@ -149,11 +150,14 @@ abstract class models_Checkoutapi extends WC_Payment_Gateway implements models_I
 		}
 
 	    protected function _setInstanceMethod(){
-	    	$configType = CHECKOUTAPI_ISPCI ? 'yes':'no';
-	    	if($configType ) {
+	    	$configType = CHECKOUTAPI_ISPCI;
+	    	if($configType) {
 	            switch ($configType) {
 	                case 'yes':
 	                    $this->_methodType = 'models_methods_creditcardpci';
+	                    break;
+	                case 'no':
+	                    $this->_methodType = 'models_methods_creditcard';
 	                    break;
 	                default:
 	                    $this->_methodType = 'models_methods_creditcard';

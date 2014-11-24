@@ -50,7 +50,7 @@ function checkoutapipayment_init(){
 		}
 
 		public function payment_fields(){
-			parent::payment_fields();
+			return parent::payment_fields();
 		}
 
 		public function process_payment($order_id){

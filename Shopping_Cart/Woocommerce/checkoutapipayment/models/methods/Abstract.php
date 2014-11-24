@@ -25,9 +25,9 @@ abstract class models_methods_Abstract extends WC_Payment_Gateway implements mod
     }
 
     protected function _validateChrage($order,$respondCharge)
-    {
+    {	
 
-
+    	
 		if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())){
 
 			$order->payment_complete( $respondCharge->getId() );
@@ -57,7 +57,35 @@ abstract class models_methods_Abstract extends WC_Payment_Gateway implements mod
 
     }
 
+    protected function get_post( $name ) {
+		if ( isset( $_POST[ $name ] ) ){
+				return $_POST[ $name ];
+			}
+			return null;
+	}
 
+    protected function _captureConfig()
+    {
+        $to_return['postedParam'] = array (
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE,
+            'autoCapTime' => CHECKOUTAPI_AUTOCAPTIME
+        );
+
+        return $to_return;
+    }
+
+    protected function _authorizeConfig()
+    {
+        $to_return['postedParam'] = array (
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH,
+            'autoCapTime' => 0
+        );
+
+        return $to_return;
+    }
 }
+
+
+
 
 ?>
