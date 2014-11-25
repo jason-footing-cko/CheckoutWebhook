@@ -4,9 +4,9 @@ set /p PATHREPOS=Please enter the directory you want it to be link to:
 set oldpath=%cd%
 cd %PATHREPOS%
 for %%A in ("%~f0\..") do set "myFolder=%%~nxA"
-
+echo %PATHREPOS%\.modman\%myFolder%
 if EXIST %PATHREPOS%\.modman (
-	call modman remove %myFolder%
+call modman remove %myFolder%
 
 )
 call modman init
