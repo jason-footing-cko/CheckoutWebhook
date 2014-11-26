@@ -45,13 +45,15 @@ abstract class model_methods_Abstract {
                 'amount'=>$amountCents,
                 'currency'=> $order->info['currency'] ,
                 'card' => array(
-                   'addressLine1'       =>  $order->billing['street_address'],
-                   'addressPostcode'    =>  $order->billing['postcode'],
-                   'addressCountry'     =>  $order->billing['country']['title'],
-                   'addressCity'        =>  $order->billing['city'],
-                   'addressPhone'       =>  $order->customer['telephone'],
-                   'paymentMethod'      =>  $order->info['payment_method']
-                )
+                            'billingDetails' => array (
+                                                'addressLine1'       =>  $order->billing['street_address'],
+                                                'addressPostcode'    =>  $order->billing['postcode'],
+                                                'addressCountry'     =>  $order->billing['country']['title'],
+                                                'addressCity'        =>  $order->billing['city'],
+                                                'addressPhone'       =>  $order->customer['telephone'],
+                                                'paymentMethod'      =>  $order->info['payment_method']
+                                             )
+                             )
 
             );
 
