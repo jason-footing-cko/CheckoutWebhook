@@ -96,8 +96,17 @@
      }
      public function process_button()
      {
+
          $this->getInstance()->process_button();
      }
+
+     public function before_process()
+     {
+
+         $this->getInstance()->before_process();
+     }
+
+
 
      public function after_process()
      {
@@ -108,4 +117,6 @@
      {
 
      }
+
+
  }

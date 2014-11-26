@@ -15,7 +15,7 @@
             Checkout.render({
                 publicKey: "<?php echo $entry_public_key ?>",
                 userEmail: "<?php echo $order_email ?>",
-                amount: "<?php echo $amount ?>",
+                value: "<?php echo $amount ?>",
                 currency: "<?php echo $order_currency ?>",
                 widgetContainerSelector: '.widget-container',
                 widgetRendered: function (event) {

@@ -260,6 +260,7 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 	public static function  isCardValid($param) 
 	{
 		$isValid = true;
+
         if(isset($param['card'])) {
             $card = $param['card'];
 

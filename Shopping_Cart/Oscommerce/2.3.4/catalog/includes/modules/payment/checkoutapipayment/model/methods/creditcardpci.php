@@ -20,13 +20,13 @@ class model_methods_creditcardpci extends model_methods_Abstract
                 'text' => tep_output_string_protected(strftime('%Y',mktime(0,0,0,1,1,$i))));
         }
 
-        $months_string = '<select data-stripe="exp_month">';
+        $months_string = '<select data-checkout="exp_month" name="exp_month">';
         foreach ( $months_array as $m ) {
             $months_string .= '<option value="' . tep_output_string($m['id']) . '">' . tep_output_string($m['text']) . '</option>';
         }
         $months_string .= '</select>';
 
-        $years_string = '<select data-stripe="exp_year">';
+        $years_string = '<select data-checkout="exp_year" name="exp_year">';
         foreach ( $years_array as $y ) {
             $years_string .= '<option value="' . tep_output_string($y['id']) . '">' . tep_output_string($y['text']) . '</option>';
         }
@@ -37,14 +37,14 @@ class model_methods_creditcardpci extends model_methods_Abstract
 
 
         $content .= '<div class="messageStackError payment-errors"></div>' .
-            '<table id="stripe_table_new_card" border="0" width="100%" cellspacing="0" cellpadding="2">' .
+            '<table id="checkout_table_new_card" border="0" width="100%" cellspacing="0" cellpadding="2">' .
             '<tr>' .
             '  <td width="30%">' . MODULE_PAYMENT_CHECKOUTAPIPAYMENT_CREDITCARD_OWNER . '</td>' .
-            '  <td><input type="text" data-stripe="name" value="' . tep_output_string($order->billing['firstname'] . ' ' . $order->billing['lastname']) . '" /></td>' .
+            '  <td><input type="text" data-checkout="name" name= "name" value="' . tep_output_string($order->billing['firstname'] . ' ' . $order->billing['lastname']) . '" /></td>' .
             '</tr>' .
             '<tr>' .
             '  <td width="30%">' . MODULE_PAYMENT_CHECKOUTAPIPAYMENT_CREDITCARD_NUMBER . '</td>' .
-            '  <td><input type="text" maxlength="20" autocomplete="off" data-stripe="number" /></td>' .
+            '  <td><input type="text" maxlength="20" autocomplete="off" data-checkout="number"  name="number"/></td>' .
             '</tr>' .
             '<tr>' .
             '  <td width="30%">' . MODULE_PAYMENT_CHECKOUTAPIPAYMENT_CREDITCARD_EXPIRY . '</td>' .
@@ -53,7 +53,7 @@ class model_methods_creditcardpci extends model_methods_Abstract
 
             $content .= '<tr>' .
                 '  <td width="30%">' . MODULE_PAYMENT_CHECKOUTAPIPAYMENT_CREDITCARD_CVC . '</td>' .
-                '  <td><input type="text" size="5" maxlength="4" autocomplete="off" data-stripe="cvc" /></td>' .
+                '  <td><input type="text" size="5" maxlength="4" autocomplete="off" data-checkout="cvc" name="cvc"/></td>' .
                 '</tr>';
 
 
@@ -72,6 +72,25 @@ class model_methods_creditcardpci extends model_methods_Abstract
     }
 
     public function pre_confirmation_check()
+    {
+
+    }
+    public function before_process()
+    {
+        global  $HTTP_POST_VARS,$order;
+
+        $config = parent::before_process();
+        $config['postedParam']['card']['phoneNumber'] = $order->customer['telephone'];
+        $config['postedParam']['card']['name'] = $HTTP_POST_VARS['name'];
+        $config['postedParam']['card']['number'] = $HTTP_POST_VARS['number'];
+        $config['postedParam']['card']['expiryMonth'] = (int)$HTTP_POST_VARS['exp_month'];
+        $config['postedParam']['card']['expiryYear'] = (int)$HTTP_POST_VARS['exp_year'];
+        $config['postedParam']['card']['cvv'] = $HTTP_POST_VARS['cvc'];
+        $config['postedParam']['card']['cvv2'] = $HTTP_POST_VARS['cvc'];
+        $this->_placeorder($config);
+    }
+
+    public function  process_button()
     {
 
     }

@@ -1212,7 +1212,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
 	private function getUriPrefix()
 	{
-		$mode = $this->getMode();
+		$mode = strtolower($this->getMode());
 		switch ($mode) {
 			case 'live':
 				$prefix = CheckoutApi_Client_Constant::APIGW3_URI_PREFIX_LIVE;

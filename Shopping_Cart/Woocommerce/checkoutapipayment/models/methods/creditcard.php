@@ -39,7 +39,7 @@
             Checkout.render({
                 publicKey: "<?php echo CHECKOUTAPI_PUBLIC_KEY ?>",
                 userEmail: "<?php echo $email ?>",
-                amount: "<?php echo $amount ?>",
+                value: "<?php echo $amount ?>",
                 currency: "<?php echo get_woocommerce_currency() ?>",
                 widgetContainerSelector: '.widget-container',
                 widgetRendered: function (event) {

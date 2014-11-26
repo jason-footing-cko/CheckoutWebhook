@@ -9,14 +9,11 @@
          Checkout.render({
              publicKey: "{$publicKey}",
              userEmail: '{$mailAddress}',
-             amount: "{$amount}",
+             value: "{$amount}",
              currency: "{$currency}",
              widgetContainerSelector: '.widget-container',
              widgetRendered: function (event) {
 
-    //             if ($$('.cko-pay-now')[0]) {
-    //                 $$('.cko-pay-now')[0].hide();
-    //             }
              },
              cardTokenReceived: function (event) {
                  document.getElementById('cko-cc-token').value = event.data.cardToken;
