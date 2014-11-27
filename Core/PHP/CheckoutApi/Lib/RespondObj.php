@@ -114,18 +114,24 @@ class CheckoutApi_Lib_RespondObj
     }
 
     /**
+     * @param boolean $print print error
      * Print all error log by the CheckoutApi_Lib_ExceptionState object for the current request
      * @throws Exception
+     * @return string $error an string of errors
      * CheckoutApi_ print the error
      */
 
-    public function printError()
+    public function printError($print = true)
     {
          /** @var CheckoutApi_Lib_ExceptionState $exceptionState */
 
           $exceptionState = CheckoutApi_Lib_Factory::getSingletonInstance('CheckoutApi_Lib_ExceptionState');
-          $exceptionState->debug();
+          $error =  $exceptionState->debug();
           $exceptionState->flushState();
+            if($print) {
+                echo $error;
+            }
+        return $error;
     }
 
     /**

@@ -171,11 +171,12 @@
 
      /**
       * CheckoutApi_ print out the error
+      * @return string $errorToreturn a list of errors
       */
 
 	public function debug()
 	{
-	
+	    $errorToreturn = '';
 		if($this->_debug && $this->hasError() ){
 			$message = $this->getMessage();
 			$trace = $this->getTrace();
@@ -184,7 +185,7 @@
 			for($i= 0, $count = sizeOf($message); $i<$count;$i++ ) {
 
 				if($critical[$i]){
-					echo '<strong style="color:red">';
+                    $errorToreturn .= '<strong style="color:red">';
 				} else  {
 					continue;
 				}
@@ -192,14 +193,14 @@
 				CheckoutApi_Utility_Utilities::dump($message[$i] .'==> { ');
 				
 				foreach($trace[$i] as $errorIndex => $errors) {
-					echo "<pre>";
-						echo  $errorIndex ."=>  "; var_dump($errors);
-						
-					echo "</pre>";
+                    $errorToreturn .=  "<pre>";
+                    $errorToreturn .=   $errorIndex ."=>  "; var_dump($errors);
+
+                    $errorToreturn .=  "</pre>";
 				}
 				
 				if($critical[$i])	{
-					echo '</strong>';
+                    $errorToreturn .=  '</strong>';
 				}
 				
 				CheckoutApi_Utility_Utilities::dump('} ');
@@ -207,7 +208,7 @@
 			}
 			
 		}
-		
+		return $errorToreturn;
 	}
 
      /**

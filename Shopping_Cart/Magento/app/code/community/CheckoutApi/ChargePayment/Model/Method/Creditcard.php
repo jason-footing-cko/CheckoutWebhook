@@ -23,23 +23,8 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
     {
         /** @var CheckoutApi_Client_ClientGW3  $Api */
         $Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
-        $scretKey = $this->getConfigData('privatekey');
-        $order = $payment->getOrder();
-        $billingaddress = $order->getBillingAddress();
-        $currencyDesc = $order->getBaseCurrencyCode();
-        $orderId = $order->getIncrementId();
-        $amountCents = (int)$amount*100;
-        $config = array();
-        $config['authorization'] = $scretKey  ;
-        $config['mode'] = $this->getConfigData('mode');
-        $config['timeout'] = $this->getConfigData('timeout');
-        $config['postedParam'] = array ( 'email'=>$payment->getAdditionalData('cko_cc_email'),
-            'amount'=>$amountCents,
-            'currency'=> $currencyDesc,
-            'description'=>"Order number::$orderId",
-             );
-
-        $config['postedParam'] = array_merge($config['postedParam'],$extraConfig);
+        $config = parent::_createCharge($payment,$amount,$extraConfig);
+        $config['postedParam']['email'] = $payment->getAdditionalData('cko_cc_email');
         $config['postedParam']['cardToken'] = $payment->getAdditionalData('cko_cc_token');
 
         return $Api->createCharge($config);

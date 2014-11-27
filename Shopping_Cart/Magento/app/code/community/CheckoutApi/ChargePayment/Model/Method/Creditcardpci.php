@@ -22,33 +22,23 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcardpci extends CheckoutApi_C
 
         /** @var CheckoutApi_Client_ClientGW3  $Api */
         $Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
-        $scretKey = $this->getConfigData('privatekey');
+
         $order = $payment->getOrder();
-        $billingaddress = $order->getBillingAddress();
-        $currencyDesc = $order->getBaseCurrencyCode();
-        $orderId = $order->getIncrementId();
-        $amountCents = (int)$amount*100;
-        $config = array();
-        $config['authorization'] = $scretKey  ;
-        $config['mode'] = $this->getConfigData('mode');
-        $config['timeout'] = $this->getConfigData('timeout');
-        $config['postedParam'] = array ( 'email'=>$billingaddress->getData('email'),
-            'amount'=>$amountCents,
-            'currency'=> $currencyDesc,
-            'description'=>"Order number::$orderId",
-             );
+        $billingAddress = $order->getBillingAddress();
+        $config = parent::_createCharge($payment,$amount,$extraConfig);
+        $config['postedParam']['email'] = $billingAddress->getData('email');
+        $config['postedParam']['card'] =  array_merge (
+                                                        array(
+                                                                'phoneNumber'   =>    $billingAddress->getData('telephone'),
+                                                                'name'          =>    $payment->getCcOwner(),
+                                                                'number'        =>    $payment->getCcNumber(),
+                                                                'expiryMonth'   =>    (int) $payment->getCcExpMonth(),
+                                                                'expiryYear'    =>    (int)$payment->getCcExpYear(),
+                                                                'cvv'           =>    $payment->getCcCid(),
+                                                             ),
+                                                        $config['postedParam']['card']
+                                                );
 
-        $config['postedParam'] = array_merge($config['postedParam'],$extraConfig);
-        $config['postedParam']['card'] = array(
-
-                'phoneNumber'=>$billingaddress->getData('telephone'),
-                'name'=>$payment->getCcOwner(),
-                'number' => $payment->getCcNumber(),
-                'expiryMonth' => $payment->getCcExpMonth(),
-                'expiryYear' => $payment->getCcExpYear(),
-                'cvv' => $payment->getCcCid(),
-
-            );
 
         return $Api->createCharge($config);
 

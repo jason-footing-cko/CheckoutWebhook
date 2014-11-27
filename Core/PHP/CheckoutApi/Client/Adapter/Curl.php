@@ -101,7 +101,7 @@ class CheckoutApi_Client_Adapter_Curl extends CheckoutApi_Client_Adapter_Abstrac
 		$http_status = curl_getinfo($resource, CURLINFO_HTTP_CODE);
 
 		if($http_status != 200 ) {
-			$this->exception("An error has occured while processing your transaction:",
+			$this->exception("An error has occured while processing your transaction",
 				array(
 					'respond_code'=> $http_status,
 					'curl_info' => curl_getinfo($resource),
