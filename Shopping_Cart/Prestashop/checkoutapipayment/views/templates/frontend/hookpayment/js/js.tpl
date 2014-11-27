@@ -6,10 +6,11 @@
     <script type="text/javascript" src="http://ckofe.com/js/Checkout.js"></script>
     <script type="text/javascript">
      function CheckoutReady() {
+         jQuery('#click_checkoutprestashop').attr('href','javascript:void(0');
          Checkout.render({
              publicKey: "{$publicKey}",
              userEmail: '{$mailAddress}',
-             value: "{$amount}",
+             amount: "{$amount}",
              currency: "{$currency}",
              widgetContainerSelector: '.widget-container',
              widgetRendered: function (event) {
@@ -22,6 +23,7 @@
                  document.getElementById('checkoutapipayment_form').submit();
              }
          });
+
 
      }
         if (window.addEventListener) {

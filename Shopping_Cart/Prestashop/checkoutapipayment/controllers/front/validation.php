@@ -82,7 +82,8 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
         $cart = $this->context->cart;
         $currency = $this->context->currency;
         $customer = new Customer((int)$cart->id_customer);
-        $invoiceAddress = new Address((int)$cart->id_address_invoice);
+        $billingAddress = new Address((int)$cart->id_address_invoice);
+        $shippingAddress = new Address((int)$cart->id_address_delivery);
         $total = (float)$cart->getOrderTotal(true, Cart::BOTH);
 
 
@@ -103,12 +104,52 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
             $config = array_merge($config,$this->_authorizeConfig());
         }
 
+        $billingAddressConfig = array(
+            'addressLine1'       =>  $billingAddress->address1,
+            'addressLine2'       =>  $billingAddress->address2,
+            'addressPostcode'    =>  $billingAddress->postcode,
+            'addressCountry'     =>  $billingAddress->country,
+            'addressCity'        =>  $billingAddress->city ,
+            'addressPhone'       =>  $billingAddress->phone,
+
+        );
+
+
+        $shippingAddressConfig = array(
+            'addressLine1'       =>  $shippingAddress->address1,
+            'addressLine2'       =>  $shippingAddress->address1,
+            'addressPostcode'    =>  $shippingAddress->postcode,
+            'addressCountry'     =>  $shippingAddress->country,
+            'addressCity'        =>  $shippingAddress->city,
+            'addressPhone'       =>  $shippingAddress->phone,
+            'recipientName'      =>  $shippingAddress->firstname . ' '.$shippingAddress->lastname
+
+        );
+        $products = array();
+        foreach ($cart->getProducts() as $item ) {
+
+            $products[] = array (
+                'name'          =>     strip_tags($item['name']),
+                'sku'           =>     strip_tags($item['reference']),
+                'price'         =>     $item['price']*100,
+                'quantity'      =>     $item['cart_quantity']
+
+            );
+        }
+      //  print_r($products); die();
         $config['postedParam'] = array_merge($config['postedParam'],array (
             'email'=>$customer->email ,
             'amount'=>$amountCents,
             'currency'=> $currency->iso_code,
             'description'=>"Order number::$orderId",
+            'shippingDetails'  =>    $shippingAddressConfig,
+            'products'         =>    $products,
+            'card'             =>     array (
+                'billingDetails'   =>    $billingAddressConfig
+
+            )
         ));
+
 
 
        return $this->module->getInstanceMethod()->createCharge($config,$cart);

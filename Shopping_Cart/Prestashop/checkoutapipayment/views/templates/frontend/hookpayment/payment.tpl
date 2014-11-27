@@ -11,10 +11,10 @@
         </p>
     {/if}
     <div style="" class="checkoutapi-info">
-			<a id="click_checkoutprestashop" href="javascript:void(0)" title="{l s='Pay with Checkout.com' mod='checkoutprestashop'}" style="">
+			<a id="click_checkoutprestashop" href="{$link->getModuleLink('checkoutapipayment', 'payment', [], true)|escape:'html'}" title="{l s='Pay with Checkout.com' mod='checkoutprestashop'}" style="">
                 <img src="{$module_dir}skin/img/checkout-logo@2x.png" alt="Pay through Checkout.com" border="0" align="absmiddle" width="360" class="img-logo"/>
                 <span class="span-desc">{l s='Secured credit/debit card payment with Checkout.com' mod='checkoutprestashop'}</span>
-                {if $template}
+                {if isset($template) }
                      {include file="../hookpayment/js/$template"}
                 {/if}
 

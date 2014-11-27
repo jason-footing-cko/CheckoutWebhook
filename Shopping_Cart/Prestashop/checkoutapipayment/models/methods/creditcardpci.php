@@ -53,16 +53,17 @@ class models_methods_creditcardpci extends models_methods_Abstract
     {
         $invoiceAddress = new Address((int)$cart->id_address_invoice);
 
-        $config['postedParam']['card']  = array(
+        $config['postedParam']['card'] = array_merge( $config['postedParam']['card'], array(
 
-            'phoneNumber'   =>   $invoiceAddress->phone ,
-            'name'          =>   Tools::getValue('cc_owner'),
-            'number'        =>   Tools::getValue('cc_number'),
-            'expiryMonth'   =>   Tools::getValue('cc_exp_month'),
-            'expiryYear'    =>  Tools::getValue('cc_exp_year'),
-            'cvv'           =>  Tools::getValue('cc_cid'),
+                                            'phoneNumber'   =>   $invoiceAddress->phone ,
+                                            'name'          =>   Tools::getValue('cc_owner'),
+                                            'number'        =>   Tools::getValue('cc_number'),
+                                            'expiryMonth'   =>   (int)Tools::getValue('cc_exp_month'),
+                                            'expiryYear'    =>   (int)Tools::getValue('cc_exp_year'),
+                                            'cvv'           =>  Tools::getValue('cc_cid'),
 
-        );
+                                   )
+                                );
 
        return parent::_createCharge($config);
     }
