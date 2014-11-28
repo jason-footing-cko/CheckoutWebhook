@@ -1,0 +1,94 @@
+﻿@{
+    Layout = "";
+}
+@model Nop.Plugin.Payments.Checkoutapipayment.Models.ConfigurationModel
+@using Nop.Web.Framework;
+@Html.Action("StoreScopeConfiguration", "Setting")
+@using (Html.BeginForm())
+{
+    <table class="adminContent">
+        <tr>
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.IsPCI_OverrideForStore, model => model.IsPCI, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.IsPCI):
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.IsPCI)
+                @Html.ValidationMessageFor(model => model.IsPCI)
+            </td>
+        </tr>
+
+        <tr>
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.SecretKey_OverrideForStore, model => model.SecretKey, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.SecretKey):
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.SecretKey)
+                @Html.ValidationMessageFor(model => model.SecretKey)
+            </td>
+        </tr>
+
+        <tr>
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.PublicKey_OverrideForStore, model => model.PublicKey, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.PublicKey):
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.PublicKey)
+                @Html.ValidationMessageFor(model => model.PublicKey)
+            </td>
+        </tr>
+
+        <tr>
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.PaymentAction_OverrideForStore, model => model.PaymentAction, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.PaymentActionValues):
+            </td>
+            <td class="adminData">
+                @Html.DropDownList("PaymentAction", Model.PaymentActionValues)
+            </td>
+        </tr>
+
+
+        <tr>
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.AutoCapTime_OverrideForStore, model => model.AutoCapTime, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.AutoCapTime):
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.AutoCapTime)
+                @Html.ValidationMessageFor(model => model.AutoCapTime)
+            </td>
+        </tr>
+
+        <tr>
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.Timeout_OverrideForStore, model => model.Timeout, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.Timeout):
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.Timeout)
+                @Html.ValidationMessageFor(model => model.Timeout)
+            </td>
+        </tr>
+
+        <tr>
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.EndPoint_OverrideForStore, model => model.EndPoint, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.EndPointValues):
+            </td>
+            <td class="adminData">
+                @Html.DropDownList("EndPoint", Model.EndPointValues)
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                <input type="submit" name="save" class="k-button" value="@T("Admin.Common.Save")" />
+            </td>
+        </tr>
+
+    </table>
+
+}
