@@ -36,7 +36,7 @@
                 <select id="creditcardpic_expiration" name="cc_exp_month" class="form-control month validate-cc-exp required-entry">
                     <option value="">--Month--</option>
                     {foreach from=$months key=i item=month }
-                        <option value="{$i}" {if $i==$cc_exp_month} selected="selected" {/if} >{$month}</option>
+                        <option value="{$i}" {if $i==$cc_exp_month} selected="selected" {/if} >{$i}-{$month}</option>
                     {/foreach}
                 </select>
             </div>

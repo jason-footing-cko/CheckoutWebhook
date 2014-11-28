@@ -53,13 +53,13 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
 
 
                 $this->module->validateOrder((int)$cart->id, $order_state,
-                    $total, $this->module->displayName, NULL, NULL, (int)$currency->id,
+                    $total, $this->module->displayName, 'Your payment was sucessfull with Checkout.com ', NULL, (int)$currency->id,
                     false, $customer->secure_key);
 
             } else {
 
                 $this->module->validateOrder((int)$cart->id, Configuration::get('PS_OS_ERROR'),
-                    $total, $this->module->displayName, $respondCharge->getResponseCode(), NULL, (int)$currency->id,
+                    $total, $this->module->displayName, 'An error has occcur while processing this transaction ('.$respondCharge->getResponseLongMessage().')', NULL, (int)$currency->id,
                     false, $customer->secure_key);
 
             }
@@ -67,13 +67,17 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
             $dbLog = models_FactoryInstance::getInstance( 'models_DataLayer' );
             $dbLog->logCharge($this->module->currentOrder,$respondCharge->getId(),$respondCharge);
 
-            Tools::redirectLink(__PS_BASE_URI__.'order-confirmation.php?key='.$customer->secure_key.'&id_cart='
-                .(int)$this->context->cart->id.'&id_module='.(int)$this->module->id.'&id_order='
-                .(int)$this->module->currentOrder);
-        } else  {
 
-            throw new PrestaShopException($respondCharge->getExceptionState()->getErrorMessage());
+        } else  {
+            $this->module->validateOrder((int)$cart->id, Configuration::get('PS_OS_ERROR'),
+                $total, $this->module->displayName, $respondCharge->getExceptionState()->getErrorMessage(), NULL, (int)$currency->id,
+                false, $customer->secure_key);
+
         }
+
+        Tools::redirectLink(__PS_BASE_URI__.'order-confirmation.php?key='.$customer->secure_key.'&id_cart='
+            .(int)$this->context->cart->id.'&id_module='.(int)$this->module->id.'&id_order='
+            .(int)$this->module->currentOrder);
 
     }
     private function _createCharge()
@@ -149,7 +153,6 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
 
             )
         ));
-
 
 
        return $this->module->getInstanceMethod()->createCharge($config,$cart);
