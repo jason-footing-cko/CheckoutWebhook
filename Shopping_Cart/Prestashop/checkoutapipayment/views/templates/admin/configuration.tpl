@@ -24,9 +24,9 @@
                     </label>
                     <div class="wrapper-field">
                         <select name="checkoutapi_test_mode" class="input-txt required" id="checkoutapi_test_mode" required>
-                            <option value="test"  {if $CHECKOUTAPI_TEST_MODE =='test'}selected{/if}>Test</option>
-                            <option value="preprod" {if $CHECKOUTAPI_TEST_MODE =='preprod'}selected{/if}>Preprod</option>
-                            <option value="live" {if $CHECKOUTAPI_TEST_MODE =='live'}selected{/if}>Live</option>
+                            <option value="test"  {if $CHECKOUTAPI_TEST_MODE =='test'}selected{/if} >Test</option>
+                            <option value="preprod" {if $CHECKOUTAPI_TEST_MODE =='preprod'}selected{/if} >Preprod</option>
+                            <option value="live" {if $CHECKOUTAPI_TEST_MODE =='live'}selected{/if} >Live</option>
                         </select>
                     </div>
                 </li>

@@ -1021,8 +1021,9 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 
             $param['postedParam'] = array();
         }
-
+        $param['rawpostedParam'] = $param['postedParam'];
         $param['postedParam'] = $this->getParser()->preparePosted($param['postedParam']);
+
 
         $respondArray = null;
 

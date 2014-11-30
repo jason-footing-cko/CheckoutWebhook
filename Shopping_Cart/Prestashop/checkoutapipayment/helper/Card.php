@@ -20,7 +20,7 @@
      {
          $monthArray = array();
          for ($month=1; $month<=12; $month++) {
-             $monthArray[] = date('F', mktime(0,0,0,$month, 1, date('Y')));
+             $monthArray[$month] = date('F', mktime(0,0,0,$month, 1, date('Y')));
 
          }
          return $monthArray;

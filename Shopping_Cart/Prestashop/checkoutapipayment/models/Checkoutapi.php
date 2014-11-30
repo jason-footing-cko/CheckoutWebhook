@@ -87,7 +87,7 @@ abstract class models_Checkoutapi extends PaymentModule  implements models_Inter
             'transactionType'                 =>    $this->getTransactionType(),
             'respond'                         =>     $respond,
 
-            'CHECKOUTAPI_TEST_MODE'           =>    (bool)Tools::getValue('checkoutapi_test_mode',
+            'CHECKOUTAPI_TEST_MODE'           =>    Tools::getValue('checkoutapi_test_mode',
                                                       Configuration::get('CHECKOUTAPI_TEST_MODE')),
             'CHECKOUTAPI_PUBLIC_KEY'          =>    Tools::getValue('checkoutapi_public_key',
                                                       Configuration::get('CHECKOUTAPI_PUBLIC_KEY')),

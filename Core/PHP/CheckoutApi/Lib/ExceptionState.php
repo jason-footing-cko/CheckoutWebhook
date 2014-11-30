@@ -185,7 +185,7 @@
 			for($i= 0, $count = sizeOf($message); $i<$count;$i++ ) {
 
 				if($critical[$i]){
-                    $errorToreturn .= '<strong style="color:red">';
+                    echo '<strong style="color:red">';
 				} else  {
 					continue;
 				}
@@ -193,14 +193,14 @@
 				CheckoutApi_Utility_Utilities::dump($message[$i] .'==> { ');
 				
 				foreach($trace[$i] as $errorIndex => $errors) {
-                    $errorToreturn .=  "<pre>";
-                    $errorToreturn .=   $errorIndex ."=>  "; var_dump($errors);
+                    echo   "<pre>";
+                    echo    $errorIndex ."=>  "; print_r($errors);
 
-                    $errorToreturn .=  "</pre>";
+                    echo   "</pre>";
 				}
 				
 				if($critical[$i])	{
-                    $errorToreturn .=  '</strong>';
+                    echo   '</strong>';
 				}
 				
 				CheckoutApi_Utility_Utilities::dump('} ');
