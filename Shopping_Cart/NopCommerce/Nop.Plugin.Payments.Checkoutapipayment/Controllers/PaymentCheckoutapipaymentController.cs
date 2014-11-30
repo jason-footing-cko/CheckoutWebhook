@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Nop.Core;
 using Nop.Plugin.Payments.Checkoutapipayment.Models;
 using Nop.Plugin.Payments.Checkoutapipayment.Validators;
+using Nop.Plugin.Payments.Checkoutapipayment.DataTypes;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Payments;
@@ -47,11 +48,11 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
             model.PaymentAction = Convert.ToInt32(CheckoutapipaymentPaymentSettings.PaymentAction);
             model.AutoCapTime = CheckoutapipaymentPaymentSettings.AutoCapTime;
             model.Timeout = CheckoutapipaymentPaymentSettings.Timeout;
-            model.EndPoint = Convert.ToInt32(CheckoutapipaymentPaymentSettings.EndPoint);
+            model.Mode = Convert.ToInt32(CheckoutapipaymentPaymentSettings.Mode);
            
 
             model.PaymentActionValues = CheckoutapipaymentPaymentSettings.PaymentAction.ToSelectList();
-            model.EndPointValues = CheckoutapipaymentPaymentSettings.EndPoint.ToSelectList();
+            model.ModeValues = CheckoutapipaymentPaymentSettings.Mode.ToSelectList();
 
 
             model.ActiveStoreScopeConfiguration = storeScope;
@@ -63,7 +64,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
                 model.PaymentAction_OverrideForStore = _settingService.SettingExists(CheckoutapipaymentPaymentSettings, x => x.PaymentAction, storeScope);
                 model.AutoCapTime_OverrideForStore = _settingService.SettingExists(CheckoutapipaymentPaymentSettings, x => x.AutoCapTime, storeScope);
                 model.Timeout_OverrideForStore = _settingService.SettingExists(CheckoutapipaymentPaymentSettings, x => x.Timeout, storeScope);
-                model.EndPoint_OverrideForStore = _settingService.SettingExists(CheckoutapipaymentPaymentSettings, x => x.EndPoint, storeScope);
+                model.Mode_OverrideForStore = _settingService.SettingExists(CheckoutapipaymentPaymentSettings, x => x.Mode, storeScope);
             }
 
             return View("~/Plugins/Payments.Checkoutapipayment/Views/PaymentCheckoutapipayment/Configure.cshtml", model);
@@ -88,7 +89,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
             CheckoutapipaymentPaymentSettings.PaymentAction = (PaymentAction)model.PaymentAction;
             CheckoutapipaymentPaymentSettings.AutoCapTime = model.AutoCapTime;
             CheckoutapipaymentPaymentSettings.Timeout = model.Timeout;
-            CheckoutapipaymentPaymentSettings.EndPoint = (EndPoint)model.EndPoint;
+            CheckoutapipaymentPaymentSettings.Mode = (Mode)model.Mode;
 
 
             /* We do not clear cache after each setting update.
@@ -126,10 +127,10 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
             else if (storeScope > 0)
                 _settingService.DeleteSetting(CheckoutapipaymentPaymentSettings, x => x.Timeout, storeScope);
 
-            if (model.EndPoint_OverrideForStore || storeScope == 0)
-                _settingService.SaveSetting(CheckoutapipaymentPaymentSettings, x => x.EndPoint, storeScope, false);
+            if (model.Mode_OverrideForStore || storeScope == 0)
+                _settingService.SaveSetting(CheckoutapipaymentPaymentSettings, x => x.Mode, storeScope, false);
             else if (storeScope > 0)
-                _settingService.DeleteSetting(CheckoutapipaymentPaymentSettings, x => x.EndPoint, storeScope);
+                _settingService.DeleteSetting(CheckoutapipaymentPaymentSettings, x => x.Mode, storeScope);
 
             //now clear settings cache
             _settingService.ClearCache();

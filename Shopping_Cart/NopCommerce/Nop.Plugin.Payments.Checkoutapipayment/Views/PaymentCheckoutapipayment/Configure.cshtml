@@ -75,11 +75,11 @@
 
         <tr>
             <td class="adminTitle">
-                @Html.OverrideStoreCheckboxFor(model => model.EndPoint_OverrideForStore, model => model.EndPoint, Model.ActiveStoreScopeConfiguration)
-                @Html.NopLabelFor(model => model.EndPointValues):
+                @Html.OverrideStoreCheckboxFor(model => model.Mode_OverrideForStore, model => model.Mode, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.ModeValues):
             </td>
             <td class="adminData">
-                @Html.DropDownList("EndPoint", Model.EndPointValues)
+                @Html.DropDownList("Mode", Model.ModeValues)
             </td>
         </tr>
 

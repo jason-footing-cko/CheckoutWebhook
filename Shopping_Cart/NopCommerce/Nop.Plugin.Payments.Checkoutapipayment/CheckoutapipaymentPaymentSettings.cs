@@ -1,4 +1,5 @@
 ﻿using Nop.Core.Configuration;
+using Nop.Plugin.Payments.Checkoutapipayment.DataTypes;
 
 namespace Nop.Plugin.Payments.Checkoutapipayment
 {
@@ -10,6 +11,6 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
         public PaymentAction PaymentAction { get; set; }
         public string AutoCapTime { get; set; }
         public string Timeout { get; set; }
-        public EndPoint EndPoint { get; set; }
+        public Mode Mode { get; set; }
     }
 }

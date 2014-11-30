@@ -34,10 +34,10 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Models
         public string Timeout { get; set; }
         public bool Timeout_OverrideForStore { get; set; }
 
-        public int EndPoint { get; set; }
-        public bool EndPoint_OverrideForStore { get; set; }
-        [NopResourceDisplayName("Plugins.Payments.Checkoutapipayment.Fields.EndPointValues")]
-        public SelectList EndPointValues { get; set; }
+        public int Mode { get; set; }
+        public bool Mode_OverrideForStore { get; set; }
+        [NopResourceDisplayName("Plugins.Payments.Checkoutapipayment.Fields.ModeValues")]
+        public SelectList ModeValues { get; set; }
 
 
 

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Routing;
 using Nop.Core;
@@ -20,6 +22,8 @@ using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Security;
 using Nop.Plugin.Payments.Checkoutapipayment.Controllers;
+using Nop.Plugin.Payments.Checkoutapipayment.DataTypes;
+using Nop.Plugin.Payments.Checkoutapipayment.GatewayRequests;
 
 namespace Nop.Plugin.Payments.Checkoutapipayment
 {
@@ -60,6 +64,28 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
         #endregion
 
         #region Utilities
+
+       private string GatewayUrl()
+       {
+           string GatewayUrl = "";
+           switch (_checkoutapipaymentPaymentSettings.Mode)
+           {
+               case Mode.Development:
+                   GatewayUrl = "http://dev.checkout.com/api.gw3/v1/";
+                   break;
+               case Mode.Preprod:
+                   GatewayUrl = "http://preprod.checkout.com/api.gw3/";
+                   break;
+               case Mode.Live:
+                   GatewayUrl = "https://api2.checkout.com/v1/";
+                   break;
+               default:
+                   GatewayUrl = "http://dev.checkout.com/api.gw3/v1/";
+                   break;
+                  
+           }
+           return GatewayUrl;
+       }
         # endregion
 
         #region Methods
@@ -72,6 +98,114 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
         public ProcessPaymentResult ProcessPayment(ProcessPaymentRequest processPaymentRequest)
         {
             var result = new ProcessPaymentResult();
+            //Charge by full card
+            var checkoutapipaymentGateway = new GatewayConnector();
+            var checkoutapipaymentRequest = new fullcardChargeRequest();
+
+            var customer = _customerService.GetCustomerById(processPaymentRequest.CustomerId);
+            
+
+            //Send in necessary parameters to build the gateway request json
+            //Convert the amount into cents
+            checkoutapipaymentRequest.amount = (Convert.ToInt32(processPaymentRequest.OrderTotal) * 100).ToString();
+            checkoutapipaymentRequest.autoCapTime = _checkoutapipaymentPaymentSettings.AutoCapTime;
+            if (_checkoutapipaymentPaymentSettings.PaymentAction == PaymentAction.AuthorizeAndCapture)
+            {
+                checkoutapipaymentRequest.autoCapture = "Y";
+            }
+            else
+            {
+                checkoutapipaymentRequest.autoCapture = "N";
+            }
+
+            if (_checkoutapipaymentPaymentSettings.IsPCI)
+            {
+                // Send full card info
+                var checkoutapipaymentFullCard = new FullCard();
+                checkoutapipaymentFullCard.cvv2 = processPaymentRequest.CreditCardCvv2;
+                if (processPaymentRequest.CreditCardExpireMonth < 10)
+                {
+                    checkoutapipaymentFullCard.expiryMonth = "0" + processPaymentRequest.CreditCardExpireMonth.ToString();
+                }
+                checkoutapipaymentFullCard.expiryYear = processPaymentRequest.CreditCardExpireYear.ToString();
+                checkoutapipaymentFullCard.name = processPaymentRequest.CreditCardName;
+                checkoutapipaymentFullCard.number = processPaymentRequest.CreditCardNumber.ToString();
+
+                var checkoutapipaymentBilling = new Billing();
+                
+                checkoutapipaymentBilling.addressLine1 = customer.BillingAddress.Address1;
+                checkoutapipaymentBilling.addressLine2 = customer.BillingAddress.Address2;
+                checkoutapipaymentBilling.postcode = customer.BillingAddress.ZipPostalCode;
+                checkoutapipaymentBilling.country = customer.BillingAddress.Country.ThreeLetterIsoCode;
+                checkoutapipaymentBilling.city = customer.BillingAddress.City;
+                checkoutapipaymentBilling.state = customer.BillingAddress.StateProvince.Abbreviation;
+                checkoutapipaymentBilling.phone = customer.BillingAddress.PhoneNumber;
+
+                checkoutapipaymentFullCard.billingDetails = checkoutapipaymentBilling;
+
+                checkoutapipaymentRequest.card = checkoutapipaymentFullCard;
+            }
+            else {
+                // using the cko-cc-token and cko-cc-email from Checkout JS
+
+            }
+
+            checkoutapipaymentRequest.currency = _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId).CurrencyCode;
+            checkoutapipaymentRequest.description = "Order ID: " + processPaymentRequest.OrderGuid.ToString();
+            checkoutapipaymentRequest.email = customer.Email;
+
+            var checkoutapipaymentShipping = new Shipping();
+            checkoutapipaymentShipping.addressLine1 = customer.ShippingAddress.Address1;
+            checkoutapipaymentShipping.addressLine2 = customer.ShippingAddress.Address2;
+            checkoutapipaymentShipping.postcode = customer.ShippingAddress.ZipPostalCode;
+            checkoutapipaymentShipping.country = customer.ShippingAddress.Country.ThreeLetterIsoCode;
+            checkoutapipaymentShipping.city = customer.ShippingAddress.City;
+            checkoutapipaymentShipping.state = customer.ShippingAddress.StateProvince.Abbreviation;
+            checkoutapipaymentShipping.phone = customer.ShippingAddress.PhoneNumber;
+            checkoutapipaymentShipping.recipientName = customer.ShippingAddress.FirstName + customer.ShippingAddress.LastName;
+
+            checkoutapipaymentRequest.shippingDetails = checkoutapipaymentShipping;
+
+            string gatewayUrl = GatewayUrl() + "charges/card";
+
+            //For debugging - Get Gateway URL
+            System.Diagnostics.Debug.WriteLine("Gateway URL:" + gatewayUrl);
+
+
+            checkoutapipaymentGateway.Uri = gatewayUrl;
+            checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
+            GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
+
+            //Check whether response code is a valid successful transaction
+            Regex regex = new Regex(@"^1[0-9]+$");
+            System.Diagnostics.Debug.WriteLine(checkoutapipaymentResponse.responseCode);
+            if (regex.IsMatch(checkoutapipaymentResponse.responseCode))
+            {
+                if (checkoutapipaymentResponse.status == "Authorised")
+                {
+                    result.NewPaymentStatus = PaymentStatus.Authorized;
+                }
+                else
+                {
+                    result.NewPaymentStatus = PaymentStatus.Paid;
+                }
+                result.AuthorizationTransactionId = checkoutapipaymentResponse.chargeId;
+                result.AuthorizationTransactionCode = checkoutapipaymentResponse.authCode;
+                result.AvsResult = checkoutapipaymentResponse.avsCheck;
+                // Can store risk relavant info if the risk transaction set to authorize mode
+                result.AuthorizationTransactionResult = checkoutapipaymentResponse.responseMessage;
+                
+            }
+            else
+            {
+                result.AuthorizationTransactionResult = checkoutapipaymentResponse.message;
+                result.AuthorizationTransactionCode = checkoutapipaymentResponse.errorCode;
+                result.AddError("Payment Declined. Please check your card details");
+                result.AddError("Error Code: " + checkoutapipaymentResponse.errorCode + 
+                    " " + checkoutapipaymentResponse.message);
+                
+            }
+            
             return result;
         }
 
@@ -102,6 +236,41 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
         public CapturePaymentResult Capture(CapturePaymentRequest capturePaymentRequest)
         {
             var result = new CapturePaymentResult();
+            var checkoutapipaymentGateway = new GatewayConnector();
+            var checkoutapipaymentRequest = new captureChargeRequest();
+
+            // get the chargeId for capturing
+            string chargeId = capturePaymentRequest.Order.AuthorizationTransactionId;
+
+            //build the URL
+            string gatewayUrl = GatewayUrl() + "charges/" + chargeId + "/capture";
+            System.Diagnostics.Debug.WriteLine("Gateway URL for Capturing: " + gatewayUrl);
+
+            checkoutapipaymentGateway.Uri = gatewayUrl;
+            checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
+            checkoutapipaymentRequest.amount = (Convert.ToInt32(capturePaymentRequest.Order.OrderTotal) * 100).ToString();
+            GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
+
+            //Check whether response code is a valid successful transaction
+            Regex regex = new Regex(@"^1[0-9]+$");
+            if (regex.IsMatch(checkoutapipaymentResponse.responseCode))
+            {
+                if (checkoutapipaymentResponse.status == "Captured"){
+                    result.NewPaymentStatus = PaymentStatus.Paid;
+                }
+                    
+                result.CaptureTransactionId = checkoutapipaymentResponse.chargeId;
+
+                result.CaptureTransactionResult = checkoutapipaymentResponse.responseMessage;
+
+            }
+            else
+            {
+                result.CaptureTransactionResult = checkoutapipaymentResponse.message;
+                result.AddError("Capture Declined" + "Error Code: " + checkoutapipaymentResponse.errorCode +
+                    " " + checkoutapipaymentResponse.message);
+            }
+
             return result;
         }
 
@@ -113,7 +282,40 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
         /// <returns>Result</returns>
         public RefundPaymentResult Refund(RefundPaymentRequest refundPaymentRequest)
         {
+            //refund includes fully refund and partial refund
             var result = new RefundPaymentResult();
+
+            var checkoutapipaymentGateway = new GatewayConnector();
+            var checkoutapipaymentRequest = new refundChargeRequest();
+
+            // get the chargeId for refund
+            string chargeId = refundPaymentRequest.Order.CaptureTransactionId;
+
+            //build the URL
+            string gatewayUrl = GatewayUrl() + "charges/" + chargeId + "/refund";
+            System.Diagnostics.Debug.WriteLine("Gateway URL for Refund: " + gatewayUrl);
+
+            checkoutapipaymentGateway.Uri = gatewayUrl;
+            checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
+            checkoutapipaymentRequest.amount = (Convert.ToInt32(refundPaymentRequest.AmountToRefund) * 100).ToString();
+            GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
+
+            //Check whether response code is a valid successful transaction
+            Regex regex = new Regex(@"^1[0-9]+$");
+            if (regex.IsMatch(checkoutapipaymentResponse.responseCode))
+            {
+                if (checkoutapipaymentResponse.status == "Refunded")
+                {
+                    var isOrderFullyRefunded = (refundPaymentRequest.AmountToRefund + refundPaymentRequest.Order.RefundedAmount == refundPaymentRequest.Order.OrderTotal);
+                    result.NewPaymentStatus = isOrderFullyRefunded ? PaymentStatus.Refunded : PaymentStatus.PartiallyRefunded;
+                }
+
+            }
+            else
+            {
+                result.AddError("Capture Declined" + "Error Code: " + checkoutapipaymentResponse.errorCode +
+                    " " + checkoutapipaymentResponse.message);
+            }
 
             return result;
         }
@@ -126,7 +328,38 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
         public VoidPaymentResult Void(VoidPaymentRequest voidPaymentRequest)
         {
             var result = new VoidPaymentResult();
-            result.AddError("Void method not supported");
+            var checkoutapipaymentGateway = new GatewayConnector();
+            var checkoutapipaymentRequest = new voidChargeRequest();
+
+            // get the chargeId for refund
+            string chargeId = voidPaymentRequest.Order.AuthorizationTransactionId;
+
+            //build the URL
+            string gatewayUrl = GatewayUrl() + "charges/" + chargeId + "/refund";
+            System.Diagnostics.Debug.WriteLine("Gateway URL for Void: " + gatewayUrl);
+
+            checkoutapipaymentGateway.Uri = gatewayUrl;
+            checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
+            checkoutapipaymentRequest.amount = (Convert.ToInt32(voidPaymentRequest.Order.OrderTotal) * 100).ToString();
+            GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
+
+            //Check whether response code is a valid successful transaction
+            Regex regex = new Regex(@"^1[0-9]+$");
+            if (regex.IsMatch(checkoutapipaymentResponse.responseCode))
+            {
+                if (checkoutapipaymentResponse.status == "Voided")
+                {
+                    result.NewPaymentStatus = PaymentStatus.Voided;
+                }
+
+            }
+            else
+            {
+                result.AddError("Void Declined" + "Error Code: " + checkoutapipaymentResponse.errorCode +
+                    " " + checkoutapipaymentResponse.message);
+            }
+
+            
             return result;
         }
 
@@ -138,6 +371,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
         public ProcessPaymentResult ProcessRecurringPayment(ProcessPaymentRequest processPaymentRequest)
         {
             var result = new ProcessPaymentResult();
+            result.AddError("Recurring payment not supported");
             return result;
         }
 
@@ -149,6 +383,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
         public CancelRecurringPaymentResult CancelRecurringPayment(CancelRecurringPaymentRequest cancelPaymentRequest)
         {
             var result = new CancelRecurringPaymentResult();
+            result.AddError("Recurring payment not supported");
             return result;
         }
 
@@ -212,7 +447,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
                 PaymentAction = PaymentAction.Authorize,
                 AutoCapTime = "0",
                 Timeout = "60",
-                EndPoint = EndPoint.Development
+                Mode = Mode.Development
 
             };
             _settingService.SaveSetting(settings);
@@ -231,8 +466,8 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.AutoCapTime.Hint", "Enter Auto Capture Time, default is 0.");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.Timeout", "Timeout (second)");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.Timeout.Hint", "Enter Timeout, default is 60s");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.EndPointValues", "Endpoint");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.EndPointValues.Hint", "Choose Endpoint Mode");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.ModeValues", "Mode");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.ModeValues.Hint", "Choose Endpoint Mode");
 
 
             base.Install();
@@ -257,8 +492,8 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
             this.DeletePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.AutoCapTime.Hint");
             this.DeletePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.Timeout");
             this.DeletePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.Timeout.Hint");
-            this.DeletePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.EndPointValues");
-            this.DeletePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.EndPointValues.Hint");
+            this.DeletePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.ModeValues");
+            this.DeletePluginLocaleResource("Plugins.Payments.Checkoutapipayment.Fields.ModeValues.Hint");
 
             base.Uninstall();
         }
@@ -307,7 +542,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
         {
             get
             {
-                return false;
+                return true;
             }
         }
 
