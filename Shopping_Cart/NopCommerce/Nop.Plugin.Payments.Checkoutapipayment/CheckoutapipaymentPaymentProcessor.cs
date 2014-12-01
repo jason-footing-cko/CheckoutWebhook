@@ -174,13 +174,17 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
 
             checkoutapipaymentGateway.Uri = gatewayUrl;
             checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
+            checkoutapipaymentGateway.Mode = _checkoutapipaymentPaymentSettings.Mode.ToString();
+
+            System.Diagnostics.Debug.WriteLine("Gateway Mode:" + checkoutapipaymentGateway.Mode);
+
+      
             GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
 
-            //Check whether response code is a valid successful transaction
-            Regex regex = new Regex(@"^1[0-9]+$");
             System.Diagnostics.Debug.WriteLine(checkoutapipaymentResponse.responseCode);
-            if (regex.IsMatch(checkoutapipaymentResponse.responseCode))
+            if (checkoutapipaymentResponse.responseCode != null)
             {
+
                 if (checkoutapipaymentResponse.status == "Authorised")
                 {
                     result.NewPaymentStatus = PaymentStatus.Authorized;
@@ -203,7 +207,6 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
                 result.AddError("Payment Declined. Please check your card details");
                 result.AddError("Error Code: " + checkoutapipaymentResponse.errorCode + 
                     " " + checkoutapipaymentResponse.message);
-                
             }
             
             return result;
@@ -248,12 +251,11 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
 
             checkoutapipaymentGateway.Uri = gatewayUrl;
             checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
+            checkoutapipaymentGateway.Mode = _checkoutapipaymentPaymentSettings.Mode.ToString();
             checkoutapipaymentRequest.amount = (Convert.ToInt32(capturePaymentRequest.Order.OrderTotal) * 100).ToString();
             GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
 
-            //Check whether response code is a valid successful transaction
-            Regex regex = new Regex(@"^1[0-9]+$");
-            if (regex.IsMatch(checkoutapipaymentResponse.responseCode))
+            if (checkoutapipaymentResponse.responseCode!=null)
             {
                 if (checkoutapipaymentResponse.status == "Captured"){
                     result.NewPaymentStatus = PaymentStatus.Paid;
@@ -297,12 +299,12 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
 
             checkoutapipaymentGateway.Uri = gatewayUrl;
             checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
+            checkoutapipaymentGateway.Mode = _checkoutapipaymentPaymentSettings.Mode.ToString();
             checkoutapipaymentRequest.amount = (Convert.ToInt32(refundPaymentRequest.AmountToRefund) * 100).ToString();
             GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
 
             //Check whether response code is a valid successful transaction
-            Regex regex = new Regex(@"^1[0-9]+$");
-            if (regex.IsMatch(checkoutapipaymentResponse.responseCode))
+            if (checkoutapipaymentResponse.responseCode!=null)
             {
                 if (checkoutapipaymentResponse.status == "Refunded")
                 {
@@ -340,12 +342,12 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
 
             checkoutapipaymentGateway.Uri = gatewayUrl;
             checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
+            checkoutapipaymentGateway.Mode = _checkoutapipaymentPaymentSettings.Mode.ToString();
             checkoutapipaymentRequest.amount = (Convert.ToInt32(voidPaymentRequest.Order.OrderTotal) * 100).ToString();
             GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
 
             //Check whether response code is a valid successful transaction
-            Regex regex = new Regex(@"^1[0-9]+$");
-            if (regex.IsMatch(checkoutapipaymentResponse.responseCode))
+            if (checkoutapipaymentResponse.responseCode!=null)
             {
                 if (checkoutapipaymentResponse.status == "Voided")
                 {

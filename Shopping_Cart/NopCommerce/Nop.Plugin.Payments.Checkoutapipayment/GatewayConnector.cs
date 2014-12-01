@@ -14,6 +14,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
         //gateway default timeout value 60 second = 60 ms
         int _timeout = 60000;
         string _authorization = string.Empty;
+        string _mode = string.Empty;
 
         /// <summary>
         /// The Uri of the Checkout payment gateway
@@ -40,6 +41,12 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
         {
             get { return _authorization; }
             set { _authorization = value; }
+        }
+
+        public string Mode
+        {
+            get { return _mode; }
+            set { _mode = value;  }
         }
 
         /// <summary>
@@ -79,7 +86,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
 
                 System.Diagnostics.Debug.WriteLine(_serverJson);
 
-                return new GatewayResponse(_serverJson);
+                return new GatewayResponse(_serverJson, _mode);
             }
         }
 
