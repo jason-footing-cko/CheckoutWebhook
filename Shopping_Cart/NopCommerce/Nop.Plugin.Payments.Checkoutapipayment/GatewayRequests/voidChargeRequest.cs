@@ -8,6 +8,6 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.GatewayRequests
 {
     public class voidChargeRequest : GatewayRequest
     {
-        public string amount { set; get; }
+        public string value { set; get; }
     }
 }

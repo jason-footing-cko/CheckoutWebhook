@@ -74,13 +74,13 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
                    GatewayUrl = "http://dev.checkout.com/api.gw3/v1/";
                    break;
                case Mode.Preprod:
-                   GatewayUrl = "http://preprod.checkout.com/api.gw3/";
+                   GatewayUrl = "http://preprod.checkout.com/api.gw3/v1/";
                    break;
                case Mode.Live:
                    GatewayUrl = "https://api2.checkout.com/v1/";
                    break;
                default:
-                   GatewayUrl = "http://dev.checkout.com/api.gw3/v1/";
+                   GatewayUrl = "http://preprod.checkout.com/api.gw3/v1/";
                    break;
                   
            }
@@ -98,31 +98,78 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
         public ProcessPaymentResult ProcessPayment(ProcessPaymentRequest processPaymentRequest)
         {
             var result = new ProcessPaymentResult();
-            //Charge by full card
-            var checkoutapipaymentGateway = new GatewayConnector();
-            var checkoutapipaymentRequest = new fullcardChargeRequest();
-
-            var customer = _customerService.GetCustomerById(processPaymentRequest.CustomerId);
+            //get whether the customer is logged in
             
+            var customer = _customerService.GetCustomerById(processPaymentRequest.CustomerId);
 
-            //Send in necessary parameters to build the gateway request json
-            //Convert the amount into cents
-            checkoutapipaymentRequest.amount = (Convert.ToInt32(processPaymentRequest.OrderTotal) * 100).ToString();
-            checkoutapipaymentRequest.autoCapTime = _checkoutapipaymentPaymentSettings.AutoCapTime;
+            string value = (Convert.ToInt32(processPaymentRequest.OrderTotal) * 100).ToString();
+            string autoCapTime = _checkoutapipaymentPaymentSettings.AutoCapTime;
+            string autoCapture = String.Empty;
             if (_checkoutapipaymentPaymentSettings.PaymentAction == PaymentAction.AuthorizeAndCapture)
             {
-                checkoutapipaymentRequest.autoCapture = "Y";
+                autoCapture = "Y";
             }
             else
             {
-                checkoutapipaymentRequest.autoCapture = "N";
+                autoCapture = "N";
             }
 
+            string currency = _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId).CurrencyCode;
+            string description = "Order ID: " + processPaymentRequest.OrderGuid.ToString();
+            string email = customer.BillingAddress.Email;
+
+            var checkoutapipaymentBilling = new Billing();
+
+            checkoutapipaymentBilling.addressLine1 = customer.BillingAddress.Address1;
+            checkoutapipaymentBilling.addressLine2 = customer.BillingAddress.Address2;
+            checkoutapipaymentBilling.postcode = customer.BillingAddress.ZipPostalCode;
+            checkoutapipaymentBilling.country = customer.BillingAddress.Country.ThreeLetterIsoCode;
+            checkoutapipaymentBilling.city = customer.BillingAddress.City;
+            // some country without state
+            if (customer.BillingAddress.StateProvince != null)
+            {
+                checkoutapipaymentBilling.state = customer.BillingAddress.StateProvince.Abbreviation;
+            }
+            else
+            {
+                checkoutapipaymentBilling.state = string.Empty;
+            }
+            
+            checkoutapipaymentBilling.phone = customer.BillingAddress.PhoneNumber;
+
+
+            var checkoutapipaymentShipping = new Shipping();
+            checkoutapipaymentShipping.addressLine1 = customer.ShippingAddress.Address1;
+            checkoutapipaymentShipping.addressLine2 = customer.ShippingAddress.Address2;
+            checkoutapipaymentShipping.postcode = customer.ShippingAddress.ZipPostalCode;
+            checkoutapipaymentShipping.country = customer.ShippingAddress.Country.ThreeLetterIsoCode;
+            checkoutapipaymentShipping.city = customer.ShippingAddress.City;
+            if (customer.ShippingAddress.StateProvince != null)
+            {
+                checkoutapipaymentShipping.state = customer.ShippingAddress.StateProvince.Abbreviation;
+            }
+            else
+            {
+                checkoutapipaymentShipping.state = String.Empty;
+            }
+            
+            checkoutapipaymentShipping.phone = customer.ShippingAddress.PhoneNumber;
+            checkoutapipaymentShipping.recipientName = customer.ShippingAddress.FirstName + " " + customer.ShippingAddress.LastName;
+
+            
+            var checkoutapipaymentGateway = new GatewayConnector();
+
+            //Charge by full card
             if (_checkoutapipaymentPaymentSettings.IsPCI)
             {
+                var checkoutapipaymentRequest = new fullcardChargeRequest();
+                checkoutapipaymentRequest.value = value;
+                checkoutapipaymentRequest.autoCapTime = autoCapTime;
+                checkoutapipaymentRequest.autoCapture = autoCapture;
+
                 // Send full card info
                 var checkoutapipaymentFullCard = new FullCard();
-                checkoutapipaymentFullCard.cvv2 = processPaymentRequest.CreditCardCvv2;
+                checkoutapipaymentFullCard.cvv = processPaymentRequest.CreditCardCvv2;
                 if (processPaymentRequest.CreditCardExpireMonth < 10)
                 {
                     checkoutapipaymentFullCard.expiryMonth = "0" + processPaymentRequest.CreditCardExpireMonth.ToString();
@@ -131,84 +178,108 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
                 checkoutapipaymentFullCard.name = processPaymentRequest.CreditCardName;
                 checkoutapipaymentFullCard.number = processPaymentRequest.CreditCardNumber.ToString();
 
-                var checkoutapipaymentBilling = new Billing();
-                
-                checkoutapipaymentBilling.addressLine1 = customer.BillingAddress.Address1;
-                checkoutapipaymentBilling.addressLine2 = customer.BillingAddress.Address2;
-                checkoutapipaymentBilling.postcode = customer.BillingAddress.ZipPostalCode;
-                checkoutapipaymentBilling.country = customer.BillingAddress.Country.ThreeLetterIsoCode;
-                checkoutapipaymentBilling.city = customer.BillingAddress.City;
-                checkoutapipaymentBilling.state = customer.BillingAddress.StateProvince.Abbreviation;
-                checkoutapipaymentBilling.phone = customer.BillingAddress.PhoneNumber;
 
                 checkoutapipaymentFullCard.billingDetails = checkoutapipaymentBilling;
 
                 checkoutapipaymentRequest.card = checkoutapipaymentFullCard;
-            }
-            else {
-                // using the cko-cc-token and cko-cc-email from Checkout JS
 
-            }
+                checkoutapipaymentRequest.currency = currency;
+                checkoutapipaymentRequest.description = description;
+                checkoutapipaymentRequest.email = email;
 
-            checkoutapipaymentRequest.currency = _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId).CurrencyCode;
-            checkoutapipaymentRequest.description = "Order ID: " + processPaymentRequest.OrderGuid.ToString();
-            checkoutapipaymentRequest.email = customer.Email;
+                checkoutapipaymentRequest.shippingDetails = checkoutapipaymentShipping;
 
-            var checkoutapipaymentShipping = new Shipping();
-            checkoutapipaymentShipping.addressLine1 = customer.ShippingAddress.Address1;
-            checkoutapipaymentShipping.addressLine2 = customer.ShippingAddress.Address2;
-            checkoutapipaymentShipping.postcode = customer.ShippingAddress.ZipPostalCode;
-            checkoutapipaymentShipping.country = customer.ShippingAddress.Country.ThreeLetterIsoCode;
-            checkoutapipaymentShipping.city = customer.ShippingAddress.City;
-            checkoutapipaymentShipping.state = customer.ShippingAddress.StateProvince.Abbreviation;
-            checkoutapipaymentShipping.phone = customer.ShippingAddress.PhoneNumber;
-            checkoutapipaymentShipping.recipientName = customer.ShippingAddress.FirstName + customer.ShippingAddress.LastName;
+                string gatewayUrl = GatewayUrl() + "charges/card";
 
-            checkoutapipaymentRequest.shippingDetails = checkoutapipaymentShipping;
-
-            string gatewayUrl = GatewayUrl() + "charges/card";
-
-            //For debugging - Get Gateway URL
-            System.Diagnostics.Debug.WriteLine("Gateway URL:" + gatewayUrl);
+                //For debugging - Get Gateway URL
+                System.Diagnostics.Debug.WriteLine("Gateway URL:" + gatewayUrl);
+                checkoutapipaymentGateway.Uri = gatewayUrl;
+                checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
 
 
-            checkoutapipaymentGateway.Uri = gatewayUrl;
-            checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
-            checkoutapipaymentGateway.Mode = _checkoutapipaymentPaymentSettings.Mode.ToString();
+                GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
 
-            System.Diagnostics.Debug.WriteLine("Gateway Mode:" + checkoutapipaymentGateway.Mode);
-
-      
-            GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
-
-            System.Diagnostics.Debug.WriteLine(checkoutapipaymentResponse.responseCode);
-            if (checkoutapipaymentResponse.responseCode != null)
-            {
-
-                if (checkoutapipaymentResponse.status == "Authorised")
+                if (checkoutapipaymentResponse.responseCode != null)
                 {
-                    result.NewPaymentStatus = PaymentStatus.Authorized;
+
+                    if (checkoutapipaymentResponse.status == "Authorised")
+                    {
+                        result.NewPaymentStatus = PaymentStatus.Authorized;
+                    }
+                    else
+                    {
+                        result.NewPaymentStatus = PaymentStatus.Paid;
+                    }
+                    result.AuthorizationTransactionId = checkoutapipaymentResponse.chargeId;
+                    result.AuthorizationTransactionCode = checkoutapipaymentResponse.authCode;
+                    result.AvsResult = checkoutapipaymentResponse.avsCheck;
+                    // Can store risk relavant info if the risk transaction set to authorize mode
+                    result.AuthorizationTransactionResult = checkoutapipaymentResponse.responseMessage;
+
                 }
                 else
                 {
-                    result.NewPaymentStatus = PaymentStatus.Paid;
+                    result.AuthorizationTransactionResult = checkoutapipaymentResponse.message;
+                    result.AuthorizationTransactionCode = checkoutapipaymentResponse.errorCode;
+                    result.AddError("Payment Declined. Please check your card details");
+                    result.AddError("Error Code: " + checkoutapipaymentResponse.errorCode +
+                        " " + checkoutapipaymentResponse.message);
                 }
-                result.AuthorizationTransactionId = checkoutapipaymentResponse.chargeId;
-                result.AuthorizationTransactionCode = checkoutapipaymentResponse.authCode;
-                result.AvsResult = checkoutapipaymentResponse.avsCheck;
-                // Can store risk relavant info if the risk transaction set to authorize mode
-                result.AuthorizationTransactionResult = checkoutapipaymentResponse.responseMessage;
-                
+
             }
-            else
-            {
-                result.AuthorizationTransactionResult = checkoutapipaymentResponse.message;
-                result.AuthorizationTransactionCode = checkoutapipaymentResponse.errorCode;
-                result.AddError("Payment Declined. Please check your card details");
-                result.AddError("Error Code: " + checkoutapipaymentResponse.errorCode + 
-                    " " + checkoutapipaymentResponse.message);
+
+
+
+            else {
+                // using the cko-cc-token and cko-cc-email from Checkout JS
+                var checkoutapipaymentRequest = new cardtokenChargeRequest();
+                checkoutapipaymentRequest.value = value;
+                checkoutapipaymentRequest.autoCapTime = autoCapTime;
+                checkoutapipaymentRequest.autoCapture = autoCapture;
+
+                checkoutapipaymentRequest.currency = currency;
+                checkoutapipaymentRequest.description = description;
+                checkoutapipaymentRequest.email = processPaymentRequest.CustomValues["cko-cc-email"].ToString();
+                checkoutapipaymentRequest.cardToken = processPaymentRequest.CustomValues["cko-cc-token"].ToString();
+
+                checkoutapipaymentRequest.shippingDetails = checkoutapipaymentShipping;
+                string gatewayUrl = GatewayUrl() + "charges/token";
+
+                //For debugging - Get Gateway URL
+                System.Diagnostics.Debug.WriteLine("Gateway URL:" + gatewayUrl);
+                checkoutapipaymentGateway.Uri = gatewayUrl;
+                checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
+
+                GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
+
+                if (checkoutapipaymentResponse.responseCode != null)
+                {
+
+                    if (checkoutapipaymentResponse.status == "Authorised")
+                    {
+                        result.NewPaymentStatus = PaymentStatus.Authorized;
+                    }
+                    else
+                    {
+                        result.NewPaymentStatus = PaymentStatus.Paid;
+                    }
+                    result.AuthorizationTransactionId = checkoutapipaymentResponse.chargeId;
+                    result.AuthorizationTransactionCode = checkoutapipaymentResponse.authCode;
+                    result.AvsResult = checkoutapipaymentResponse.avsCheck;
+                    // Can store risk relavant info if the risk transaction set to authorize mode
+                    result.AuthorizationTransactionResult = checkoutapipaymentResponse.responseMessage;
+
+                }
+                else
+                {
+                    result.AuthorizationTransactionResult = checkoutapipaymentResponse.message;
+                    result.AuthorizationTransactionCode = checkoutapipaymentResponse.errorCode;
+                    result.AddError("Payment Declined. Please check your card details");
+                    result.AddError("Error Code: " + checkoutapipaymentResponse.errorCode +
+                        " " + checkoutapipaymentResponse.message);
+                }
+
             }
-            
             return result;
         }
 
@@ -251,8 +322,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
 
             checkoutapipaymentGateway.Uri = gatewayUrl;
             checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
-            checkoutapipaymentGateway.Mode = _checkoutapipaymentPaymentSettings.Mode.ToString();
-            checkoutapipaymentRequest.amount = (Convert.ToInt32(capturePaymentRequest.Order.OrderTotal) * 100).ToString();
+            checkoutapipaymentRequest.value = (Convert.ToInt32(capturePaymentRequest.Order.OrderTotal) * 100).ToString();
             GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
 
             if (checkoutapipaymentResponse.responseCode!=null)
@@ -299,8 +369,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
 
             checkoutapipaymentGateway.Uri = gatewayUrl;
             checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
-            checkoutapipaymentGateway.Mode = _checkoutapipaymentPaymentSettings.Mode.ToString();
-            checkoutapipaymentRequest.amount = (Convert.ToInt32(refundPaymentRequest.AmountToRefund) * 100).ToString();
+            checkoutapipaymentRequest.value = (Convert.ToInt32(refundPaymentRequest.AmountToRefund) * 100).ToString();
             GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
 
             //Check whether response code is a valid successful transaction
@@ -342,8 +411,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
 
             checkoutapipaymentGateway.Uri = gatewayUrl;
             checkoutapipaymentGateway.Authorization = _checkoutapipaymentPaymentSettings.SecretKey;
-            checkoutapipaymentGateway.Mode = _checkoutapipaymentPaymentSettings.Mode.ToString();
-            checkoutapipaymentRequest.amount = (Convert.ToInt32(voidPaymentRequest.Order.OrderTotal) * 100).ToString();
+            checkoutapipaymentRequest.value = (Convert.ToInt32(voidPaymentRequest.Order.OrderTotal) * 100).ToString();
             GatewayResponse checkoutapipaymentResponse = checkoutapipaymentGateway.ProcessRequest(checkoutapipaymentRequest);
 
             //Check whether response code is a valid successful transaction

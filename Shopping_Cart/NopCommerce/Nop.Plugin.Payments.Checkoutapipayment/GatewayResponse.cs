@@ -19,7 +19,12 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
         private string _errorCode;
         private string _message;
 
-        public GatewayResponse(string serverJson, string Mode)
+        public GatewayResponse()
+        {
+            //default constructor
+        }
+
+        public GatewayResponse(string serverJson)
         {
             //parse the json string to json object
             var gatewayResponse = JObject.Parse(@serverJson);
@@ -33,42 +38,28 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
                 {
                     _responseCode = gatewayResponse["responseCode"].ToString();
                     System.Diagnostics.Debug.WriteLine("Response Code " + _responseCode);
-                    if (Mode == "Preprod")
-                    {
-                        if (gatewayResponse["responseShortMessage"] != null)
-                        {
-                            _responseMessage = gatewayResponse["responseShortMessage"].ToString();
-                            System.Diagnostics.Debug.WriteLine("response Message : " + _responseMessage);
-                        }
-                        if (gatewayResponse["card"]["avsCheck"] != null)
-                        {
-                            _avsCheck = gatewayResponse["card"]["avsCheck"].ToString();
-                            System.Diagnostics.Debug.WriteLine("AVS Check " + _avsCheck);
-                        }
-                    }
-                    else
-                    {
-
-                        if (gatewayResponse["responseMessage"] != null)
-                        {
-                            _responseMessage = gatewayResponse["responseMessage"].ToString();
-                            System.Diagnostics.Debug.WriteLine("response Message : " + _responseMessage);
-                        }
-                        if (gatewayResponse["card"]["billingDetails"]["avsCheck"] != null)
-                        {
-                            _avsCheck = gatewayResponse["card"]["billingDetails"]["avsCheck"].ToString();
-                            System.Diagnostics.Debug.WriteLine("AVS Check " + _avsCheck);
-
-                        }
-
-                    }
-
 
                     if (gatewayResponse["id"] != null)
                     {
                         _chargeId = gatewayResponse["id"].ToString();
                         System.Diagnostics.Debug.WriteLine("Charge ID: " + _chargeId);
                     }
+
+                    if (gatewayResponse["card"]["avsCheck"] != null)
+                    {
+                        _avsCheck = gatewayResponse["card"]["avsCheck"].ToString();
+                        System.Diagnostics.Debug.WriteLine("AVS Check " + _avsCheck);
+                    }
+
+
+                    if (gatewayResponse["responseMessage"] != null)
+                    {
+                        _responseMessage = gatewayResponse["responseMessage"].ToString();
+                        System.Diagnostics.Debug.WriteLine("response Message : " + _responseMessage);
+                    }
+
+
+
 
                     if (gatewayResponse["status"] != null)
                     {
@@ -85,19 +76,16 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
                 }
                 else
                 {
-                    if (Mode == "Preprod")
-                    {
                         if (gatewayResponse["responseCode"] != null)
                         {
                             _errorCode = gatewayResponse["responseCode"].ToString();
                             System.Diagnostics.Debug.WriteLine("Error Code " + _errorCode);
                         }
-                        if (gatewayResponse["responseShortMessage"] != null)
+                        if (gatewayResponse["responseMessage"] != null)
                         {
-                            _message = gatewayResponse["responseShortMessage"].ToString();
+                            _message = gatewayResponse["responseMessage"].ToString();
                             System.Diagnostics.Debug.WriteLine("Message " + _message);
                         }
-                    }
 
                 }
 

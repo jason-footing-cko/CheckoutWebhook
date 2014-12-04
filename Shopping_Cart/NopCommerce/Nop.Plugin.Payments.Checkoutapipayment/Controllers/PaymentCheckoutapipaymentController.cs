@@ -10,8 +10,14 @@ using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Payments;
 using Nop.Services.Stores;
+using Nop.Services.Orders;
+using Nop.Services.Customers;
+using Nop.Services.Directory;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
+using Nop.Core.Infrastructure;
+using Nop.Core.Domain.Orders;
+using Nop.Core.Domain.Directory;
 
 namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
 {
@@ -144,6 +150,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
             //load settings for a chosen store scope
             var storeScope = this.GetActiveStoreScopeConfiguration(_storeService, _workContext);
             var CheckoutapipaymentPaymentSettings = _settingService.LoadSetting<CheckoutapipaymentPaymentSettings>(storeScope);
+            System.Diagnostics.Debug.WriteLine(CheckoutapipaymentPaymentSettings.IsPCI);
 
             if (CheckoutapipaymentPaymentSettings.IsPCI)
             {
@@ -214,8 +221,28 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
             }
             else
             {
+                
                 //Checkout JS
-                return null;
+                var model = new CreditCardModel();
+                //set postback values
+                var form = this.Request.Form;
+                //Get currenct customer
+                var customer = EngineContext.Current.Resolve<IWorkContext>().CurrentCustomer;
+                // get the shopping cart items for current customer
+                var cart = customer.ShoppingCartItems.Where(x => x.ShoppingCartType == ShoppingCartType.ShoppingCart).ToList();
+
+
+                ViewBag.publickey = CheckoutapipaymentPaymentSettings.PublicKey;
+                ViewBag.email = customer.BillingAddress.Email;
+                ViewBag.currency = EngineContext.Current.Resolve<IWorkContext>().WorkingCurrency.CurrencyCode;
+                ViewBag.amount = (Convert.ToInt32(EngineContext.Current.Resolve<IOrderTotalCalculationService>().GetShoppingCartTotal(cart)*100)).ToString();
+
+
+                model.cko_cc_token = form["CardToken"];
+                model.cko_cc_email = form["Email"];
+
+
+                return View("~/Plugins/Payments.Checkoutapipayment/Views/PaymentCheckoutapipayment/CreditCard.cshtml", model);;
             }
              
 
@@ -248,6 +275,9 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
             }
             else{
                 //Checkout JS
+
+                // validation is done within Checkout JS 
+                // no validator is needed here
                 return null;
             }
         }
@@ -272,7 +302,12 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
             }
             else
             {
-                return null;
+                var paymentInfo = new ProcessPaymentRequest();
+                paymentInfo.CustomValues = new Dictionary<string, object>();
+                paymentInfo.CustomValues.Add("cko_cc_token", form["cko_cc_token"]);
+                paymentInfo.CustomValues.Add("cko_cc_email", form["cko_cc_email"]);
+                return paymentInfo;
+                
             }
         }
 

@@ -9,7 +9,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.GatewayRequests
 {
     public class fullcardChargeRequest : GatewayRequest
     {
-        public string amount { set; get; }
+        public string value { set; get; }
         public string autoCapTime { set; get; }
         public string autoCapture { set; get; }
         public FullCard card { set; get; }

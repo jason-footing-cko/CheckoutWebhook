@@ -43,11 +43,6 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
             set { _authorization = value; }
         }
 
-        public string Mode
-        {
-            get { return _mode; }
-            set { _mode = value;  }
-        }
 
         /// <summary>
         /// Do the post to the gateway and retrieve the response
@@ -86,7 +81,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
 
                 System.Diagnostics.Debug.WriteLine(_serverJson);
 
-                return new GatewayResponse(_serverJson, _mode);
+                return new GatewayResponse(_serverJson);
             }
         }
 
