@@ -1,8 +1,0 @@
-﻿Group: Payment methods
-FriendlyName: Credit Card (Checkout.com)
-SystemName: Payments.Checkoutapipayment
-Version: 1.00
-SupportedVersions: 3.40
-Author:Checkout.com Integration Team 
-DisplayOrder: 1
-FileName: Nop.Plugin.Payments.Checkoutapipayment.dll
