@@ -1,0 +1,62 @@
+﻿@{
+    Layout = "";
+}
+@using Nop.Web.Framework;
+@using Nop.Plugin.Payments.Checkoutapipayment
+
+<p>Please Select Your Credit / Debit Card </p>
+
+<div class="content" id="payment">
+    <input type="hidden" name="cko_cc_token" id="cko-cc-token" value="">
+    <input type="hidden" name="cko_cc_email" id="cko-cc-email" value="" />
+</div>
+
+
+<script src="http://ckofe.com/js/Checkout.js"></script>
+
+<DIV class="widget-container"></DIV>
+    <SCRIPT type="text/javascript">
+        function checkoutRender(){
+            Checkout.render({
+                publicKey: '@ViewBag.publickey',
+                userEmail: '@ViewBag.email',
+                amount: @Convert.ToInt32(@ViewBag.amount),
+                currency: '@ViewBag.currency',
+                widgetContainerSelector: '.widget-container',
+                widgetRendered: function(event) {
+                    $(".cko-pay-now").hide();
+                },
+                cardTokenReceived: function(event) {
+                    console.log('card token: ', event.data.cardToken);
+                    console.log('email: ', event.data.email);
+                    document.getElementById('cko-cc-token').value = event.data.cardToken;
+                    document.getElementById('cko-cc-email').value = event.data.email;
+                }
+            });
+        }
+
+
+        function loadExtScript(src, test, callback) {
+            var s = document.createElement('script');
+            s.src = src;
+            document.body.appendChild(s);
+
+            var callbackTimer = setInterval(function() {
+
+                if(typeof Checkout!='undefined'){
+                    clearInterval(callbackTimer);
+                    checkoutRender();
+                }
+            }, 100);
+        }
+
+        loadExtScript('http://ckofe.com/js/Checkout.js',checkoutRender,function(){})
+
+
+    </SCRIPT>
+
+
+
+
+
+
