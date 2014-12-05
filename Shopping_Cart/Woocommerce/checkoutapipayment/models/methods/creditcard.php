@@ -86,7 +86,7 @@
         $config['mode'] = CHECKOUTAPI_ENDPOINT;
         $config['timeout'] = CHECKOUTAPI_TIMEOUT;
         $config['postedParam'] = array('email' =>parent::get_post('cko_cc_email'),
-            'amount'=> $amount,
+            'value'=> $amount,
             'currency' => $order->order_currency,
             'description'=>"Order number::$order_id"
         );

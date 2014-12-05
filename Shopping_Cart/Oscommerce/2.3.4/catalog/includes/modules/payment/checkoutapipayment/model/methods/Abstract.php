@@ -42,7 +42,7 @@ abstract class model_methods_Abstract {
 
             $config['postedParam'] = array (
                 'email'=>$order->customer['email_address'] ,
-                'amount'=>$amountCents,
+                'value'=>$amountCents,
                 'currency'=> $order->info['currency'] ,
                 'card' => array(
                             'billingDetails' => array (

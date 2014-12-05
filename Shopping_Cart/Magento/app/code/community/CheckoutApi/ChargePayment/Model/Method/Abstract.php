@@ -106,7 +106,7 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
         $config['timeout'] = $this->getConfigData('timeout');
 
         $config['postedParam'] = array (
-            'amount'           =>    $amountCents,
+            'value'           =>    $amountCents,
             'currency'         =>    $currencyDesc,
             'shippingDetails'  =>    $shippingAddressConfig,
             'products'         =>    $products,

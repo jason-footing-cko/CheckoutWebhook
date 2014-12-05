@@ -147,7 +147,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
         $param['postedParam']['type'] = CheckoutApi_Client_Constant::TOKEN_SESSION_TYPE;
         $postedParam = $param['postedParam'];
         $this->flushState();
-        $isAmountValid = CheckoutApi_Client_Validation_GW3::isAmountValid($postedParam);
+        $isAmountValid = CheckoutApi_Client_Validation_GW3::isValueValid($postedParam);
         $isCurrencyValid = CheckoutApi_Client_Validation_GW3::isValidCurrency($postedParam);
         $uri = $this->getUriToken();
 
@@ -215,7 +215,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
         $param['postedParam']['type'] = CheckoutApi_Client_Constant::CHARGE_TYPE;
         $postedParam = $param['postedParam'];
         $this->flushState();
-        $isAmountValid = CheckoutApi_Client_Validation_GW3::isAmountValid($postedParam);
+        $isAmountValid = CheckoutApi_Client_Validation_GW3::isValueValid($postedParam);
         $isCurrencyValid = CheckoutApi_Client_Validation_GW3::isValidCurrency($postedParam);
         $isEmailValid = CheckoutApi_Client_Validation_GW3::isEmailValid($postedParam);
         $isCustomerIdValid = CheckoutApi_Client_Validation_GW3::isCustomerIdValid($postedParam);
@@ -314,7 +314,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
         $param['postedParam']['type'] = CheckoutApi_Client_Constant::CHARGE_TYPE;
         $postedParam = $param['postedParam'];
         $this->flushState();
-        $isAmountValid = CheckoutApi_Client_Validation_GW3::isAmountValid($postedParam);
+        $isAmountValid = CheckoutApi_Client_Validation_GW3::isValueValid($postedParam);
         $isChargeIdValid = CheckoutApi_Client_Validation_GW3::isChargeIdValid($param);
         $uri = $this->getUriCharge();
 
@@ -350,7 +350,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
         $param['postedParam']['type'] = CheckoutApi_Client_Constant::CHARGE_TYPE;
         $postedParam = $param['postedParam'];
         $this->flushState();
-        $isAmountValid = CheckoutApi_Client_Validation_GW3::isAmountValid($postedParam);
+        $isAmountValid = CheckoutApi_Client_Validation_GW3::isValueValid($postedParam);
         $isChargeIdValid = CheckoutApi_Client_Validation_GW3::isChargeIdValid($param);
         $uri = $this->getUriCharge();
 

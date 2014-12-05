@@ -143,7 +143,7 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
       //  print_r($products); die();
         $config['postedParam'] = array_merge($config['postedParam'],array (
             'email'=>$customer->email ,
-            'amount'=>$amountCents,
+            'value'=>$amountCents,
             'currency'=> $currency->iso_code,
             'description'=>"Order number::$orderId",
             'shippingDetails'  =>    $shippingAddressConfig,

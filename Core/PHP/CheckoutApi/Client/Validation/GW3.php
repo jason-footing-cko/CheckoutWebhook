@@ -72,23 +72,22 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
      * @return boolean
      * CheckoutApi_ check if amount is valid.
      * Simple usage:
-     *        CheckoutApi_Client_Validation_GW3::isAmountValid($postedParam)
+     *        CheckoutApi_Client_Validation_GW3::isValueValid($postedParam)
      */
-	public static function isAmountValid($postedParam)
+	public static function isValueValid($postedParam)
 	{
 		$isValid = false;
 
-		if(isset($postedParam['amount'])) {
+		if(isset($postedParam['value'])) {
 
-			$amount = $postedParam['amount'];
+			$amount = $postedParam['value'];
 
 			$isAmountEmpty = CheckoutApi_Lib_Validator::isEmpty($amount);
 
-			$isIntegerAmount = CheckoutApi_Lib_Validator::isInteger($amount);
 			
-			if(!$isAmountEmpty && $isIntegerAmount && $amount > -1 ) {
+			if(!$isAmountEmpty  ) {
 				$isValid = true;
-			//	$this->logError(true, "Amount should be in cents.", array('amount'=>$postedParam['amount']), false);
+
 			} 
 	
 		} 
@@ -230,18 +229,18 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
      * @return bool
      *
      * Simple usage:
-     *          CheckoutApi_Client_Validation_GW3::isValidCvv2($card)
+     *          CheckoutApi_Client_Validation_GW3::isValidCvv($card)
      */
 
-	public static function isValidCvv2($card) 
+	public static function isValidCvv($card)
 	{
 		$isValid = false;
 
 		if(isset($card['cvv'])) {
 
-			$isCvv2Empty = CheckoutApi_Lib_Validator::isEmpty($card['cvv']);
+			$isCvvEmpty = CheckoutApi_Lib_Validator::isEmpty($card['cvv']);
 			
-			if(!$isCvv2Empty && CheckoutApi_Lib_Validator::isValidCvv2Len($card['cvv'])) {
+			if(!$isCvvEmpty && CheckoutApi_Lib_Validator::isValidCvvLen($card['cvv'])) {
 			
 				$isValid = true;
 			
@@ -290,9 +289,9 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
                 $isValid = false;
             }
 
-            $isValidCvv2 = CheckoutApi_Client_Validation_GW3::isValidCvv2($card);
+            $isValidCvv = CheckoutApi_Client_Validation_GW3::isValidCvv($card);
 
-            if (!$isValidCvv2) {
+            if (!$isValidCvv) {
                 $isValid = false;
             }
 

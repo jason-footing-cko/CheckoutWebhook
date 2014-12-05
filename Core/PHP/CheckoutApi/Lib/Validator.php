@@ -118,13 +118,13 @@ final class CheckoutApi_Lib_Validator extends CheckoutApi_lib_Object
 
     /**
      *   A helper method that check if ccv is in correct format
-     * @param string $cvv2
+     * @param string $cvv
      * @return true
 
      */
-	public static function isValidCvv2Len($cvv2)
+	public static function isValidCvvLen($cvv)
 	{
 		$pattern = '/^[0-9]{3,4}$/';
-		return preg_match($pattern, $cvv2)?true:false;
+		return preg_match($pattern, $cvv)?true:false;
 	}
 }
