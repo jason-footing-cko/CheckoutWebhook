@@ -33,6 +33,10 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
                 $payment->save();
 
                 return $respondCharge;
+            }else {
+
+                Mage::throwException(Mage::helper('payment')->__( 'An error has occured. Please check you card detail and try again. Thank you'));
+                return false;
             }
 
         } else {
@@ -68,10 +72,10 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
         $billingAddressConfig = array(
                                         'addressLine1'       =>  $street[0],
                                         'addressLine2'       =>  $street[1],
-                                        'addressPostcode'    =>  $billingAddress->getPostcode(),
-                                        'addressCountry'     =>  $billingAddress->getCountry(),
-                                        'addressCity'        =>  $billingAddress->getCity(),
-                                        'addressPhone'       =>  $billingAddress->getTelephone(),
+                                        'postcode'    =>  $billingAddress->getPostcode(),
+                                        'country'     =>  $billingAddress->getCountry(),
+                                        'city'        =>  $billingAddress->getCity(),
+                                        'phone'       =>  $billingAddress->getTelephone(),
 
                                      );
 
@@ -80,10 +84,10 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
         $shippingAddressConfig = array(
                                         'addressLine1'       =>  $street[0],
                                         'addressLine2'       =>  $street[1],
-                                        'addressPostcode'    =>  $shippingAddress->getPostcode(),
-                                        'addressCountry'     =>  $shippingAddress->getCountry(),
-                                        'addressCity'        =>  $shippingAddress->getCity(),
-                                        'addressPhone'       =>  $shippingAddress->getTelephone(),
+                                        'postcode'    =>  $shippingAddress->getPostcode(),
+                                        'country'     =>  $shippingAddress->getCountry(),
+                                        'city'        =>  $shippingAddress->getCity(),
+                                        'phone'       =>  $shippingAddress->getTelephone(),
                                         'recipientName'      =>  $shippingAddress->getFirstname(). ' '.$shippingAddress->getLastname()
 
                                      );
@@ -94,7 +98,7 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
             $products[] = array (
                             'name'       =>     $item->getName(),
                             'sku'        =>     $item->getSku(),
-                            'price'      =>     $item->getPrice()*100,
+                            'price'      =>     $item->getPrice(),
                             'quantity'   =>     $item->getQtyOrdered(),
                             'image'      =>     Mage::helper('catalog/image')->init($product, 'image')->__toString()
                          );
@@ -111,6 +115,7 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
             'shippingDetails'  =>    $shippingAddressConfig,
             'products'         =>    $products,
             'description'      =>    "Order number::$orderId",
+            'metadata'      =>    array("trackId" => $orderId),
             'card'             =>     array (
                                             'billingDetails'   =>    $billingAddressConfig
 

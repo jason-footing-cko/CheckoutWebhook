@@ -37,4 +37,10 @@
          $path = 'payment/creditcard/'.$field;
          return Mage::getStoreConfig($path, $storeId);
      }
+     public function getName()
+     {
+         return  $this->_getQuote()->getBillingAddress()->getName();
+
+     }
+
 }

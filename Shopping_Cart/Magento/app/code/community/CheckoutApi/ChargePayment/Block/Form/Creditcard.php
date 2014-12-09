@@ -78,4 +78,36 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
         return  $this->_getQuote()->getBillingAddress()->getEmail();
 
     }
+
+    public function getName()
+    {
+        return  $this->_getQuote()->getBillingAddress()->getName();
+
+    }
+
+    public function renderJsConfig()
+    {
+        $Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
+        $config = array();
+        $config['debug'] = false;
+        $config['publicKey'] = $this->getPublicKey() ;
+        $config['email'] =  $this->getEmailAddress();
+        $config['name'] = $this->getName();
+        $config['amount'] =  $this->getAmount();
+        $config['currency'] =  $this->getCurrency();
+        $config['widgetSelector'] =  '.widget-container';
+        $config['cardTokenReceivedEvent'] = "
+                        document.getElementById('cko-cc-token').value = event.data.cardToken;
+                        document.getElementById('cko-cc-email').value = event.data.email;
+                        payment.save();";
+        $config['widgetRenderedEvent'] ="if ($$('.cko-pay-now')[0]) {
+                                                $$('.cko-pay-now')[0].hide();
+                                            }";
+        $config['readyEvent'] = '';
+
+
+        $jsConfig = $Api->getJsConfig($config);
+
+        return $jsConfig;
+    }
  }

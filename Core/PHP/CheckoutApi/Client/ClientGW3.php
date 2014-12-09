@@ -1258,4 +1258,32 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
         $this->setUriProvider();
 
     }
+
+    /**
+     * @param $config array of configuration
+     * @return string script tag
+     */
+    public function getJsConfig($config)
+    {
+        $script = " window.CKOConfig = {
+                debugMode: '{$config['debug']}',
+                publicKey: '{$config['publicKey']}',
+                customerEmail: '{$config['email']}',
+                customerName: '{$config['name']}',
+                value: '{$config['amount']}',
+                currency: '{$config['currency']}',
+                widgetContainerSelector: '{$config['widgetSelector']}',
+                cardTokenReceived: function(event) {
+                    {$config['cardTokenReceivedEvent']}
+                },
+                 widgetRendered: function (event) {
+                    {$config['widgetRenderedEvent']}
+                 },
+
+                ready: function() {
+                     {$config['readyEvent']}
+                }
+            };";
+        return $script;
+    }
 }

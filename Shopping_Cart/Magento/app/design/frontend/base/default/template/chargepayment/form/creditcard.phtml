@@ -35,53 +35,8 @@
 
 
             <script>
-                if(Checkout.hasOwnProperty('render')) {
-                    Checkout.render({
-                        publicKey: "<?php echo $this->getPublicKey() ?>",
-                        userEmail: '<?php echo $this->getEmailAddress() ?>',
-                        amount: "<?php echo $this->getAmount()?>",
-                        currency: "<?php echo $this->getCurrency()?>",
-                        widgetContainerSelector: '.widget-container',
-                        widgetRendered: function (event) {
-
-                            if ($$('.cko-pay-now')[0]) {
-                                $$('.cko-pay-now')[0].hide();
-                            }
-                        },
-                        cardTokenReceived: function (event) {
-                            document.getElementById('cko-cc-token').value = event.data.cardToken;
-                            document.getElementById('cko-cc-email').value = event.data.email;
-                            payment.save();
-                        }
-                    });
-                }
-
-                window.CKOConfig = {
-                    publicKey: "<?php //echo $this->getPublicKey() ?>//",
-                    userEmail: '<?php echo $this->getEmailAddress() ?>',
-                    amount: "<?php echo $this->getAmount()?>",
-                    currency: "<?php echo $this->getCurrency()?>",
-                    widgetContainerSelector: '.widget-container',
-                    widgetRendered: function (event) {
-
-                            if ($$('.cko-pay-now')[0]) {
-                                $$('.cko-pay-now')[0].hide();
-                            }
-                        },
-                    ckoReady: function() {
-                        console.log('CheckoutJS is ready');
-                    },
-                    cardTokenReceived: function(event) {
-                        document.getElementById('cko-cc-token').value = event.data.cardToken;
-                        document.getElementById('cko-cc-email').value = event.data.email;
-                        payment.save();
-                    },
-                    widgetRendered: function(event) {
-                        if ($$('.cko-pay-now')[0]) {
-                                $$('.cko-pay-now')[0].hide();
-                        }
-                    }
-                };
+                <?php echo $this->renderJsConfig() ?>
+                Checkout.render();
             </script>
 
         </div>
