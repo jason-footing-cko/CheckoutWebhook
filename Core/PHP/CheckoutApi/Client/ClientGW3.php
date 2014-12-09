@@ -129,19 +129,19 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
     }
 
     /**
-     * Create session token
+     * Create payment token
      * @param array $param payload param
      * @return CheckoutApi_Lib_RespondObj
      * @throws Exception
      *
      * Simple usage:
-     *      $sessionConfig['postedParam'] = array( "amount"=>100, "currency"=>"GBP");
-     *      $sessionTokenObj = $Api->getSessionToken($sessionConfig);
+     *      $sessionConfig['postedParam'] = array( "value"=>100, "currency"=>"GBP");
+     *      $sessionTokenObj = $Api->getPaymentToken($sessionConfig);
      * Use by having, first an instance of the gateway 3.0 and set of argument base on documentation for creating a session token.
      *
      */
 
-    public  function  getSessionToken(array $param)
+    public  function  getPaymentToken(array $param)
     {
         $hasError = false;
         $param['postedParam']['type'] = CheckoutApi_Client_Constant::TOKEN_SESSION_TYPE;
