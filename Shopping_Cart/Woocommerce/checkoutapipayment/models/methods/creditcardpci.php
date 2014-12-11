@@ -17,19 +17,9 @@
  	}
 
  	public function payment_fields(){
- 		
- 		// $args = array();
-
- 		// Credit Card Form Name Field
- 		// $fields = array('card-holder' => '<p class="form-row form-row-wide">
-			// 	<label for="' . esc_attr( $this->id ) . '-card-holder">' . __( 'Card Holder Name', 'woocommerce' ) . ' <span class="required">*</span></label>
-			// 	<input id="' . esc_attr( $this->id ) . '-card-holder" class="input-text wc-credit-card-form-card-holder" type="text" maxlength="20" autocomplete="off" placeholder="Your Name Here" name="' . ( $args['fields_have_names'] ? $this->id . '-card-holder' : '' ) . '" />
-			// </p>');
- 		// $this->credit_card_form($args, $fields);
 
  		$this->credit_card_form();
- 		
-
+ 	
  	}
 
  	public function validate_fields(){
@@ -43,10 +33,10 @@
 		$grand_total = $order->order_total;
 		$amount = (int)$grand_total*100;
 		$config['authorization'] = CHECKOUTAPI_SECRET_KEY;
-		$config['mode'] = CHECKOUTAPI_ENDPOINT;
+		//$config['mode'] = CHECKOUTAPI_ENDPOINT;
 		$config['timeout'] = CHECKOUTAPI_TIMEOUT;
 		$config['postedParam'] = array('email' =>$order->billing_email,
-			'amount'=> $amount,
+			'value'=> $amount,
 			'currency' => $order->order_currency,
 			'description'=>"Order number::$order_id"
 		);
@@ -63,23 +53,39 @@
 		$cardnumber = preg_replace('/\D/', '', parent::get_post($this->id.'-card-number'));
 		$cardexpiry = explode(" / ", parent::get_post($this->id.'-card-expiry')) ;
 
+
+		
 		$config['postedParam']['card'] = array(
 			'name' => $order->billing_first_name .' '.$order->billing_last_name,
 			'number' => $cardnumber,
 			'expiryMonth' => $cardexpiry[0],
             'expiryYear' => $cardexpiry[1],
             'cvv' => parent::get_post($this->id.'-card-cvc'),
-			'addressLine1' => $order->billing_address_1,
-			'addressLine2' => $order->billing_address_2,
-			'addressPostcode' => $order->billing_postcode,
-			'addressCountry' => $order->billing_country,
-			'addressCity'=>$order->billing_city,
-			'addressState'=>$order->billing_state,
-			'addressPhone' => $order->billing_phone
 		);
-
+		
+		$config['postedParam']['card']['billingdetails'] = array(
+			'addressline1' => $order->billing_address_1,
+			'addressline2' => $order->billing_address_2,
+			'city'=>$order->billing_city,
+			'country' => $order->billing_country,
+			'phone' => $order->billing_phone,
+			'postcode' => $order->billing_postcode,
+			'state'=>$order->billing_state
+		);
+		
+		$config['postedParam']['shippingdetails'] = array(
+			'addressline1' => $order->shipping_address_1,
+			'addressline2' => $order->shipping_address_2,
+			'city'=>$order->shipping_city,
+			'country' => $order->shipping_country,
+			'phone' => $order->shipping_phone,
+			'postcode' => $order->shipping_postcode,
+			'state'=>$order->shipping_state
+		);
+		
+		
 		$respondCharge = parent::_createCharge($config);
-
+		
 		return parent::_validateChrage($order, $respondCharge);
 
  	}

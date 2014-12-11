@@ -19,7 +19,7 @@ abstract class models_methods_Abstract extends WC_Payment_Gateway implements mod
 	protected function _createCharge($config)
     {
 
-        $Api = CheckoutApi_Api::getApi();
+        $Api = CheckoutApi_Api::getApi(array('mode'=>CHECKOUTAPI_ENDPOINT));
         
         return $Api->createCharge($config);
     }

@@ -134,8 +134,7 @@ abstract class models_Checkoutapi extends WC_Payment_Gateway implements models_I
 					  'dev' => 'Development',
 					  'preprod' => 'Preprod',
 					  'live' => 'Live' 
-					  ),
-				  'default'     => 'Development'
+					  )
 				)
 			
 			);

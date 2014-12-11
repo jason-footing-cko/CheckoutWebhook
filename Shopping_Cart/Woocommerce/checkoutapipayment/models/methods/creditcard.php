@@ -23,55 +23,24 @@
         $email = "Email@youremail.com";
         if(isset($current_user->data)){
             $email = $current_user->user_email;
+			$name = $current_user->user_first_name;
         }
-
-
             
  	?>
- 	<p>Please select a Credit / Debit card</p>
-    <div class="widget-container"></div>
-    <div class="content" id="payment">
-    <input type="hidden" name="cko_cc_token" id="cko-cc-token" value="">
-    <input type="hidden" name="cko_cc_email" id="cko-cc-email" value="" />
-
-        <script type="text/javascript">
-        function checkoutRender() {
-            Checkout.render({
-                publicKey: "<?php echo CHECKOUTAPI_PUBLIC_KEY ?>",
-                userEmail: "<?php echo $email ?>",
-                value: "<?php echo $amount ?>",
-                currency: "<?php echo get_woocommerce_currency() ?>",
-                widgetContainerSelector: '.widget-container',
-                widgetRendered: function (event) {
-					if (jQuery('.cko-pay-now')) {
-					 	jQuery('.cko-pay-now').hide();
-					 }
-                },
-                cardTokenReceived: function (event) {
-                    document.getElementById('cko-cc-token').value = event.data.cardToken;
-                    document.getElementById('cko-cc-email').value = event.data.email;
-                }
-            });
-
-        }
-        function loadExtScript(src, test, callback) {
-            var s = document.createElement('script');
-            s.src = src;
-            document.body.appendChild(s);
-
-            var callbackTimer = setInterval(function() {
-
-               if(typeof Checkout!='undefined'){
-                   clearInterval(callbackTimer);
-                   checkoutRender();
-               }
-            }, 100);
-        }
-
-    loadExtScript('http://ckofe.com/js/Checkout.js',checkoutRender,function(){})
-        
-    </script>
-
+		
+	    <div style="" class="widget-container">
+            <p>Please select your credit card type</p>
+            <input type="hidden" name="cko_cc_token" id="cko-cc-token" value="">
+            <input type="hidden" name="cko_cc_email" id="cko-cc-email" value="" />
+			<script  src="https://www.checkout.com/cdn/js/Checkout.js"></script>
+            <script>
+                <?php echo $this->renderJsConfig($email, $amount, $name) ?>
+                //Checkout.render();
+            </script>
+			
+        </div>
+ 	
+		
 
 	<?php
 
@@ -83,7 +52,7 @@
         $grand_total = $order->order_total;
         $amount = (int)$grand_total*100;
         $config['authorization'] = CHECKOUTAPI_SECRET_KEY;
-        $config['mode'] = CHECKOUTAPI_ENDPOINT;
+        //$config['mode'] = CHECKOUTAPI_ENDPOINT;
         $config['timeout'] = CHECKOUTAPI_TIMEOUT;
         $config['postedParam'] = array('email' =>parent::get_post('cko_cc_email'),
             'value'=> $amount,
@@ -100,15 +69,50 @@
 
         $config['postedParam'] = array_merge($config['postedParam'],$extraConfig);
         $config['postedParam']['cardToken'] = parent::get_post('cko_cc_token');
-
-        //var_dump($config);
+		
+		$config['postedParam']['shippingdetails'] = array(
+			'addressline1' => $order->shipping_address_1,
+			'addressline2' => $order->shipping_address_2,
+			'city'=>$order->shipping_city,
+			'country' => $order->shipping_country,
+			'phone' => $order->shipping_phone,
+			'postcode' => $order->shipping_postcode,
+			'state'=>$order->shipping_state
+		);
 
         $respondCharge = parent::_createCharge($config);
+
 
         return parent::_validateChrage($order, $respondCharge);
 
 
  	}
+	
+	private function renderJsConfig($email, $amount, $name)
+    {
+        $Api = CheckoutApi_Api::getApi(array('mode'=>CHECKOUTAPI_ENDPOINT));
+        $config = array();
+        $config['debug'] = false;
+        $config['publicKey'] = CHECKOUTAPI_PUBLIC_KEY ;
+        $config['email'] =  $email;
+        $config['name'] = $name;
+        $config['amount'] =  $amount;
+        $config['currency'] =  get_woocommerce_currency();
+        $config['widgetSelector'] =  '.widget-container';
+        $config['cardTokenReceivedEvent'] = "
+                        document.getElementById('cko-cc-token').value = event.data.cardToken;
+                        document.getElementById('cko-cc-email').value = event.data.email;
+                        payment.save();";
+        $config['widgetRenderedEvent'] ="if (jQuery('.cko-pay-now')) {
+                                                jQuery('.cko-pay-now').hide();
+                                            }";
+        $config['readyEvent'] = '';
+
+
+        $jsConfig = $Api->getJsConfig($config);
+
+        return $jsConfig;
+    }
  }
 
 
