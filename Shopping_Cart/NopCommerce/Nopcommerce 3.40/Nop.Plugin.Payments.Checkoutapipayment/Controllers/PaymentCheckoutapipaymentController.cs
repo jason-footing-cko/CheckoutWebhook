@@ -234,6 +234,7 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
 
                 ViewBag.publickey = CheckoutapipaymentPaymentSettings.PublicKey;
                 ViewBag.email = customer.BillingAddress.Email;
+                ViewBag.name = customer.BillingAddress.FirstName + ' ' + customer.BillingAddress.LastName;
                 ViewBag.currency = EngineContext.Current.Resolve<IWorkContext>().WorkingCurrency.CurrencyCode;
                 ViewBag.amount = (Convert.ToInt32(EngineContext.Current.Resolve<IOrderTotalCalculationService>().GetShoppingCartTotal(cart)*100)).ToString();
 
@@ -275,10 +276,21 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
             }
             else{
                 //Checkout JS
+                var warnings = new List<string>();
+                //var model = new CreditCardModel()
+                //{
+                //    cko_cc_token = form["cko_cc_token"],
+                //    cko_cc_email = form["cko_cc_email"]
+                //};
 
-                // validation is done within Checkout JS 
-                // no validator is needed here
-                return null;
+                //if(model.cko_cc_email == null){
+                //    warnings.Add("Email Can't be null");
+                //}
+                //if(model.cko_cc_token == null){
+                //    warnings.Add ("Card has not been tokenised, please verify your payment details");
+                //}
+                
+                return warnings;
             }
         }
 
@@ -303,9 +315,17 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
             else
             {
                 var paymentInfo = new ProcessPaymentRequest();
-                paymentInfo.CustomValues = new Dictionary<string, object>();
+                //paymentInfo.CreditCardType = "Visa";
+                //paymentInfo.CreditCardName = "Name";
+                //paymentInfo.CreditCardNumber = "45434740022499960";
+                //paymentInfo.CreditCardExpireMonth = 6;
+                //paymentInfo.CreditCardExpireYear = 99;
+                //paymentInfo.CreditCardCvv2 = "123";
+                ////paymentInfo.CustomValues = new Dictionary<string, object>();
                 paymentInfo.CustomValues.Add("cko_cc_token", form["cko_cc_token"]);
                 paymentInfo.CustomValues.Add("cko_cc_email", form["cko_cc_email"]);
+
+                System.Diagnostics.Debug.WriteLine(paymentInfo.CustomValues.ToString());
                 return paymentInfo;
                 
             }
