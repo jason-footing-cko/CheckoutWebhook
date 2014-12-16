@@ -1,0 +1,117 @@
+<?php
+abstract class model_methods_Abstract {
+
+
+
+    public function before_capture($params)
+    {
+        global $customer_id, $order, $currency, $HTTP_POST_VARS;
+        $config = array();
+
+
+            $amountCents = (int)$params['amount']*100 ;
+            $config['authorization'] = $params['secretkey'];
+            $config['mode'] = $params['modetype'];
+            $products = array();
+//            foreach ($orderedItems as $item ) {
+//                $product = Mage::getModel('catalog/product')->load($item->getProductId());
+//                $products[] = array (
+//                    'name'       =>     $item->getName(),
+//                    'sku'        =>     $item->getSku(),
+//                    'price'      =>     $item->getPrice(),
+//                    'quantity'   =>     $item->getQtyOrdered(),
+//                    'image'      =>     Mage::helper('catalog/image')->init($product, 'image')->__toString()
+//                );
+//            }
+
+            $config['postedParam'] = array (
+                'email'=> $params['clientdetails']['email'] ,
+                'value'=>$amountCents,
+                'currency'=> $params['currency'],
+                'products'=> $products,
+                'metadata' => array('trackid'=>$params['invoiceid']),
+                'card' => array(
+                            'billingDetails' => array (
+                                                'addressLine1'  =>  $params['clientdetails']['address1'],
+                                                'addressLine2'  =>  $params['clientdetails']['address2'],
+                                                'postcode'      => $params['clientdetails']['postcode'],
+                                                'country'       =>  $params['clientdetails']['country'],
+                                                'city'          => $params['clientdetails']['city'],
+                                                'state'         =>  $params['clientdetails']['state'],
+                                                'phone'         =>  $params['clientdetails']['phonenumber']
+
+                                             )
+                             )
+
+            );
+
+            if ($params['transmethod']== 'Capture') {
+                $config = array_merge( $this->_captureConfig($params),$config);
+            } else {
+                $config = array_merge( $this->_authorizeConfig($params),$config);
+            }
+
+        return $config;
+    }
+    protected function _placeorder($config)
+    {
+        global $messageStack,$order;
+
+        //building charge
+        $respondCharge = $this->_createCharge($config);
+        $GATEWAY = getGatewayVariables('checkoutapipayment');
+        logTransaction($GATEWAY["name"],$respondCharge->toArray(),"Successful");
+
+        if( $respondCharge->isValid()) {
+
+            if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
+                logTransaction($GATEWAY["name"],$respondCharge->toArray(),"Successful");
+                return array("status"=>"success","transid"=>$config['metadata']['trackid'],"rawdata"=>$respondCharge);
+            }
+            return array("status"=>"declined","rawdata"=>$respondCharge);
+        } else  {
+
+            return array("status"=>"error","rawdata"=>$respondCharge);
+        }
+        logTransaction($GATEWAY["name"],$respondCharge->toArray(),"fail");
+    }
+    private function _createCharge($config)
+    {
+        $Api = CheckoutApi_Api::getApi(array('mode'=> $config['mode']));
+        return $Api->createCharge($config);
+    }
+    private function _captureConfig($params)
+    {
+        $to_return['postedParam'] = array (
+            'autoCapture' => ($params['transmethod'] =='Capture'),
+            'autoCapTime' => $params['capturetime']
+        );
+
+        return $to_return;
+    }
+
+    private function _authorizeConfig($params)
+    {
+        $to_return['postedParam'] = array(
+            'autoCapture' => ( $params['transmethod'] =='Authorize'),
+            'autoCapTime' => 0
+        );
+        return $to_return;
+    }
+
+
+    public function getFooterHtml($param)
+    {
+        return '';
+    }
+
+    public function getHeadHtml($param)
+    {
+        return '';
+    }
+
+    public function getShoppingCartValidateCheckout($param)
+    {
+        return array();
+    }
+}
