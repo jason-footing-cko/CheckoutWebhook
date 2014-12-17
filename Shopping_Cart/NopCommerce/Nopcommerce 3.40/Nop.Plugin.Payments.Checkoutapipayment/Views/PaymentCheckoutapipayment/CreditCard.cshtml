@@ -18,6 +18,8 @@
             @Html.TextBoxFor(model => model.cko_cc_email, new { @type = "hidden" })
         </td>
     <tr>
+</table>
+
 <script src="https://www.checkout.com/cdn/js/Checkout.js"></script>
 <div style="" class="widget-container">
     <script type="text/javascript">
@@ -38,20 +40,15 @@
                 phone: '@ViewBag.phone'
             },
             widgetContainerSelector: '.widget-container',
-            cardTokenReceived: function (event) {
-                document.getElementById('cko_cc_token').value = event.data.cardToken;
-                document.getElementById('cko_cc_email').value = event.data.email;
-            },
             widgetRendered: function (event) {
                 $(".cko-pay-now").hide();
             },
-            lightboxDeactivated: function (event) {
-                console.log("Lightbox Deactivated");
-
+            cardTokenReceived: function (event) {
+                document.getElementById('cko_cc_token').value = event.data.cardToken;
+                document.getElementById('cko_cc_email').value = event.data.email;
             }
         };
 
     </script>
 
 </div>
-</table>
