@@ -21,7 +21,7 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
         $_config['authorization'] = $secretKey ;
         $_config['chargeId'] = $chargeId ;
         $_config['postedParam'] = array (
-            'amount'=>(int)($_authorizeAmount*100)
+            'value'=>(int)($_authorizeAmount*100)
         );
 
         $_captureCharge = $_Api->captureCharge($_config);
@@ -73,7 +73,7 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
         $_config['authorization'] = $secretKey ;
         $_config['chargeId'] = $chargeId ;
         $_config['postedParam'] = array (
-            'amount'=>(int)($_authorizeAmount*100)
+            'value'=>(int)($_authorizeAmount*100)
         );
 
         $_refundCharge = $_Api->refundCharge($_config);

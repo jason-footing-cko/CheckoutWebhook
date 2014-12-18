@@ -60,18 +60,27 @@ abstract class model_methods_Abstract {
         //building charge
         $respondCharge = $this->_createCharge($config);
         $GATEWAY = getGatewayVariables('checkoutapipayment');
-        logTransaction($GATEWAY["name"],$respondCharge->toArray(),"Successful");
 
         if( $respondCharge->isValid()) {
 
             if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
                 logTransaction($GATEWAY["name"],$respondCharge->toArray(),"Successful");
-                return array("status"=>"success","transid"=>$config['metadata']['trackid'],"rawdata"=>$respondCharge);
+
+
+                $command = "addtransaction";
+                $adminuser = "admin";
+
+                $values["transid"] = $respondCharge->getId();
+                $values["date"] = date('d/m/Y',$respondCharge->getCreated());
+
+                $results = localAPI($command,$values,$adminuser);
+                return  array("status"=>"success","gatewayid"=>$respondCharge->getId(),"transid"=>$config['metadata']['trackid'] ,"rawdata"=>$respondCharge->getRawOutput());
+                //return array("status"=>"success","transid"=>$config['metadata']['trackid'],"rawdata"=>$respondCharge);
             }
-            return array("status"=>"declined","rawdata"=>$respondCharge);
+            return array("status"=>"failed","rawdata"=>$respondCharge->getRawOutput());
         } else  {
 
-            return array("status"=>"error","rawdata"=>$respondCharge);
+            return array("status"=>"failed","rawdata"=>$respondCharge->getRawOutput());
         }
         logTransaction($GATEWAY["name"],$respondCharge->toArray(),"fail");
     }

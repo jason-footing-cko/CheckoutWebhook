@@ -39,19 +39,42 @@ function checkoutapipayment_capture($params) {
 
 
 }
+function checkoutapipayment_storeremote($params) {
+
+    $instance = getPaymentInstance($params);
+
+
+    # Perform Transaction Here & Generate $results Array, eg:
+    return  $instance->before_capture($params);
+
+
+
+}
+
 
 function checkoutapipayment_refund($params) {
+    $_config = array();
+    $amountCents = (int)$params['amount']*100 ;
+    $_config['authorization'] = $params['secretkey'];
+    $_config['mode'] = $params['modetype'];
+    $_Api = CheckoutApi_Api::getApi(array('mode'=>$_config['mode']));
+    $GATEWAY = getGatewayVariables('checkoutapipayment');
+    $_config['chargeId'] = $params['gatewayid'] ;
+    $_config['postedParam'] = array (
+        'value'=>$amountCents
+    );
+
+    $_refundCharge = $_Api->refundCharge($_config);
 
 
+    if($_refundCharge->isValid() && $_refundCharge->getRefunded() &&
+        preg_match('/^1[0-9]+$/',$_refundCharge->getResponseCode())) {
+        logTransaction($GATEWAY["name"],$_refundCharge->toArray(),"Success");
+        return array("status"=>"success","transid"=>$params["invoiceid"],"rawdata"=>$_refundCharge->getRawRespond());
+    }
+    logTransaction($GATEWAY["name"],$_refundCharge->toArray(),"fail");
+    return array("status"=>"error","rawdata"=>$_refundCharge->getRawRespond());
 
-//	# Return Results
-//	if ($results["status"]=="success") {
-//		return array("status"=>"success","transid"=>$results["transid"],"rawdata"=>$results);
-//	} elseif ($gatewayresult=="declined") {
-//        return array("status"=>"declined","rawdata"=>$results);
-//    } else {
-//		return array("status"=>"error","rawdata"=>$results);
-//	}
 
 }
 

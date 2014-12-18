@@ -4,18 +4,20 @@ class model_methods_creditcard extends model_methods_Abstract
 
     public function before_process()
     {
-        global  $HTTP_POST_VARS,$order;
 
-        $config = parent::before_process();
-
-        $config['postedParam']['email'] = $HTTP_POST_VARS['cko_cc_email'];
-        $config['postedParam']['cardToken'] = $HTTP_POST_VARS['cko_cc_token'];
-        $this->_placeorder($config);
     }
 
     public function  before_capture($params)
     {
-        print_r($params);die();
+
+        global  $HTTP_POST_VARS,$order;
+
+        $config = parent::before_capture($params);
+
+        $config['postedParam']['email'] = $_POST['cko-cc-email'];
+        $config['postedParam']['cardToken'] = $_POST['cko-cc-token'];
+        return $this->_placeorder($config);
+
     }
 
     public function getFooterHtml($param)
@@ -34,8 +36,6 @@ class model_methods_creditcard extends model_methods_Abstract
         $config['cardTokenReceivedEvent'] = "
                         document.getElementById('cko-cc-token').value = event.data.cardToken;
                         document.getElementById('cko-cc-email').value = event.data.email;
-
-                        //$('.ordernow').trigger('click');
                         ";
         $config['widgetRenderedEvent'] ="if ($('.cko-pay-now')) {
                                                 $('.cko-pay-now').hide();
@@ -46,7 +46,7 @@ class model_methods_creditcard extends model_methods_Abstract
                 publicKey: '".$GATEWAY['publickey']."',
                 debugMode: true,
                 ready: function() {
-                var submit = document.getElementById('mainfrm').onsubmit;
+
                     CKOAPI.monitorForm('#mainfrm');
                     $('[name=ccnumber]').attr('data-checkout','email-address');
                     $('#expiry-month').val($('#ccexpirymonth').val());
@@ -63,18 +63,20 @@ class model_methods_creditcard extends model_methods_Abstract
 
                     $('[name=cccvv]').attr('data-checkout','cvv');
                     $('[name=ccnumber]').attr('data-checkout','card-number');
-                    console.log(submit+'');
+                    $('[name^=submit]').remove();
+                    $('#mainfrm').attr('action','/cart.php?a=checkout&submit=true');
+
                 },
                 formMonitored: function(event) {
 
                 },
                 formSubmitted: function(event) {
-                    $('#mainfrm').trigger('submit');
+
 
                 }
             };
         </script>
-        <script  src='https://www.checkout.com/cdn/js/CKOAPI.js'></script>";
+        <script  src='https://www.checkout.com/cdn/js/CKOAPI.js' async ></script>";
         $html.='<div style="display:block" class="widget-container"><input data-checkout="email-address" type="hidden" placeholder="Enter your e-mail address" class="input-control" value="'. $config['email'] .'"/>
                 <input data-checkout="card-name" type="hidden" placeholder="Enter the name on your card" autocomplete="off" class="input-control" value="'. $config['name'].'" />
                 <input data-checkout="expiry-month" id="expiry-month" type="hidden" placeholder="MM" autocomplete="off" class="input-control center-align" maxlength="2" value=""/>
