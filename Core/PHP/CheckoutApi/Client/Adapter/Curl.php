@@ -92,7 +92,6 @@ class CheckoutApi_Client_Adapter_Curl extends CheckoutApi_Client_Adapter_Abstrac
 			curl_setopt($resource, CURLOPT_POSTFIELDS, $this->getPostedParam());
 		}
 
-		
 		curl_setopt($resource, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($resource, CURLOPT_SSL_VERIFYPEER, false);
 
