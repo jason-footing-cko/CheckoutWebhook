@@ -231,11 +231,19 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
                 // get the shopping cart items for current customer
                 var cart = customer.ShoppingCartItems.Where(x => x.ShoppingCartType == ShoppingCartType.ShoppingCart).ToList();
 
-
                 ViewBag.publickey = CheckoutapipaymentPaymentSettings.PublicKey;
                 ViewBag.email = customer.BillingAddress.Email;
+
+                ViewBag.name = customer.BillingAddress.FirstName + ' ' + customer.BillingAddress.LastName;
                 ViewBag.currency = EngineContext.Current.Resolve<IWorkContext>().WorkingCurrency.CurrencyCode;
-                ViewBag.amount = (Convert.ToInt32(EngineContext.Current.Resolve<IOrderTotalCalculationService>().GetShoppingCartTotal(cart)*100)).ToString();
+                ViewBag.amount = (Convert.ToInt32(EngineContext.Current.Resolve<IOrderTotalCalculationService>().GetShoppingCartTotal(cart) * 100)).ToString();
+                ViewBag.addressLine1 = customer.BillingAddress.Address1;
+                ViewBag.addressLine2 = customer.BillingAddress.Address2;
+                ViewBag.postcode = customer.BillingAddress.ZipPostalCode;
+                ViewBag.city = customer.BillingAddress.City;
+                ViewBag.state = customer.BillingAddress.StateProvince.Abbreviation;
+                ViewBag.country = customer.BillingAddress.Country.ThreeLetterIsoCode;
+                ViewBag.phone = customer.BillingAddress.PhoneNumber;
 
 
                 model.cko_cc_token = form["CardToken"];
@@ -275,10 +283,20 @@ namespace Nop.Plugin.Payments.Checkoutapipayment.Controllers
             }
             else{
                 //Checkout JS
+                var warnings = new List<string>();
+                var model = new CreditCardModel()
+                {
+                    cko_cc_token = form["cko_cc_token"],
+                    cko_cc_email = form["cko_cc_email"]
+                };
 
-                // validation is done within Checkout JS 
-                // no validator is needed here
-                return null;
+                if(model.cko_cc_email == null){
+                    warnings.Add("Email Can't be null");
+                }
+                if(model.cko_cc_token == null){
+                    warnings.Add ("Card has not been tokenised, please verify your payment details");
+                }
+                return warnings;
             }
         }
 

@@ -239,8 +239,8 @@ namespace Nop.Plugin.Payments.Checkoutapipayment
 
                 checkoutapipaymentRequest.currency = currency;
                 checkoutapipaymentRequest.description = description;
-                checkoutapipaymentRequest.email = processPaymentRequest.CustomValues["cko-cc-email"].ToString();
-                checkoutapipaymentRequest.cardToken = processPaymentRequest.CustomValues["cko-cc-token"].ToString();
+                checkoutapipaymentRequest.email = processPaymentRequest.CustomValues["cko_cc_email"].ToString();
+                checkoutapipaymentRequest.cardToken = processPaymentRequest.CustomValues["cko_cc_token"].ToString();
 
                 checkoutapipaymentRequest.shippingDetails = checkoutapipaymentShipping;
                 string gatewayUrl = GatewayUrl() + "charges/token";

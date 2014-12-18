@@ -1,59 +1,62 @@
 ﻿@{
     Layout = "";
 }
+@model Nop.Plugin.Payments.Checkoutapipayment.Models.CreditCardModel
 @using Nop.Web.Framework;
 @using Nop.Plugin.Payments.Checkoutapipayment
 
-<p>Please Select Your Credit / Debit Card </p>
+<p>Please Select your Credit Card Type</p>
 
-<div class="content" id="payment">
-    <input type="hidden" name="cko_cc_token" id="cko-cc-token" value="">
-    <input type="hidden" name="cko_cc_email" id="cko-cc-email" value="" />
+<table>
+    <tr>
+        <td>
+            @Html.TextBoxFor(model => model.cko_cc_token, new { @type = "hidden" })
+        </td>
+    <tr>
+    <tr>
+        <td>
+            @Html.TextBoxFor(model => model.cko_cc_email, new { @type = "hidden" })
+        </td>
+    <tr>
+</table>
+
+<script src="https://www.checkout.com/cdn/js/Checkout.js"></script>
+<div style="" class="widget-container">
+    <script type="text/javascript">
+        window.CKOConfig = {
+            namespace: 'CKOJS',
+            publicKey: '@ViewBag.publickey',
+            customerEmail: '@ViewBag.email',
+            customerName: '@ViewBag.name',
+            value: '@ViewBag.amount',
+            currency: '@ViewBag.currency',
+            billingDetails: {
+                addressLine1: '@ViewBag.addressLine1',
+                addressLine2: '@ViewBag.addressLine2',
+                postcode: '@ViewBag.postcode',
+                country: '@ViewBag.country',
+                city: '@ViewBag.city',
+                state: '@ViewBag.state',
+                phone: '@ViewBag.phone'
+            },
+            widgetContainerSelector: '.widget-container',
+            widgetRendered: function (event) {
+                $(".cko-pay-now").hide();
+            },
+            cardTokenReceived: function (event) {
+                document.getElementById('cko_cc_token').value = event.data.cardToken;
+                document.getElementById('cko_cc_email').value = event.data.email;
+            }
+        };
+
+    </script>
+
 </div>
 
 
-<script src="http://ckofe.com/js/Checkout.js"></script>
-
-<DIV class="widget-container"></DIV>
-    <SCRIPT type="text/javascript">
-        function checkoutRender(){
-            Checkout.render({
-                publicKey: '@ViewBag.publickey',
-                userEmail: '@ViewBag.email',
-                amount: @Convert.ToInt32(@ViewBag.amount),
-                currency: '@ViewBag.currency',
-                widgetContainerSelector: '.widget-container',
-                widgetRendered: function(event) {
-                    $(".cko-pay-now").hide();
-                },
-                cardTokenReceived: function(event) {
-                    console.log('card token: ', event.data.cardToken);
-                    console.log('email: ', event.data.email);
-                    document.getElementById('cko-cc-token').value = event.data.cardToken;
-                    document.getElementById('cko-cc-email').value = event.data.email;
-                }
-            });
-        }
 
 
-        function loadExtScript(src, test, callback) {
-            var s = document.createElement('script');
-            s.src = src;
-            document.body.appendChild(s);
 
-            var callbackTimer = setInterval(function() {
-
-                if(typeof Checkout!='undefined'){
-                    clearInterval(callbackTimer);
-                    checkoutRender();
-                }
-            }, 100);
-        }
-
-        loadExtScript('http://ckofe.com/js/Checkout.js',checkoutRender,function(){})
-
-
-    </SCRIPT>
 
 
 
