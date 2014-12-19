@@ -96,8 +96,6 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
             $_order->registerCancellation('Transaction has been void')
                 ->save();
 
-
-
                 $_rawInfo = $_refundCharge->toArray();
                 $_payment->setAdditionalInformation('rawrespond',$_rawInfo);
                 $_payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$_rawInfo);

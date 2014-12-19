@@ -36,7 +36,8 @@
 
             <script>
                 <?php echo $this->renderJsConfig() ?>
-                Checkout.render();
+
+                Checkout.render(<?php echo $this->renderJsConfig() ?>);
             </script>
 
         </div>

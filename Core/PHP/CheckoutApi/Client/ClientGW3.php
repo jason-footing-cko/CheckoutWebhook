@@ -1269,6 +1269,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
                 debugMode: '{$config['debug']}',
                 publicKey: '{$config['publicKey']}',
                 customerEmail: '{$config['email']}',
+                namespace: 'CheckoutIntegration',
                 customerName: '{$config['name']}',
                 value: '{$config['amount']}',
                 currency: '{$config['currency']}',
@@ -1281,9 +1282,10 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
                  },
 
                 ready: function() {
-                     {$config['readyEvent']}
+                     {$config['readyEvent']};
+
                 }
-            };";
+            }";
         return $script;
     }
 }
