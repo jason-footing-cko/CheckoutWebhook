@@ -26,7 +26,7 @@ final class CheckoutApi_Utility_Utilities
 	public static function dump($toPrint)
 	{
 		echo '<pre>';
-			var_dump($toPrint);
+			print_r($toPrint);
 		echo '</pre>';
 	}
 }

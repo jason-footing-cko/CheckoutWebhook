@@ -161,12 +161,11 @@ abstract class model_methods_Abstract {
                 'MODULE_PAYMENT_CHECKOUTAPIPAYMENT_SORT_ORDER',
 
 
-
-
-
         );
     }
-    public function remove() {
+
+    public function remove() 
+    {
         tep_db_query("delete from " . TABLE_CONFIGURATION . " where configuration_key in ('" . implode("', '", $this->keys()) . "')");
     }
 
@@ -286,8 +285,7 @@ abstract class model_methods_Abstract {
                 'desc' => 'Verify gateway server SSL certificate on connection?',
                 'value' => 'True',
                 'set_func' => 'tep_cfg_select_option(array(\'True\', \'False\'), '),
-            'MODULE_PAYMENT_CHECKOUTAPIPAYMENT_PROXY' => array('title' => 'Proxy Server',
-                'desc' => 'Send API requests through this proxy server. (host:port, eg: 123.45.67.89:8080 or proxy.example.com:8080)'),
+          
             'MODULE_PAYMENT_CHECKOUAPIPAYMENT_LOCALPAYMENT_ENABLE' => array('title' => 'Enable localPayment',
 
                 'desc' => 'Enable localpayment using the js.',

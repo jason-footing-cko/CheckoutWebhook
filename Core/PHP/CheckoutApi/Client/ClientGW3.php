@@ -1265,8 +1265,10 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
      */
     public function getJsConfig($config)
     {
+       $renderMode = isset($config['renderMode'])?$config['renderMode']:0;
         $script = " window.CKOConfig = {
-                debugMode: '{$config['debug']}',
+                debugMode: false,
+                renderMode:{$renderMode},
                 publicKey: '{$config['publicKey']}',
                 customerEmail: '{$config['email']}',
                 namespace: 'CheckoutIntegration',
