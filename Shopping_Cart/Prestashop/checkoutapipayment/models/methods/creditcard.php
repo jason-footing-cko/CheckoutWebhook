@@ -20,11 +20,31 @@ class models_methods_creditcard extends models_methods_Abstract
         $total = (float)$cart->getOrderTotal(true, Cart::BOTH);
         $amountCents = (int)$total*100;
         $customer = new Customer((int)$cart->id_customer);
+        $Api = CheckoutApi_Api::getApi(array('mode'=> Configuration::get('CHECKOUTAPI_TEST_MODE')));
+        $config = array();
+        $config['debug'] = false;
+        $config['publicKey'] = Configuration::get('CHECKOUTAPI_PUBLIC_KEY') ;
+        $config['email'] =  $customer->email;
+        $config['name'] = $customer->firstname . ' '.$customer->lastname ;
+        $config['amount'] =  $amountCents;
+        $config['currency'] =   $currency->iso_code;
+        $config['widgetSelector'] =  '.widget-container';
+        $config['cardTokenReceivedEvent'] = "
+                document.getElementById('cko-cc-token').value = event.data.cardToken;
+                document.getElementById('cko-cc-email').value = event.data.email;
+                document.getElementById('checkoutapipayment_form').submit();";
+
+        $config['widgetRenderedEvent'] ="";
+        $config['readyEvent'] = '';
+
+
+        $jsConfig = $Api->getJsConfig($config);
 
         return  array(
             'hasError' 			=>	 $hasError,
             'methodType' 		=>	 $this->getCode(),
             'template'          =>   'js.tpl',
+            'jsScript'          =>   $jsConfig,
             'simulateEmail'     =>   'dhirajmetal@mail.com',
             'publicKey'         =>    Configuration::get('CHECKOUTAPI_PUBLIC_KEY'),
             'mailAddress'       =>   $customer->email,

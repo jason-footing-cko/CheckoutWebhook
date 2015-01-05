@@ -159,7 +159,7 @@ abstract class models_Checkoutapi extends PaymentModule  implements models_Inter
         $config['timeout'] =  Configuration::get('CHECKOUTAPI_GATEWAY_TIMEOUT');
 
         $config['postedParam'] =array (
-            'amount'    =>  $amountCents
+            'value'    =>  $amountCents
           );
 
         $Api = CheckoutApi_Api::getApi(array('mode'=> Configuration::get('CHECKOUTAPI_TEST_MODE')));

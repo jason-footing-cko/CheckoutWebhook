@@ -3,36 +3,13 @@
     <div class="widget-container"></div>
     <input type="hidden" name="cko_cc_token" id="cko-cc-token" value="">
     <input type="hidden" name="cko_cc_email" id="cko-cc-email" value="" />
-    <script type="text/javascript" src="http://ckofe.com/js/Checkout.js"></script>
+
+    <script async src="https://www.checkout.com/cdn/js/Checkout.js"></script>
     <script type="text/javascript">
-     function CheckoutReady() {
-         jQuery('#click_checkoutprestashop').attr('href','javascript:void(0');
-         Checkout.render({
-             publicKey: "{$publicKey}",
-             userEmail: '{$mailAddress}',
-             amount: "{$amount}",
-             currency: "{$currency}",
-             widgetContainerSelector: '.widget-container',
-             widgetRendered: function (event) {
-
-             },
-             cardTokenReceived: function (event) {
-                 document.getElementById('cko-cc-token').value = event.data.cardToken;
-                 document.getElementById('cko-cc-email').value = event.data.email;
-                 // payment.save();
-                 document.getElementById('checkoutapipayment_form').submit();
-             }
-         });
-
-
-     }
-        if (window.addEventListener) {
-
-            window.addEventListener('load', CheckoutReady, false)
-        }
-        else if (window.attachEvent) {
-            window.attachEvent('onload', CheckoutReady)
-        }
+        jQuery(function(){
+            jQuery('#click_checkoutprestashop').attr('href','javascript:void(0');
+        });
+    {$jsScript}
 
     </script>
 </form>

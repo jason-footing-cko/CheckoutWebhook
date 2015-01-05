@@ -30,7 +30,7 @@ abstract class models_methods_Abstract extends PaymentModule  implements models_
     {
 
         $Api = CheckoutApi_Api::getApi(array('mode'=> Configuration::get('CHECKOUTAPI_TEST_MODE')));
-       
+
         return $Api->createCharge($config);
     }
 }

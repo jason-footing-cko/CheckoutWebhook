@@ -72,6 +72,8 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
             $this->module->validateOrder((int)$cart->id, Configuration::get('PS_OS_ERROR'),
                 $total, $this->module->displayName, $respondCharge->getExceptionState()->getErrorMessage(), NULL, (int)$currency->id,
                 false, $customer->secure_key);
+            $dbLog = models_FactoryInstance::getInstance( 'models_DataLayer' );
+            $dbLog->logCharge($this->module->currentOrder,$respondCharge,$respondCharge);
 
         }
 
