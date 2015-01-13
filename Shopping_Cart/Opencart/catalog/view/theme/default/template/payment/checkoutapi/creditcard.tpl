@@ -12,64 +12,25 @@
 
 
         function checkoutRender() {
-            Checkout.render({
-                publicKey: "<?php echo $entry_public_key ?>",
-                userEmail: "<?php echo $order_email ?>",
-                value: "<?php echo $amount ?>",
-                currency: "<?php echo $order_currency ?>",
-                widgetContainerSelector: '.widget-container',
-                widgetRendered: function (event) {
-
-                    //             if ($$('.cko-pay-now')[0]) {
-                    //                 $$('.cko-pay-now')[0].hide();
-                    //             }
-                },
-                cardTokenReceived: function (event) {
-                    document.getElementById('cko-cc-token').value = event.data.cardToken;
-                    document.getElementById('cko-cc-email').value = event.data.email;
-                    // payment.save();
-
-                    $.ajax({
-                        url: 'index.php?route=payment/checkoutapipayment/send',
-                        type: 'post',
-                        data: $('#payment :input'),
-                        dataType: 'json',
-                        beforeSend: function () {
-                            $('#button-confirm').attr('disabled', true);
-                            $('#payment').before('<div class="attention"><img src="catalog/view/theme/default/image/loading.gif" alt="" /> <?php echo $text_wait; ?></div>');
-                        },
-                        complete: function () {
-                            $('#button-confirm').attr('disabled', false);
-                            $('.attention').remove();
-                        },
-                        success: function (json) {
-
-                            if (json['error']) {
-                                alert(json['error']);
-                            }
-
-                            if (json['success']) {
-                                 location = json['success'];
-                            }
-                        }
-                    });
-                }
-            });
+            Checkout.render(<?php echo $jsconfig ?>);
 
         }
         function loadExtScript(src, test, callback) {
-            var s = document.createElement('script');
-            s.src = src;
-            document.body.appendChild(s);
 
+            if(!document.getElementById('checkoutApiJs')) {
+                var s = document.createElement('script');
+                s.src = src;
+                s.id = 'checkoutApiJs';
+                document.body.appendChild(s);
+            }
             var callbackTimer = setInterval(function() {
 
                if(typeof Checkout!='undefined'){
                    clearInterval(callbackTimer);
                    checkoutRender();
                }
-            }, 100);
+            }, 180);
         }
 
-        loadExtScript('http://ckofe.com/js/Checkout.js',checkoutRender,function(){})
+        loadExtScript('https://www.checkout.com/cdn/js/Checkout.js',checkoutRender,function(){})
     </script>

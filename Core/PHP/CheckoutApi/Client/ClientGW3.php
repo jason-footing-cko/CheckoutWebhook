@@ -1266,6 +1266,9 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
     public function getJsConfig($config)
     {
        $renderMode = isset($config['renderMode'])?$config['renderMode']:0;
+       $config['widgetRenderedEvent'] = isset($config['widgetRenderedEvent'])?$config['widgetRenderedEvent']:'';
+       $config['cardTokenReceivedEvent'] = isset($config['cardTokenReceivedEvent'])?$config['cardTokenReceivedEvent']:'';
+       $config['readyEvent'] = isset($config['readyEvent'])?$config['readyEvent']:'';
         $script = " window.CKOConfig = {
                 debugMode: false,
                 renderMode:{$renderMode},

@@ -124,12 +124,12 @@ class osC_Payment_checkoutapipayment extends osC_Payment_Admin
         $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION .
             " (configuration_title, configuration_key, configuration_value, configuration_description,
       configuration_group_id, sort_order, date_added) values
-       ('Set auto capture time.', 'MODULE_PAYMENT_CHECKOUAPIPAYMENT_AUTOCAPTIME', '0', 'the gateway will use this time to caputure the transaction.', '6', '0', now())");
+       ('Set auto capture time.', 'MODULE_PAYMENT_CHECKOUAPIPAYMENT_AUTOCAPTIME', '0', 'Time taken by the gateway  to caputure the transaction.', '6', '0', now())");
 
         $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION .
             " (configuration_title, configuration_key, configuration_value, configuration_description,
       configuration_group_id, sort_order, date_added) values
-       ('Set Gateway timeout.', 'MODULE_PAYMENT_CHECKOUAPIPAYMENT_GATEWAY_TIMEOUT', '60', 'Set how long request timeout on server..', '6', '0', now())");
+       ('Set Gateway timeout.', 'MODULE_PAYMENT_CHECKOUAPIPAYMENT_GATEWAY_TIMEOUT', '60', 'Set how long request timeout on server.', '6', '0', now())");
 
         $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION .
             " (configuration_title, configuration_key, configuration_value, configuration_description,

@@ -29,17 +29,18 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
         if($_captureCharge->isValid() && $_captureCharge->getCaptured() &&
             preg_match('/^1[0-9]+$/',$_captureCharge->getResponseCode()) ) {
 
-            if ($_payment->getMethodInstance() instanceof CheckoutApi_ChargePayment_Model_Method_Creditcard) {
+            if ($_payment->getMethodInstance() instanceof CheckoutApi_ChargePayment_Model_Method_Abstract) {
 
                 $_payment->capture(null);
                 $_rawInfo = $_captureCharge->toArray();
 
                 $_payment->setAdditionalInformation('rawrespond',$_rawInfo);
                 $_payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$_rawInfo);
+                $orderStatus = $this->getConfigData('order_status_capture');
 
-                $_order->setState(Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE_CAPTURE ,false );
+                $_order->setStatus($orderStatus ,false );
 
-                $_order->addStatusToHistory(Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE_CAPTURE, 'Payment Sucessfully captured
+                $_order->addStatusToHistory($orderStatus, 'Payment Sucessfully captured
                   with Transaction ID '.$_captureCharge->getId());
 
                 $_order->save();
@@ -54,7 +55,8 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
 
         }
 
-        $this->_redirectReferer();
+
+     $this->_redirectReferer();
     }
 
     public  function  VoidAction()

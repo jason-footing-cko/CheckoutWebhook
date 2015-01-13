@@ -20,9 +20,9 @@ final class CheckoutApi_Lib_Factory extends CheckoutApi_Lib_Object
      * Simple usage:
      *      CheckoutApi_Lib_Factory::getInstance('CheckoutApi_Client_ClientGW3');
      */
-	public static function getInstance($className) 
+	public static function getInstance($className, array $arguments = array())
 	{
-		return new $className;
+		return new $className($arguments);
 	}
 
     /**

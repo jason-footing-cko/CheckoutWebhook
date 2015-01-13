@@ -24,8 +24,8 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
                 $rawInfo = $respondCharge->toArray();
                 $payment->setAdditionalInformation('rawrespond',$rawInfo);
                 $payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$rawInfo);
-                $orderStatus = $this->getConfigData('order_status');
-                $order->setState($orderStatus ,false );
+                $orderStatus = $this->getConfigData('order_status_capture');
+                $order->setStatus($orderStatus ,false );
 
                 $order->addStatusToHistory($orderStatus, $messageSuccess.$respondCharge->getId()
                     .' and respond code '.$respondCharge->getResponseCode(), false);
@@ -137,6 +137,7 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
      */
     public function capture(Varien_Object $payment, $amount)
     {
+
         if (!$this->canCapture()) {
             Mage::throwException(Mage::helper('payment')->__('Capture action is not available.'));
 

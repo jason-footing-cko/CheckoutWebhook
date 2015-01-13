@@ -155,6 +155,7 @@
                 <cctypes>AE,VI,MC,DI</cctypes>
                 <model>checkoutapi_chargePayment/method_creditcardpci</model>
                 <order_status>processing</order_status>
+                <order_status_capture>processing</order_status_capture>
                 <title>Credit Card (Checkout.com) pci</title>
                 <payment_action>authorize</payment_action>
                 <allowspecific>0</allowspecific>
@@ -168,7 +169,8 @@
                 <model>checkoutapi_chargePayment/method_creditcard</model>
                 <order_status>processing</order_status>
                 <title>Credit Card (Checkout.com)</title>
-                <payment_action>authorize</payment_action>
+                <payment_action>processing</payment_action>
+                <order_status_capture>processing</order_status_capture>
                 <allowspecific>0</allowspecific>
                 <mode>dev</mode>
                 <timeout>60</timeout>
@@ -177,7 +179,8 @@
             <localpayment>
                 <active>0</active>
                 <model>checkoutapi_chargePayment/method_localpayment</model>
-                <order_status>authorize</order_status>
+                <order_status>processing</order_status>
+                <order_status_capture>processing</order_status_capture>
                 <title>Local payment provider(s)</title>
                 <allowspecific>0</allowspecific>
 
