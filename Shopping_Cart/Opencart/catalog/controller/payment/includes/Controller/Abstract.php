@@ -65,6 +65,7 @@ abstract class Controller_Abstract extends Controller
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
         //building charge
+
         $respondCharge = $this->_createCharge();
 
         if( $respondCharge->isValid()) {
@@ -125,7 +126,7 @@ abstract class Controller_Abstract extends Controller
 
         $products = array();
         foreach ($productsLoad as $item ) {
-           
+
             $products[] = array (
                 'name'       =>     $item['name'],
                 'sku'        =>     $item['key'],

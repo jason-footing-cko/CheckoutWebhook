@@ -21,23 +21,29 @@ if (!class_exists('vmPSPlugin')) {
          $this->tableFields = array_keys ($this->getTableSQLFields ());
          $this->_tablepkey = 'id';
          $this->_tableId = 'id';
+         $this->_currentMethod = '';
 
      }
 
      public function getCurrentMethod()
      {
-         if(is_null($this->_current)){
+
+
+         if(is_null($this->_currentMethod)){
+             $this->_currentMethod = $this->methods[0];
+         }elseif($this->_currentMethod->virtuemart_paymentmethod_id!=$this->methods[0]->virtuemart_paymentmethod_id) {
              $this->_currentMethod = $this->methods[0];
          }
+
          return $this->_currentMethod;
      }
 
-     public function getInstance()
+     public function getInstance($modetype=null)
      {
 
          if(!$this->_instance) {
-
-             switch($this->getCurrentMethod()->mode_type) {
+             $type = ($modetype)?$modetype:$this->getCurrentMethod()->mode_type;
+             switch($type) {
                  case '1':
 
                      $this->_instance = CheckoutApi_Lib_Factory::getInstance('model_methods_creditcardpci');
@@ -56,19 +62,20 @@ if (!class_exists('vmPSPlugin')) {
 
      function getTableSQLFields ()
      {
-         $SQLfields = array(
-             'id' => 'int(1) UNSIGNED NOT NULL AUTO_INCREMENT',
-             'virtuemart_order_id' => 'int(1) UNSIGNED',
-             'transaction_id' => 'char(64)',
-             'gateway_id' => 'varchar(255)',
-
-             'product' => 'varchar(255)',
-             'quantity' => 'varchar(255)',
-             'total' => 'decimal(15,5) NOT NULL DEFAULT \'0.00000\'',
-             'action' => 'char(255)',
-             'comments' => 'varchar(255)',
-             'referer' => 'varchar(255)',
-             'tax_id' => 'smallint(1)',
+         $SQLfields = array
+         (
+             'id' 	                => 'int(1) UNSIGNED NOT NULL AUTO_INCREMENT',
+             'virtuemart_order_id'  => 'int(1) UNSIGNED',
+             'order_number'         => 'char(64)',
+             'transaction_id'       => 'char(64)',
+             'virtuemart_paymentmethod_id' => 'mediumint(1) UNSIGNED',
+             'payment_name'         => 'varchar(5000)',
+             'payment_order_total'  => 'decimal(15,5) NOT NULL',
+             'payment_currency'     => 'smallint(1)',
+             'return_context'       => 'char(255)',
+             'cost_per_transaction' => 'decimal(10,2)',
+             'cost_percent_total'   => 'char(10)',
+             'tax_id'               => 'smallint(1)',
              'rawOutput' => 'text'
          );
          return $SQLfields;
@@ -115,13 +122,43 @@ if (!class_exists('vmPSPlugin')) {
      public function plgVmDisplayListFEPayment (VirtueMartCart $cart, $selected = 0, &$htmlIn)
      {
 
-         if(parent::displayListFE($cart,$selected,$htmlIn)) {
-              $this->getInstance()->plgVmDisplayListFEPayment($cart, $selected, $htmlIn, $this);
-             return true;
-         }else {
-             return false;
+         if ($this->getPluginMethods($cart->vendorId) === 0) {
+             if (empty($this->_name)) {
+                 $app = JFactory::getApplication();
+                 $app->enqueueMessage(vmText::_('COM_VIRTUEMART_CART_NO_' . strtoupper($this->_psType)));
+                 return false;
+             } else {
+                 return false;
+             }
          }
 
+         return $this->getInstance()->plgVmDisplayListFEPayment($cart, $selected, $htmlIn, $this);
+
+
+
+     }
+
+     public function plgVmOnSelectCheckPayment(VirtueMartCart $cart, &$msg)
+     {
+
+         $currentObj = $this->getVmPluginMethod($cart->virtuemart_paymentmethod_id);
+         if (!$this->selectedThisByMethodId($cart->virtuemart_paymentmethod_id)) {
+             return NULL; // Another method was selected, do nothing
+         }
+
+         if (!($this->_currentMethod = $this->getVmPluginMethod($cart->virtuemart_paymentmethod_id))) {
+             return FALSE;
+         }
+
+
+          $this->getInstance($currentObj->mode_type)->plgVmOnSelectCheckPayment($cart, $msg, $this);
+         return true;
+
+     }
+
+     public  function  VmPluginMethod($int, $cache = true)
+     {
+        return $this->getVmPluginMethod($int,$cache);
      }
 
      protected function checkConditions ($cart, $method, $cart_prices)
@@ -179,6 +216,77 @@ if (!class_exists('vmPSPlugin')) {
          return $this->getPluginHtml($currentMethod,$selected,$methodSalesPrice);
      }
 
+     public function plgVmOnSelectedCalculatePricePayment(VirtueMartCart $cart, array &$cart_prices, &$payment_name)
+     {
 
+         if (!($this->_currentMethod = $this->getVmPluginMethod($cart->virtuemart_paymentmethod_id))) {
+             return null; // Another method was selected, do nothing
+         }
+         if (!$this->selectedThisElement($this->_currentMethod->payment_element)) {
+             return false;
+         }
 
+         $this->getInstance()->getSessionData();
+         $cart_prices['payment_tax_id'] = 0;
+         $cart_prices['payment_value'] = 0;
+
+         if (!$this->checkConditions($cart, $this->_currentMethod, $cart_prices)) {
+             return false;
+         }
+         $payment_name = $this->renderPluginName($this->_currentMethod);
+
+         $this->setCartPrices($cart, $cart_prices, $this->_currentMethod);
+
+         return true;
+     }
+
+    public function plgVmConfirmedOrder(VirtueMartCart $cart, $order)
+    {
+
+        if (!($this->_currentMethod = $this->getVmPluginMethod($cart->virtuemart_paymentmethod_id))) {
+            return null; // Another method was selected, do nothing
+        }
+        if (!$this->selectedThisElement($this->_currentMethod->payment_element)) {
+            return false;
+        }
+        if (!($this->_currentMethod = $this->getVmPluginMethod($cart->virtuemart_paymentmethod_id))) {
+            return false; // Another method was selected, do nothing
+        }
+
+        $this->setInConfirmOrder($cart);
+        $this->getInstance()->plgVmConfirmedOrder( $cart, $order,$this);
+        $response_fields = $this->getInstance()->process( $cart, $order,$this);
+       // $payment_currency_id = shopFunctions::getCurrencyIDByName(self::AUTHORIZE_DEFAULT_PAYMENT_CURRENCY);
+        //$totalInPaymentCurrency = vmPSPlugin::getAmountInCurrency($order['details']['BT']->order_total, $payment_currency_id);
+
+        if($response_fields['status']) {
+
+            $dbValues['order_number'] = $order['details']['BT']->order_number;
+            $dbValues['virtuemart_order_id'] = $order['details']['BT']->virtuemart_order_id;
+            $dbValues['payment_method_id'] = $order['details']['BT']->virtuemart_paymentmethod_id;
+            $dbValues['transaction_id'] = $response_fields['transaction_id'];
+            $dbValues['payment_name'] = parent::renderPluginName($this->_currentMethod);
+            $dbValues['cost_per_transaction'] = $this->_currentMethod->cost_per_transaction;
+            $dbValues['cost_percent_total'] = $this->_currentMethod->cost_percent_total;
+            //$dbValues['payment_order_total'] = $totalInPaymentCurrency['value'];
+            //$dbValues['payment_currency'] = $payment_currency_id;
+            $this->debugLog("before store", "plgVmConfirmedOrder", 'debug');
+
+            $new_status = $this->_currentMethod->payment_approved_status;
+            $html = $this->getSucessMessage();
+
+        }else {
+
+        }
+
+        $modelOrder = VmModel::getModel('orders');
+        $order['order_status'] = $new_status;
+        $order['customer_notified'] = 1;
+        $order['comments'] = '';
+        $modelOrder->updateStatusForOneOrder($order['details']['BT']->virtuemart_order_id, $order, TRUE);
+
+        //We delete the old stuff
+        $cart->emptyCart();
+        vRequest::setVar('html', $html);
+    }
  }

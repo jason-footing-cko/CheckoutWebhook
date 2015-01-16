@@ -12,25 +12,54 @@
 
 
         function checkoutRender() {
-            Checkout.render(<?php echo $jsconfig ?>);
+
 
         }
-        function loadExtScript(src, test, callback) {
+        function loadExtScript(src) {
 
             if(!document.getElementById('checkoutApiJs')) {
                 var s = document.createElement('script');
                 s.src = src;
+                s.type = 'text/javascript';
                 s.id = 'checkoutApiJs';
-                document.body.appendChild(s);
-            }
-            var callbackTimer = setInterval(function() {
+                s.async = 'true';
+                s.onload =  function() {
+                    var rs = this.readyState; console.log(rs);
 
-               if(typeof Checkout!='undefined'){
-                   clearInterval(callbackTimer);
-                   checkoutRender();
-               }
-            }, 180);
+                    try {
+                        if(typeof Checkout!='undefined') {
+                            Checkout.render(<?php echo $jsconfig ?>);
+                        }
+
+
+                    } catch (e) {
+
+                    }
+                };
+
+                //document.body.appendChild(s);
+            }
+//            var callbackTimer = setInterval(function() {
+//
+//               if(typeof Checkout!='undefined'){
+//                   clearInterval(callbackTimer);
+//                   checkoutRender();
+//               }
+//            }, 180);
         }
 
-        loadExtScript('https://www.checkout.com/cdn/js/Checkout.js',checkoutRender,function(){})
+     //   loadExtScript('https://www.checkout.com/cdn/js/Checkout.js');
+
+        $.ajax({
+            url: '//checkout.com/cdn/js/Checkout.js',
+            dataType: 'script',
+            cache: true,
+            beforeSend: function(){
+                <?php echo $jsconfig ?>
+            },
+            success: function() {
+              //  Checkout.render();
+            }
+
+        });
     </script>

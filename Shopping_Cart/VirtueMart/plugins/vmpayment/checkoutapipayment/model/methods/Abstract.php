@@ -14,142 +14,146 @@ abstract class model_methods_Abstract
 
      public function plgVmDisplayListFEPayment(VirtueMartCart $cart, $selected = 0, &$htmlIn, $obj)
      {
+
          return $obj->displayListFE ($cart, $selected, $htmlIn);
      }
 
 
-    public function process()
+    public function process(VirtueMartCart $cart, $order,$obj)
     {
-        global $osC_Customer, $osC_Currencies, $osC_ShoppingCart;
-        $config = array();
-
-
-            $amountCents = (int)$osC_Currencies->formatRaw($osC_ShoppingCart->getTotal(),$osC_Currencies->getCode())*100;
-            $config['authorization'] = MODULE_PAYMENT_CHECKOUTAPIPAYMENT_SECRET_KEY;
-            $config['mode'] = MODULE_PAYMENT_CHECKOUTAPIPAYMENT_GATEWAY_SERVER;
+      
+            $amountCents = (int) $order['details']['BT']->order_total*100;
+            $config['authorization'] = $obj->_currentMethod->secret_key;
+            $config['mode'] = $obj->_currentMethod->mode_type;
+            $currency = CurrencyDisplay::getInstance();
+            $cart_currency_code = ShopFunctions::getCurrencyByID ($cart->pricesCurrency, 'currency_code_3');
+            $shippingAdd = isset($order['details']['ST'])?$order['details']['ST']:$order['details']['BT'];
             $shippingAddressConfig = array(
-                'addressLine1'       =>  $osC_ShoppingCart->getShippingAddress('street_address'),
-                'postcode'           =>  $osC_ShoppingCart->getShippingAddress('postcode'),
-                'country'            =>  $osC_ShoppingCart->getShippingAddress('country_title'),
-                'city'               =>  $osC_ShoppingCart->getShippingAddress('city'),
-                'phone'              =>  $osC_ShoppingCart->getShippingAddress('telephone_number'),
-                'recipientName'      =>  $osC_ShoppingCart->getShippingAddress('firstname'). ' '.$osC_ShoppingCart->getShippingAddress('lastname')
+                'addressLine1'       =>  $shippingAdd->address_1,
+                'addressLine2'       =>  $shippingAdd->address_2,
+                'postcode'           =>  $shippingAdd->zip,
+                'country'            =>  ShopFunctions::getCountryByID($shippingAdd->virtuemart_country_id,'country_3_code'),
+                'city'               =>  $shippingAdd->city,
+                'phone'              =>  $shippingAdd->phone_1,
+                'recipientName'      =>  $shippingAdd->first_name.' '. $order['details']['BT']->last_name
 
             );
             $products = array();
-            if ($osC_ShoppingCart->hasContents()) {
-                $i = 1;
-                foreach($osC_ShoppingCart->getProducts() as $product) {
+            $items = $order['details']['BT']->items;
+            if ($items) {
+
+                foreach($items as $product) {
 
                     $products[] = array (
-                        'name'       =>    $product['name'],
-                        'sku'        =>    $product['sku'],
-                        'price'      =>    $product['final_price'],
-                        'quantity'   =>     $product['quantity'],
+                        'name'       =>    $product->order_item_name,
+                        'sku'        =>    $product->order_item_sku,
+                        'price'      =>    $currency->roundForDisplay($product->product_final_price),
+                        'quantity'   =>    $product->product_quantity,
 
                     );
-                    $i++;
+
                 }
             }
-            $this->_order_id     = osC_Order::insert();
+
             $config['postedParam'] = array (
-                'email'             => $osC_Customer->getEmailAddress() ,
+                'email'             => $order['details']['BT']->email,
                 'value'             => $amountCents,
                 'shippingDetails'   => $shippingAddressConfig,
-                'currency'          => $osC_Currencies->getCode() ,
+                'currency'          =>$cart_currency_code ,
                 'products'         =>    $products,
-                'metadata'      =>    array("trackId" => $this->_order_id ),
+                'metadata'      =>    array("trackId" => $order['details']['BT']->virtuemart_order_id ),
                 'card'   => array(
                             'billingDetails' => array (
-                                                'addressLine1'       =>  $osC_ShoppingCart->getBillingAddress('street_address'),
-                                                'addressPostcode'    =>  $osC_ShoppingCart->getBillingAddress('postcode'),
-                                                'addressCountry'     =>  $osC_ShoppingCart->getBillingAddress('country_title'),
-                                                'addressCity'        =>  $osC_ShoppingCart->getBillingAddress('city'),
-                                                'addressPhone'       =>  $osC_ShoppingCart->getBillingAddress('telephone_number')
+                                            'addressLine1'       =>  $order['details']['BT']->address_1,
+                                            'addressLine2'       =>  $order['details']['BT']->address_2,
+                                            'postcode'           =>  $order['details']['BT']->zip,
+                                            'country'            =>  ShopFunctions::getCountryByID($order['details']['BT']->virtuemart_country_id,'country_3_code'),
+                                            'city'               =>  $order['details']['BT']->city,
+                                            'phone'              =>  $order['details']['BT']->phone_1,
 
                                              )
                              )
 
             );
 
-            if (MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD == 'Authorize and Capture') {
-                $config = array_merge( $this->_captureConfig(),$config);
+            if ($obj->_currentMethod->order_type == 'AUTH_CAPTURE') {
+                $config = array_merge( $this->_captureConfig($obj),$config);
             } else {
-                $config = array_merge( $this->_authorizeConfig(),$config);
+                $config = array_merge( $this->_authorizeConfig($obj),$config);
             }
 
         return $config;
     }
 
-    protected function _placeorder($config)
+    protected function _placeorder($config,$obj,$order)
     {
-        global $osC_Database, $osC_Customer, $osC_Currencies, $osC_ShoppingCart, $osC_Language, $messageStack, $osC_CreditCard;
-        $order_id = osC_Order::insert();
-        $error =   $error = $osC_Language->get('payment_checkoutapipayment_error_general');;
-        $respondCharge = $this->_createCharge($config);
-        $this->_currentCharge = $respondCharge;
+
+
+        $respondCharge = $this->_createCharge($config,$obj);
+
 
         if( $respondCharge->isValid()) {
             if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
-                osC_Order::process($this->_order_id, MODULE_PAYMENT_CHECKOUTAPIPAYMENT_PROCESSING_ORDER_STATUS_ID);
 
-                $Qtransaction = $osC_Database->query('insert into '.TABLE_ORDERS_TRANSACTIONS_HISTORY.'
-                                  (orders_id, transaction_code, transaction_return_value, transaction_return_status, date_added)
-                                  values (:orders_id, :transaction_code, :transaction_return_value, :transaction_return_status, now())');
-             //   $Qtransaction->bindTable(':table_orders_transactions_history', TABLE_ORDERS_TRANSACTIONS_HISTORY);
-                $Qtransaction->bindInt(':orders_id', $order_id);
-                $Qtransaction->bindInt(':transaction_code', $respondCharge->getRespondCode());
-                $Qtransaction->bindValue(':transaction_return_value', $respondCharge->getId());
-                $Qtransaction->bindInt(':transaction_return_status', 1);
-                $Qtransaction->execute();
+                $response_fields['virtuemart_order_id'] = $config['postedParam']['metadata']['trackId'];
+                $response_fields['transaction_id'] = $respondCharge->getId();
+                $response_fields['gateway_id'] = '';
+                $response_fields['rawOutput'] = json_encode(serialize($respondCharge));
+                $response_fields['status'] = true;
+                $response_fields['message'] = 'Sucessful';
 
 
-                if (osc_not_null(MODULE_PAYMENT_CHECKOUTAPIPAYMENT_PROCESSING_ORDER_STATUS_ID)) {
-                    osC_Order::process($_POST['invoice'], MODULE_PAYMENT_CHECKOUTAPIPAYMENT_PROCESSING_ORDER_STATUS_ID, 'Checkout.com Processing Transaction');
-                }
             }else {
-                osC_Order::remove($this->_order_id);
+                $respondCharge->getRespondCode();
+                $response_fields['virtuemart_order_id'] = $config['postedParam']['metadata']['trackId'];
+                $response_fields['transaction_id'] = $respondCharge->getId();
+                $response_fields['gateway_id'] = '';
+                $response_fields['rawOutput'] = json_encode(serialize($respondCharge));
+                $response_fields['status'] = false;
+                $response_fields['message'] = 'decline';
 
-                $messageStack->add_session('checkout_payment', $error, 'error');
-
-                osc_redirect(osc_href_link(FILENAME_CHECKOUT, 'payment_error='.$respondCharge->getRespondCode(), 'SSL'));
 
 
             }
 
         } else  {
 
-            osC_Order::remove($this->_order_id);
+            $respondCharge->getErrorCode();
 
-            $messageStack->add_session('checkout_payment', $error, 'error');
-
-            osc_redirect(osc_href_link(FILENAME_CHECKOUT,'payment_error=' . $respondCharge->getErrorCode(), 'SSL'));
-
+            $respondCharge->getRespondCode();
+            $response_fields['virtuemart_order_id'] = $config['postedParam']['metadata']['trackId'];
+            $response_fields['rawOutput'] = json_encode(serialize($respondCharge));
+            $response_fields['status'] = false;
+            $response_fields['message'] = 'fail';
 
         }
 
+        return $response_fields;
+
     }
-    private function _createCharge($config)
+    private function _createCharge($config,$obj)
     {
-        $Api = CheckoutApi_Api::getApi(array('mode'=> MODULE_PAYMENT_CHECKOUTAPIPAYMENT_GATEWAY_SERVER));
+        $currentMethod = $obj->getCurrentMethod()->sandbox;
+
+        $Api = CheckoutApi_Api::getApi(array('mode'=>  $obj->getCurrentMethod()->sandbox));
 
         return $Api->createCharge($config);
     }
 
-    private function _captureConfig()
+    private function _captureConfig($obj)
     {
         $to_return['postedParam'] = array (
-            'autoCapture' =>( MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD =='Authorize and Capture'),
-            'autoCapTime' => MODULE_PAYMENT_CHECKOUAPIPAYMENT_AUTOCAPTIME
+            'autoCapture' =>( $obj->_currentMethod->order_type == 'AUTH_CAPTURE'),
+            'autoCapTime' => $obj->_currentMethod->autocaptime
         );
 
         return $to_return;
     }
 
-    private function _authorizeConfig()
+    private function _authorizeConfig($obj)
     {
         $to_return['postedParam'] = array(
-            'autoCapture' => ( MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD =='Authorize'),
+            'autoCapture' => ( $obj->_currentMethod->order_type == 'AUTH_ONLY'),
             'autoCapTime' => 0
         );
         return $to_return;
@@ -169,9 +173,43 @@ abstract class model_methods_Abstract
         return $toReturn;
     }
 
-    protected function _sessionSave(VirtueMartCart $cart)
+    protected function _clearSession()
     {
-        return $this->getInstance()->_sessionSave($cart);
+        $toReturn = null;
+        if (!class_exists('vmCrypt')) {
+            require(JPATH_VM_ADMINISTRATOR . DS . 'helpers' . DS . 'vmcrypt.php');
+        }
+
+        $session = JFactory::getSession();
+        $session->clear('checkoutapipayment', 'vm');
+    }
+
+    public function sessionSave(VirtueMartCart $cart,$obj)
+    {
+
+    }
+
+
+    public function getSessionData()
+    {
+        return $this->_getSessionData();
+    }
+
+    public function plgVmOnSelectCheckPayment(VirtueMartCart $cart, &$msg, $obj)
+    {
+
+
+    }
+
+
+    public function plgVmConfirmedOrder(VirtueMartCart $cart, $order,$obj)
+    {
+
+
+        $usrBT = $order['details']['BT'];
+        $usrST = ((isset($order['details']['ST'])) ? $order['details']['ST'] : '');
+        $session = JFactory::getSession();
+        $return_context = $session->getId();
     }
 
 }
