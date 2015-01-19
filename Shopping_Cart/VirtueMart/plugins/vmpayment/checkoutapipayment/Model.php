@@ -17,11 +17,12 @@ if (!class_exists('vmPSPlugin')) {
      function __construct (& $subject, $config) {
          parent::__construct ($subject, $config);
          $varsToPush = $this->getVarsToPush ();
-         $this->setConfigParameterable ($this->_configTableFieldName, $varsToPush);
+
          $this->tableFields = array_keys ($this->getTableSQLFields ());
          $this->_tablepkey = 'id';
          $this->_tableId = 'id';
          $this->_currentMethod = '';
+         $this->setConfigParameterable ($this->_configTableFieldName, $varsToPush);
 
      }
 
@@ -41,7 +42,7 @@ if (!class_exists('vmPSPlugin')) {
      public function getInstance($modetype=null)
      {
 
-         if(!$this->_instance) {
+
              $type = ($modetype)?$modetype:$this->getCurrentMethod()->mode_type;
              switch($type) {
                  case '1':
@@ -54,13 +55,13 @@ if (!class_exists('vmPSPlugin')) {
 
                      break;
              }
-         }
+
 
          return $this->_instance;
 
      }
 
-     function getTableSQLFields ()
+    public function getTableSQLFields ()
      {
          $SQLfields = array
          (
@@ -131,17 +132,22 @@ if (!class_exists('vmPSPlugin')) {
                  return false;
              }
          }
+         if (!($this->_currentMethod = $this->getVmPluginMethod($cart->virtuemart_paymentmethod_id))) {
+             return FALSE;
+         }
 
          return $this->getInstance()->plgVmDisplayListFEPayment($cart, $selected, $htmlIn, $this);
 
 
 
      }
+     /**
+      * This is for checking the input data of the payment method within the checkout
+      *
+      * @author Valerie Cartan Isaksen
+      */
+     public function plgVmOnCheckoutCheckDataPayment(VirtueMartCart $cart) {
 
-     public function plgVmOnSelectCheckPayment(VirtueMartCart $cart, &$msg)
-     {
-
-         $currentObj = $this->getVmPluginMethod($cart->virtuemart_paymentmethod_id);
          if (!$this->selectedThisByMethodId($cart->virtuemart_paymentmethod_id)) {
              return NULL; // Another method was selected, do nothing
          }
@@ -150,6 +156,29 @@ if (!class_exists('vmPSPlugin')) {
              return FALSE;
          }
 
+         $this->getInstance()->sessionSave($cart,$this);
+         return $this->validate( true);;
+
+     }
+
+    public  function  validate($enqueueMessage)
+    {
+        $this->getInstance()->validate( $enqueueMessage);
+    }
+
+     public function plgVmOnSelectCheckPayment(VirtueMartCart $cart, &$msg)
+     {
+
+         $currentObj = $this->getVmPluginMethod($cart->virtuemart_paymentmethod_id);
+
+         if (!$this->selectedThisByMethodId($cart->virtuemart_paymentmethod_id)) {
+             return NULL; // Another method was selected, do nothing
+         }
+
+         if (!($this->_currentMethod = $this->getVmPluginMethod($cart->virtuemart_paymentmethod_id))) {
+             return FALSE;
+         }
+         $this->getInstance()->sessionSave( $cart,$this);
 
           $this->getInstance($currentObj->mode_type)->plgVmOnSelectCheckPayment($cart, $msg, $this);
          return true;
@@ -219,6 +248,7 @@ if (!class_exists('vmPSPlugin')) {
      public function plgVmOnSelectedCalculatePricePayment(VirtueMartCart $cart, array &$cart_prices, &$payment_name)
      {
 
+
          if (!($this->_currentMethod = $this->getVmPluginMethod($cart->virtuemart_paymentmethod_id))) {
              return null; // Another method was selected, do nothing
          }
@@ -236,6 +266,8 @@ if (!class_exists('vmPSPlugin')) {
          $payment_name = $this->renderPluginName($this->_currentMethod);
 
          $this->setCartPrices($cart, $cart_prices, $this->_currentMethod);
+
+
 
          return true;
      }
@@ -256,26 +288,61 @@ if (!class_exists('vmPSPlugin')) {
         $this->setInConfirmOrder($cart);
         $this->getInstance()->plgVmConfirmedOrder( $cart, $order,$this);
         $response_fields = $this->getInstance()->process( $cart, $order,$this);
-       // $payment_currency_id = shopFunctions::getCurrencyIDByName(self::AUTHORIZE_DEFAULT_PAYMENT_CURRENCY);
-        //$totalInPaymentCurrency = vmPSPlugin::getAmountInCurrency($order['details']['BT']->order_total, $payment_currency_id);
+        $currency = CurrencyDisplay::getInstance();
+        $cart_currency_code = ShopFunctions::getCurrencyByID ($order['details']['BT']->order_currency);
+
+        $payment_currency_id = shopFunctions::getCurrencyByID($cart_currency_code);
+        $totalInPaymentCurrency = vmPSPlugin::getAmountInCurrency($order['details']['BT']->order_total, $payment_currency_id);
+        $info['payment_name'] = parent::renderPluginName($this->getCurrentMethod());
 
         if($response_fields['status']) {
+
+
 
             $dbValues['order_number'] = $order['details']['BT']->order_number;
             $dbValues['virtuemart_order_id'] = $order['details']['BT']->virtuemart_order_id;
             $dbValues['payment_method_id'] = $order['details']['BT']->virtuemart_paymentmethod_id;
             $dbValues['transaction_id'] = $response_fields['transaction_id'];
-            $dbValues['payment_name'] = parent::renderPluginName($this->_currentMethod);
-            $dbValues['cost_per_transaction'] = $this->_currentMethod->cost_per_transaction;
-            $dbValues['cost_percent_total'] = $this->_currentMethod->cost_percent_total;
-            //$dbValues['payment_order_total'] = $totalInPaymentCurrency['value'];
-            //$dbValues['payment_currency'] = $payment_currency_id;
+            $dbValues['payment_name'] = parent::renderPluginName($this->getCurrentMethod());
+            $dbValues['cost_per_transaction'] = $this->getCurrentMethod()->cost_per_transaction;
+            $dbValues['cost_percent_total'] = $this->getCurrentMethod()->cost_percent_total;
+            $dbValues['payment_order_total'] = $totalInPaymentCurrency['value'];
+            $dbValues['payment_currency'] = $payment_currency_id;
             $this->debugLog("before store", "plgVmConfirmedOrder", 'debug');
+            $this->storePSPluginInternalData($dbValues);
 
-            $new_status = $this->_currentMethod->payment_approved_status;
-            $html = $this->getSucessMessage();
+
+            $info['invoice_number'] =  $order['details']['BT']->order_number;
+            $info['amount'] = $totalInPaymentCurrency ;
+            $info['currency'] = $cart_currency_code;
+            $info['transaction_id'] = $response_fields['transaction_id'];
+
+            $new_status = $this->getCurrentMethod()->payment_approved_status;
+            $html = $this->getSucessMessage($info);
+            $cart->_inConfirm = true;
+            $cart->emptyCart ();
 
         }else {
+
+            $info['invoice_number'] =  $order['details']['BT']->order_number;
+            $info['amount'] = $totalInPaymentCurrency ;
+            $info['currency'] = $cart_currency_code;
+            $info['transaction_id'] = $response_fields['transaction_id'];
+            $info['error'] = $response_fields['error'];
+            $html = $this->getErrorMessage($info);
+            $mainframe = JFactory::getApplication();
+            $mainframe->enqueueMessage($html);
+            $cart->_confirmDone = false;
+            $cart->_dataValidated = false;
+            $cart->_inConfirm = false;
+            $cart->setCartIntoSession (false,true);
+
+            if($response_fields['message'] == 'decline') {
+                $new_status = $this->getCurrentMethod()->payment_declined_status;
+            }else {
+                $new_status = $this->getCurrentMethod()->payment_held_status;
+                $mainframe->redirect(JRoute::_('index.php?option=com_virtuemart&view=cart&task=editpayment', FALSE), vmText::_('COM_VIRTUEMART_CART_ORDERDONE_DATA_NOT_VALID'));
+            }
 
         }
 
@@ -283,10 +350,51 @@ if (!class_exists('vmPSPlugin')) {
         $order['order_status'] = $new_status;
         $order['customer_notified'] = 1;
         $order['comments'] = '';
+
         $modelOrder->updateStatusForOneOrder($order['details']['BT']->virtuemart_order_id, $order, TRUE);
 
         //We delete the old stuff
-        $cart->emptyCart();
+      //  $cart->emptyCart();
         vRequest::setVar('html', $html);
     }
+
+     public function getSucessMessage($info)
+     {
+         $html = '<table class="adminlist table">' . "\n";
+         $html .= $this->getHtmlRow('VMPAYMENT_CHECKOUTAPIPAYMENT_PAYMENT_NAME', $info['payment_name']);
+         $html .= $this->getHtmlRow('VMPAYMENT_CHECKOUTAPIPAYMENT_ORDER_NUMBER', $info['invoice_number']);
+         $html .= $this->getHtmlRow('VMPAYMENT_CHECKOUTAPIPAYMENT_AMOUNT', $info['amount']['display']);
+         //$html .= $this->getHtmlRow('VMPAYMENT_CHECKOUTAPIPAYMENT_RESPONSE_AUTHORIZATION_CODE', $info['responde_code']);
+         $html .= $this->getHtmlRow('VMPAYMENT_CHECKOUTAPIPAYMENT_RESPONSE_TRANSACTION_ID', $info['transaction_id']);
+         $html .= '</table>' . "\n";
+         $this->debugLog(vmText::_('VMPAYMENT_CHECKOUTAPIPAYMENT_ORDER_NUMBER') . " " . $info['invoice_number'] . ' payment approved', '_handleResponse', 'debug');
+
+         return $html;
+     }
+
+     public function getErrorMessage($info)
+     {
+         $html =  "\n";
+
+
+
+         foreach($info['error'] as $error) {
+             $html .= $error;
+         }
+
+         $html .=  "\n";
+
+         return $html;
+     }
+
+     /**
+      * Create the table for this plugin if it does not yet exist.
+      * This functions checks if the called plugin is active one.
+      * When yes it is calling the standard method to create the tables
+      *
+      */
+     function plgVmOnStoreInstallPaymentPluginTable($jplugin_id) {
+
+         return parent::onStoreInstallPluginTable($jplugin_id);
+     }
  }

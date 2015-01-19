@@ -10,8 +10,4 @@ if (!class_exists('vmPSPlugin')) {
 class plgVmpaymentCheckoutApipayment extends Model
 {
 
-
-
-
-
 }

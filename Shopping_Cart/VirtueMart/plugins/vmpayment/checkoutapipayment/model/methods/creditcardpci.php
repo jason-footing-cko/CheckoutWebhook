@@ -24,9 +24,9 @@ class model_methods_creditcardpci extends model_methods_Abstract
         $obj->getInstance()->getC->$method_name = $obj->getRenderPluginName($currentMethod);
         $html[] = $obj->pluginHtml($currentMethod, $selected, $methodSalesPrice);
 
-        //if ($selected == $currentMethod->virtuemart_paymentmethod_id) {
-        $this->_getSessionData();
-        //}
+        if ($selected == $currentMethod->virtuemart_paymentmethod_id) {
+              $this->_getSessionData();
+        }
 
         if (empty($currentMethod->creditcards)) {
             $currentMethod->creditcards = self::getCreditCards();
@@ -163,6 +163,7 @@ EOD;
 
         return $toReturn;
     }
+
     protected function _getSessionData()
     {
         if (!class_exists('vmCrypt')) {
@@ -182,6 +183,7 @@ EOD;
         }
 
     }
+
     public function process(VirtueMartCart $cart, $order,$obj)
     {
         $this->_getSessionData();
@@ -193,7 +195,7 @@ EOD;
         $config['postedParam']['card']['expiryYear'] = (int)$this->_cc_expire_year;
         $config['postedParam']['card']['cvv'] = $this->_cc_cvv;
 
-        $this->_placeorder($config,$obj,$order);
+        return $this->_placeorder($config,$obj,$order);
     }
 
     public function sessionSave(VirtueMartCart $cart,$obj)
@@ -206,12 +208,8 @@ EOD;
         $this->_cc_cvv = vRequest::getVar('cc_cvv_' . $cart->virtuemart_paymentmethod_id, '');
         $this->_cc_expire_month = vRequest::getVar('cc_expire_month_' . $cart->virtuemart_paymentmethod_id, '');
         $this->_cc_expire_year = vRequest::getVar('cc_expire_year_' . $cart->virtuemart_paymentmethod_id, '');
+        $this->_setSession();
 
-        if (!$this->_validate_creditcard_data(true)) {
-            return false; // returns string containing errors
-        }
-
-       $this->_setSession();
         return true;
     }
 
@@ -284,19 +282,9 @@ EOD;
         return $img;
     }
 
-    public function plgVmOnSelectCheckPayment(VirtueMartCart $cart, &$msg, $obj)
-    {
-
-        $this->sessionSave($cart,$obj);
-        if (!$obj->selectedThisByMethodId($cart->virtuemart_paymentmethod_id)) {
-            return false; // Another method was selected, do nothing
-        }
 
 
-        return true;
-    }
-
-    function _validate_creditcard_data($enqueueMessage = TRUE) {
+    private function _validate_creditcard_data($enqueueMessage = TRUE) {
 
         $html = '';
         $this->_cc_valid = TRUE;
@@ -329,6 +317,13 @@ EOD;
             $app->enqueueMessage($html);
         }
 
+
         return $this->_cc_valid;
+    }
+
+    public  function validate($enqueueMessage)
+    {
+        $this->_getSessionData();
+        return $this->_validate_creditcard_data($enqueueMessage);
     }
 }

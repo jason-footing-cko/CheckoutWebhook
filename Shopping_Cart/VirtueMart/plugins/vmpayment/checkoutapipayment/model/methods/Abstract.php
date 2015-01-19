@@ -22,7 +22,7 @@ abstract class model_methods_Abstract
     public function process(VirtueMartCart $cart, $order,$obj)
     {
       
-            $amountCents = (int) $order['details']['BT']->order_total*100;
+            $amountCents = ceil((float)($order['details']['BT']->order_total)*100.00);
             $config['authorization'] = $obj->_currentMethod->secret_key;
             $config['mode'] = $obj->_currentMethod->mode_type;
             $currency = CurrencyDisplay::getInstance();
@@ -90,7 +90,7 @@ abstract class model_methods_Abstract
 
 
         $respondCharge = $this->_createCharge($config,$obj);
-
+        $response_fields = array();
 
         if( $respondCharge->isValid()) {
             if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
@@ -111,20 +111,21 @@ abstract class model_methods_Abstract
                 $response_fields['rawOutput'] = json_encode(serialize($respondCharge));
                 $response_fields['status'] = false;
                 $response_fields['message'] = 'decline';
-
+                $response_fields['error']['message'] = $respondCharge->getExceptionState()->getErrorMessage();
 
 
             }
 
         } else  {
 
-            $respondCharge->getErrorCode();
+
 
             $respondCharge->getRespondCode();
             $response_fields['virtuemart_order_id'] = $config['postedParam']['metadata']['trackId'];
             $response_fields['rawOutput'] = json_encode(serialize($respondCharge));
             $response_fields['status'] = false;
             $response_fields['message'] = 'fail';
+            $response_fields['error']['message'] = $respondCharge->getExceptionState()->getErrorMessage();
 
         }
 
@@ -197,10 +198,13 @@ abstract class model_methods_Abstract
 
     public function plgVmOnSelectCheckPayment(VirtueMartCart $cart, &$msg, $obj)
     {
-
+        $this->sessionSave($cart,$obj);
+        if (!$obj->selectedThisByMethodId($cart->virtuemart_paymentmethod_id)) {
+            return false; // Another method was selected, do nothing
+        }
+        return true;
 
     }
-
 
     public function plgVmConfirmedOrder(VirtueMartCart $cart, $order,$obj)
     {
@@ -210,6 +214,10 @@ abstract class model_methods_Abstract
         $usrST = ((isset($order['details']['ST'])) ? $order['details']['ST'] : '');
         $session = JFactory::getSession();
         $return_context = $session->getId();
+    }
+    public function validate($toValidate)
+    {
+        return true;
     }
 
 }

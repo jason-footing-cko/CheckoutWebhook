@@ -1,196 +1,125 @@
 <?php
 class model_methods_creditcard extends model_methods_Abstract
 {
+    private $cko_cc_email ;
+    private $cko_cc_token ;
 
-
-    public function confirmation($obj)
-    {
-        $selection = array('id' => $obj->_code,
-            'title' => $obj->_method_title,
-            'fields' => array(
-                array(
-                    'title' => '',
-                    'field' =>  osc_draw_input_field('cko_cc_token',$_POST['cko_cc_token'] ,'id="payment_checkoutapipayment_cko-cc-token" style="display:none"')
-                        .osc_draw_input_field('cko_cc_email',$_POST['cko_cc_email'],'id="payment_checkoutapipayment_cko-cc-email" style="display:none"')
-                )
-            )
-        );
-
-        return $selection;
-    }
-
-    public function selection($obj)
+    public function plgVmDisplayListFEPayment(VirtueMartCart $cart, $selected = 0,&$htmlIn,$obj)
     {
 
-        $selection = array('id' => $obj->_code,
-            'module' => $obj->_method_title,
-            'fields' => array(
-                array(
-                    'title' => '',
-                    'field' => '<div class="widget-container"></div>'. osc_draw_input_field('cko_cc_token','' ,'id="payment_checkoutapipayment_cko-cc-token" style="display:none"').osc_draw_input_field('cko_cc_email','','id="payment_checkoutapipayment_cko-cc-email" style="display:none"')
-                )
-            )
-        );
+        $toReturn = true;
 
-        return $selection;
-    }
+        JHTML::script('vmcreditcard.js', 'components/com_virtuemart/assets/js/', FALSE);
+        VmConfig::loadJLang('com_virtuemart', true);
+        vmJsApi::jCreditCard();
 
-    public function getJavascriptBlock($obj)
-    {
-        global $osC_Customer, $osC_Currencies, $osC_ShoppingCart,$osC_Language;
-        $amountCents = (int)$osC_Currencies->formatRaw($osC_ShoppingCart->getTotal(),$osC_Currencies->getCode())*100;
-        $Api = CheckoutApi_Api::getApi(array('mode'=>MODULE_PAYMENT_CHECKOUTAPIPAYMENT_GATEWAY_SERVER));
+        $currentMethod =  $obj->getCurrentMethod();
+        $method_name = $obj->getPsType() . '_name';
+        $methodSalesPrice = $obj->setCartPrices($cart, $cart->cartPrices, $currentMethod);
+
+        $html = array();
+        $obj->getInstance()->getC->$method_name = $obj->getRenderPluginName($currentMethod);
+        $html[] = $obj->pluginHtml($currentMethod, $selected, $methodSalesPrice);
+        if ($selected == $currentMethod->virtuemart_paymentmethod_id) {
+            $this->_getSessionData();
+        }
+        $paymentId = $currentMethod->virtuemart_paymentmethod_id;
+
+        $Api = CheckoutApi_Api::getApi(array('mode'=>$obj->getCurrentMethod()->sandbox));
+
+        $amountCents = ceil((float)($cart->pricesUnformatted['billTotal'])*100.00);
+
+        $cart_currency_code = ShopFunctions::getCurrencyByID ($cart->pricesCurrency, 'currency_code_3');
         $config = array();
         $config['debug'] = false;
         $config['renderMode'] = 2;
-        $config['publicKey']        = MODULE_PAYMENT_CHECKOUTAPIPAYMENT_PUBLISHABLE_KEY;
-        $config['email']            =   $osC_Customer->getEmailAddress();
-        $config['name']             =   $osC_ShoppingCart->getShippingAddress('firstname'). ' '.$osC_ShoppingCart->getShippingAddress('lastname');
-        $config['amount']           =  $amountCents;
-        $config['currency']         =  $osC_Currencies->getCode();
+        $config['publicKey']        =   $obj->getCurrentMethod()->public_key;
+        $config['email']            =   $cart->BT['email'];
+        $config['name']             =   $cart->BT['first_name']. ' '.$cart->BT['last_name'];
+        $config['amount']           =   $amountCents;
+        $config['currency']         =   $cart_currency_code;
         $config['widgetSelector']   =  '.widget-container';
         $config['cardTokenReceivedEvent'] = "
-                        document.getElementById('payment_checkoutapipayment_cko-cc-token').value = event.data.cardToken;
-                        document.getElementById('payment_checkoutapipayment_cko-cc-email').value = event.data.email;
-                         $('btnSavePaymentMethod').fireEvent('click');
+                        document.getElementById('cko-cc-token').value = event.data.cardToken;
+                        document.getElementById('cko-cc-email').value = event.data.email;
+
                       ";
-        $config['widgetRenderedEvent'] ="";
+        $config['widgetRenderedEvent'] = "";
         $config['readyEvent'] = '';
 
 
         $jsConfig = $Api->getJsConfig($config);
-        $toreturn = "} ; function checkoutRender() {
-            Checkout.render($jsConfig);
-            };
-            function loadExtScript(src, test, callback) {
-                if( !document.getElementById('checkoutapi')) {
-                    var s = document.createElement('script');
-                    s.src = src;
-                    s.id = 'checkoutapi';;
 
-                   document.body.appendChild(s);
-                }
+        $html[] = '<br/>';
+        $html[] = '<span class="vmpayment_cardinfo">';
+        $html[] =  vmText::_('VMPAYMENT_CHECKOUTAPIPAYMENT_COMPLETE_FORM');
+        $html[] =  '<div class="widget-container"></div>';
+        $html[] =  '<input type="hidden" name="cko_cc_token_'.$paymentId.'" id="cko-cc-token" value="'.$this->cko_cc_token.'">
+            <input type="hidden" name="cko_cc_email_'.$paymentId.'" id="cko-cc-email" value="'.$this->cko_cc_email.'" />';
+        $html[] =  '<script type="text/javascript">';
+        $html[] =  $jsConfig;
+        $html[] =  '</script>';
+        $html[] =  '<script async src="https://www.checkout.com/cdn/js/Checkout.js"></script>';
+        $html[] =  '</span>';
 
-                var callbackTimer = setInterval(function() {
+        $htmlIn[] = array(join("\n",$html));
 
-                   if(Checkout.hasOwnProperty('render')){
-                       clearInterval(callbackTimer);
-                       checkoutRender();
-                   }
-                }, 100);
-        }
-
-        loadExtScript('https://www.checkout.com/cdn/js/Checkout.js','',function(){});".$this->hijackedJs()."function dummy(){";
-
-
-
-        return $toreturn;
-    }
-    public function pre_confirmation_check()
-    {
-        $this->_verifyData();
-    }
-    public function process()
-    {
-        global  $osC_ShoppingCart, $osC_CreditCard;
-        $this->_verifyData();
-        $config = parent::process();
-        $config['postedParam']['email'] = $_POST['cko_cc_email'];
-        $config['postedParam']['cardToken'] =  $_POST['cko_cc_token'];
-
-        $this->_placeorder($config);
+        return $toReturn;
     }
 
 
-
-
-
-    private  function _verifyData()
+    public function process(VirtueMartCart $cart, $order,$obj)
     {
-        global $osC_Language,$messageStack;
-        $error = false;
-        $errorMsg = $osC_Language->get('payment_checkoutapipayment_js_token');
-        if(( !isset($_POST['cko_cc_token']) || !isset($_POST['cko_cc_email']))){
+        $this->_getSessionData();
 
-            $error = true;
-        }else {
-            if(isset($_POST['cko_cc_token']) && !(trim($_POST['cko_cc_token'])) ){
-                $error = true;
-            }
+        $config = parent::process($cart, $order,$obj);
 
-            if(isset($_POST['cko_cc_email']) && !(trim($_POST['cko_cc_email'])) ){
-                $error = true;
-            }
-        }
-
-        if($error){
-            $messageStack->add_session('checkout_payment', $errorMsg, 'error');
-        }
-
+        $config['postedParam']['email'] = $this->cko_cc_email;
+        $config['postedParam']['cardToken'] =  $this->cko_cc_token;
+        return $this->_placeorder($config,$obj,$order);
     }
 
-    public function hijackedJs()
+
+    protected function _getSessionData()
     {
-        global $osC_Database, $osC_Language;
 
-        $Qmodules = $osC_Database->query('select code from :table_templates_boxes where modules_group = "payment"');
-        $Qmodules->bindTable(':table_templates_boxes', TABLE_TEMPLATES_BOXES);
-        $Qmodules->setCache('modules-payment');
-        $Qmodules->execute();
-        $modules = array();
-        while ($Qmodules->next()) {
-            $moduleCode = $Qmodules->value('code');
-            $module_class = 'osC_Payment_' . $moduleCode;
-            $modules[$moduleCode] = new $module_class();
+        $session = JFactory::getSession();
+        $checkoutSession = $session->get('checkoutapipayment', 0, 'vm');
+
+        if (!empty($checkoutSession)) {
+            $sessiontData = (object)json_decode($checkoutSession,true);
+            $this->cko_cc_email = $sessiontData->cko_cc_email;
+            $this->cko_cc_token =  $sessiontData->cko_cc_token;
         }
+    }
 
-        $js = '';
-        if (is_array($modules)) {
-            $js = 'function check_form() {' . "\n" .
-                '  var error = 0;' . "\n" .
-                '  var error_message = "' . str_replace(array("\r", "\n"), "", $osC_Language->get('js_error')) . '";' . "\n" .
-                '  var payment_value = null;' . "\n" .
-                '  if (document.checkout_payment.payment_method.length) {' . "\n" .
-                '    for (var i=0; i<document.checkout_payment.payment_method.length; i++) {' . "\n" .
-                '      if (document.checkout_payment.payment_method[i].checked) {' . "\n" .
-                '        payment_value = document.checkout_payment.payment_method[i].value;' . "\n" .
-                '      }' . "\n" .
-                '    }' . "\n" .
-                '  } else if (document.checkout_payment.payment_method.checked) {' . "\n" .
-                '    payment_value = document.checkout_payment.payment_method.value;' . "\n" .
-                '  } else if (document.checkout_payment.payment_method.value) {' . "\n" .
-                '    payment_value = document.checkout_payment.payment_method.value;' . "\n" .
-                '  }' . "\n\n ".
-                'if (payment_value=="checkoutapipayment"){
-                    if(document.getElementById("payment_checkoutapipayment_cko-cc-token").value==""){
-                       error_message = error_message + "' . str_replace(array("\r", "\n"), "", $osC_Language->get('payment_checkoutapipayment_js_token')) . '\n";'.
+    public function sessionSave(VirtueMartCart $cart,$obj)
+    {
 
-                   'return false; }
-                   if(document.getElementById("payment_checkoutapipayment_cko-cc-email").value==""){
-                       error_message = error_message + "' . str_replace(array("\r", "\n"), "", $osC_Language->get('payment_checkoutapipayment_js_token')) . '\n";'.
+        $this->cko_cc_email = vRequest::getVar('cko_cc_email_' . $cart->virtuemart_paymentmethod_id, '');
+        $this->cko_cc_token = vRequest::getVar('cko_cc_token_' . $cart->virtuemart_paymentmethod_id, '');
 
-                '  return false; }
-                }';
-            foreach ($modules as $module) {
-                if ( $module->isEnabled() && $module->_code!='checkoutapipayment') {
-                    $js .= $module->getJavascriptBlock();
-                }
-            }
-            $js .= "\n" . '  if (payment_value == null) {' . "\n" .
-                '    error_message = error_message + "' . str_replace(array("\r", "\n"), "", $osC_Language->get('js_no_payment_module_selected')) . '\n";' . "\n" .
-                '    error = 1;' . "\n" .
-                '  }' . "\n\n" .
-                '  if (error == 1) {' . "\n" .
-                '    alert(error_message);' . "\n" .
-                '    return false;' . "\n" .
-                '  } else {' . "\n" .
-                '    return true;' . "\n" .
-                '  }' . "\n" .
-                '}' ;
-        }
-    return $js;
+        $this->_setSession();
+        return true;
+    }
 
-        }
+    private  function _setSession()
+    {
 
+        $session = JFactory::getSession();
+        $sessionObj = new stdClass();
+
+        // card information
+        $sessionObj->cko_cc_email = $this->cko_cc_email;
+        $sessionObj->cko_cc_token = $this->cko_cc_token;
+
+        $session->set('checkoutapipayment', json_encode($sessionObj), 'vm');
+    }
+
+    public  function validate($enqueueMessage)
+    {
+        $this->_getSessionData();
+        return $this->cko_cc_token?true:false;
+    }
 }
 
