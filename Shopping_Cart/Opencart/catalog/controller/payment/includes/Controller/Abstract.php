@@ -157,7 +157,7 @@ abstract class Controller_Abstract extends Controller
         );
 
         $config['postedParam'] = array_merge($config['postedParam'],array (
-            'email'              =>  $this->customer->getEmail(),
+            'email'              =>  $order_info['email'],
             'value'              =>  $amountCents,
             'currency'           =>  $this->currency->getCode(),
             'description'        =>  "Order number::$orderId",

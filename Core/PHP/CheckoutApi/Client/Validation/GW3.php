@@ -272,26 +272,27 @@ final class CheckoutApi_Client_Validation_GW3 extends CheckoutApi_Lib_Object
 
             $isCardNumberValid = CheckoutApi_Client_Validation_GW3::isCardNumberValid($card);
 
-            if (!$isCardNumberValid) {
+            if (!$isCardNumberValid && ! isset($param['card']['number'])) {
 
                 $isValid = false;
             }
 
             $isValidMonth = CheckoutApi_Client_Validation_GW3::isMonthValid($card);
 
-            if (!$isValidMonth) {
+
+            if (!$isValidMonth && !isset($param['card']['expiryMonth'])) {
                 $isValid = false;
             }
 
             $isValidYear = CheckoutApi_Client_Validation_GW3::isValidYear($card);
 
-            if (!$isValidYear) {
+            if (!$isValidYear && !isset($param['card']['expiryYear'])) {
                 $isValid = false;
             }
 
             $isValidCvv = CheckoutApi_Client_Validation_GW3::isValidCvv($card);
 
-            if (!$isValidCvv) {
+            if (!$isValidCvv && !isset($param['card']['cvv'])) {
                 $isValid = false;
             }
 
