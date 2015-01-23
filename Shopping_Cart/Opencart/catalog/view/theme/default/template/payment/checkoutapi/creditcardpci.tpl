@@ -3,7 +3,7 @@
        <tr>
            <td><?php echo $entry_cc_owner;?></td>
            <td><input type="text" name="cc_owner" id="cc_owner" value=""/>
-               <span id="NameError" class="error";"></span>
+               <span id="NameError" class="error"></span>
            </td>
        </tr>
        <tr>
