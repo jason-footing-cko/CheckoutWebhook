@@ -35,7 +35,8 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
                 return $respondCharge;
             }else {
 
-                Mage::throwException(Mage::helper('payment')->__( 'An error has occured. Please check you card detail and try again. Thank you'));
+                Mage::throwException(Mage::helper('payment')->__( 'An error has occured. Please check you card
+                details and try again. Thank you'));
                 return false;
             }
 

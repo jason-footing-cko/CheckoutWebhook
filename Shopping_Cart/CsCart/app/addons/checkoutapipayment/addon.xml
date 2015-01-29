@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<addon scheme="3.0" edition_type="ROOT,ULT:VENDOR">
+    <id>checkoutapipayment</id>
+    <version>1.0</version>
+    <default_language>en</default_language>
+    <priority>100600</priority>
+    <status>active</status>
+    <name>Checkout.com</name>
+
+
+    <settings edition_type="ROOT,ULT:VENDOR">
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="gateway_setup">
+                        <type>header</type>
+                    </item>
+
+                    <item id="public_key">
+                        <name>Enter the publishable API key  provided by Checkout.com</name>
+                        <type>input</type>
+
+                    </item>
+                    <item id="secret_key">
+                        <name>Enter the secret API key  provided by Checkout.com</name>
+                        <type>input</type>
+                    </item>
+
+                    <item id="transaction_type">
+                        <name>Select the transaction method</name>
+                        <type>selectbox</type>
+                        <default_value>authorize_capture</default_value>
+                        <variants>
+                            <item id="authorize_capture">
+                            </item>
+                            <item id="authorize_only">
+                            </item>
+                       </variants>
+                    </item>
+
+                    <item id="autocaptime">
+                        <name>Please enter auto capture time.</name>
+                        <type>input</type>
+                        <default_value>0</default_value>
+                    </item>
+
+                    <item id="localpayment">
+                        <name>Enable localPayment</name>
+                        <type>selectbox</type>
+                        <default_value>no</default_value>
+                        <variants>
+                            <item id="yes">
+                            </item>
+                            <item id="no">
+                            </item>
+                        </variants>
+                    </item>
+
+                    <item id="server_type">
+                        <name>Verify gateway server SSL certificate on connection?</name>
+                        <type>selectbox</type>
+                        <default_value>no</default_value>
+                        <variants>
+                            <item id="yes">
+                            </item>
+                            <item id="no">
+                            </item>
+                        </variants>
+                    </item>
+
+
+                    <item id="text_checkoutapipayment_status_map">
+                        <type>header</type>
+                    </item>
+
+                    <item id="order_complete">
+                        <name>Review Order Status</name>
+                        <type>selectbox</type>
+                        <default_value>processed</default_value>
+                        <variants>
+                            <item id="completed"></item>
+                            <item id="pending"> </item>
+                            <item id="processed"> </item>
+                            <item id="voided"> </item>
+                        </variants>
+                    </item>
+
+                    <item id="order_cancel">
+                        <name>Review Order Cancel</name>
+                        <type>selectbox</type>
+                        <default_value>cancel</default_value>
+                        <variants>
+                            <item id="completed"></item>
+                            <item id="pending"> </item>
+                            <item id="cancel"> </item>
+                            <item id="voided"> </item>
+                        </variants>
+                    </item>
+
+                    <item id="server_configuration">
+                        <type>header</type>
+                    </item>
+                    <item id="gateway_timeout">
+                        <name>Time  request will timeout.</name>
+                        <type>input</type>
+                        <default_value>60</default_value>
+                    </item>
+
+                    <item id="mode_type">
+                        <name>Perform transactions on the production server or on the testing server</name>
+                        <type>selectbox</type>
+                        <default_value>live</default_value>
+                        <variants>
+                            <item id="live"> </item>
+                            <item id="preprod"> </item>
+                            <item id="test"> </item>
+                        </variants>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+    <queries>
+        <item type="file">database/data.sql</item>
+    </queries>
+    <functions>
+        <item for="uninstall">fn_checkoutapipayment_delete_payment_processors</item>
+    </functions>
+
+</addon>

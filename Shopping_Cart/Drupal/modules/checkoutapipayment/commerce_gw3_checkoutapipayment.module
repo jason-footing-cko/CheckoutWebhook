@@ -27,9 +27,11 @@ function commerce_gw3_checkoutapipayment_commerce_payment_method_info()
     $arg = arg();
 
     if($arg[0] != 'admin' ) {
+    
         $payment_setting = commerce_payment_method_instance_load('commerce_gw3_checkoutapipayment|commerce_payment_commerce_gw3_checkoutapipayment');
         $instance = getInstance($payment_setting);
         $js = $instance->getExtraInit();
+    
         if ($js && isset($js['script'])) {
             drupal_add_js($js['script'], array('type' => 'inline', 'scope' => 'footer'));
         }
@@ -38,6 +40,7 @@ function commerce_gw3_checkoutapipayment_commerce_payment_method_info()
             drupal_add_js($js['script_external'], array('type' => 'external', 'scope' => 'footer', 'setting' => array('asyn' => 'true')));
         }
     }
+
     return $payment_methods;
 }
 
@@ -54,6 +57,8 @@ function commerce_gw3_checkoutapipayment_settings_default(){
 
     );
 }
+
+
 function commerce_gw3_checkoutapipayment_settings_form($settings= array()){
     $form = array();
     module_load_include('inc', 'commerce_payment', 'includes/commerce_payment.credit_card');
@@ -153,7 +158,8 @@ function  commerce_gw3_checkoutapipayment_submit_form($payment_method, $pane_val
 }
 
 
- function getInstance($settings)
+
+function getInstance($settings)
 {
 
        switch($settings['settings']['type']) {

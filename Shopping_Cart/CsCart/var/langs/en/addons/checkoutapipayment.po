@@ -1,0 +1,135 @@
+msgid ""
+msgstr "Project-Id-Version: tygh"
+"Content-Type: textplain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_US"
+
+msgctxt "Addons::name::checkoutapipayment"
+msgid "Checkout.com payments"
+msgstr "Checkout.com payments"
+
+msgctxt "Addons::description::checkoutapipayment"
+msgid "Lets you accept payments via Checkout.com"
+msgstr "Lets you accept payments via Checkout.com."
+
+
+msgctxt "SettingsOptions::checkoutapipayment::server_configuration"
+msgid "Server Configuration"
+msgstr "Server Configuration"
+
+msgctxt "SettingsOptions::checkoutapipayment::gateway_setup"
+msgid "Gateway Setup"
+msgstr "Gateway Setup"
+
+msgctxt "Languages::checkoutapipaymentl_key_settings"
+msgid "Payment API settings"
+msgstr "Payment API settings"
+
+msgctxt "SettingsOptions::checkoutapipayment::localpayment"
+msgid "Enable localPayment"
+msgstr "Enable localPayment"
+
+msgctxt "SettingsVariants::checkoutapipayment::localpayment::yes"
+msgid "yes"
+msgstr "yes"
+
+msgctxt "SettingsVariants::checkoutapipayment::localpayment::no"
+msgid "no"
+msgstr "no"
+
+msgctxt "SettingsVariants::checkoutapipayment::server_type::yes"
+msgid "yes"
+msgstr "yes"
+
+msgctxt "SettingsVariants::checkoutapipayment::server_type::no"
+msgid "no"
+msgstr "no"
+
+
+msgctxt "SettingsOptions::checkoutapipayment::server_type"
+msgid "Verify gateway server SSL certificate on connection?"
+msgstr "Verify gateway server SSL certificate on connection?"
+
+msgctxt "SettingsOptions::checkoutapipayment::autocaptime"
+msgid "Set auto capture time"
+msgstr "When transaction is set to authorize and caputure , the gateway will use this time to caputure the transaction."
+
+msgctxt "SettingsOptions::checkoutapipayment::text_checkoutapipayment_status_map"
+msgid "Checkout.com order status conversion "
+msgstr "Checkout.com order status conversion map"
+
+
+msgctxt "SettingsOptions::checkoutapipayment::gateway_timeout"
+msgid "Time  request will timeout "
+msgstr "Time  request will timeout"
+
+
+msgctxt "SettingsVariants::checkoutapipayment::transaction_type::authorize_capture"
+msgid "Authorize and Capture"
+msgstr "Authorize and Capture"
+
+msgctxt "SettingsVariants::checkoutapipayment::transaction_type::authorize_only"
+msgid "Authorize"
+msgstr "Authorize"
+
+
+msgctxt "SettingsVariants::checkoutapipayment::mode_type::live"
+msgid "Live"
+msgstr "Live"
+
+msgctxt "SettingsVariants::checkoutapipayment::mode_type::test"
+msgid "Test"
+msgstr "Test"
+
+msgctxt "SettingsVariants::checkoutapipayment::mode_type::preprod"
+msgid "Preprod"
+msgstr "Preprod"
+
+msgctxt "SettingsVariants::checkoutapipayment::order_complete::completed"
+msgid "Complete"
+msgstr "Complete"
+
+msgctxt "SettingsVariants::checkoutapipayment::order_complete::pending"
+msgid "Pending"
+msgstr "Pending"
+
+
+msgctxt "SettingsVariants::checkoutapipayment::order_complete::processed"
+msgid "Processed"
+msgstr "Processed"
+
+msgctxt "SettingsVariants::checkoutapipayment::order_complete::voided"
+msgid "Voided"
+msgstr "Voided"
+
+msgctxt "SettingsVariants::checkoutapipayment::order_cancel::completed"
+msgid "Complete"
+msgstr "Complete"
+
+msgctxt "SettingsVariants::checkoutapipayment::order_cancel::pending"
+msgid "Pending"
+msgstr "Pending"
+
+
+msgctxt "SettingsVariants::checkoutapipayment::order_cancel::processed"
+msgid "Processed"
+msgstr "Processed"
+
+msgctxt "SettingsVariants::checkoutapipayment::order_cancel::voided"
+msgid "Voided"
+msgstr "Voided"
+
+msgctxt "SettingsVariants::checkoutapipayment::order_cancel::cancel"
+msgid "Cancel"
+msgstr "Cancel"
+
+msgctxt "SettingsVariants::checkoutapipayment::order_pending::pending"
+msgid "Pending"
+msgstr "Pending"
+
+msgctxt "SettingsVariants::checkoutapipayment::order_pending::cancel"
+msgid "Cancel"
+msgstr "Cancel"
+
+
+
