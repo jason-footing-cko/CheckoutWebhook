@@ -1,3 +1,5 @@
+/css/checkoutapipayment /css/checkoutapipayment 
 /skin/common_files/payments/checkoutapipayment/ /skin/common_files/payments/checkoutapipayment/
 payment/checkoutapipayment.php payment/checkoutapipayment.php
 payment/includes payment/includes
+/checkoutapipayment_ajax.php /checkoutapipayment_ajax
