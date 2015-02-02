@@ -13,6 +13,11 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
         $_payment = $_order->getPayment();
         $chargeId = preg_replace('/\-capture$/','',$_payment->getLastTransId());
         $_authorizeAmount = $_payment->getAmountAuthorized();
+        $_method = $_payment->getMethod();
+        if($_method) {
+            $this->_code = $_method;
+        }
+
         /** @var CheckoutApi_Client_ClientGW3  $Api */
         $_Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
         $secretKey = $this->getConfigData('privatekey');

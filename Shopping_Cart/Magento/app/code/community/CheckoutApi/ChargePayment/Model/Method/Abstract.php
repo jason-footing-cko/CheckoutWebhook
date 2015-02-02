@@ -158,7 +158,6 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
             $lastTransactionId =  $payment->getLastTransId();
             $lastTransactionIdCapture =  $payment->getTransactionId();
 
-
             if($lastTransactionId.'-capture' == $lastTransactionIdCapture ) {
                 return $this;
             }
