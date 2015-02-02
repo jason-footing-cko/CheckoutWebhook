@@ -13,7 +13,7 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
         /** @var CheckoutApi_Lib_RespondObj  $respondCharge */
 
         $respondCharge = $this->_createCharge($payment,$amount,$extraConfig);
-
+        $this->_debug($respondCharge);
         if( $respondCharge->isValid()) {
 
             if(preg_match('/^1[0-9]+$/',$respondCharge->getResponseCode())) {
@@ -35,14 +35,26 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
                 return $respondCharge;
             }else {
 
+                $errorDetails = '';
+
+                if($this->getDebugFlag()) {
+                    $errorDetails = $respondCharge->getResponseMessage(). '---'.$respondCharge->getId() ;
+                }
+
                 Mage::throwException(Mage::helper('payment')->__( 'An error has occured. Please check you card
-                details and try again. Thank you'));
+                details and try again. Thank you.').' ( '.$errorDetails.')');
                 return false;
             }
 
         } else {
+            $errorDetails = '';
+            if($this->getDebugFlag()) {
+                $errorDetails = $respondCharge->getMessage();
+            }
 
-            Mage::throwException(Mage::helper('payment')->__( $respondCharge->getExceptionState()->getErrorMessage() ));
+            Mage::throwException(Mage::helper('payment')->__( $respondCharge->getExceptionState()->getErrorMessage().
+                ' ( '.$errorDetails.')'
+            ));
 
         }
 
