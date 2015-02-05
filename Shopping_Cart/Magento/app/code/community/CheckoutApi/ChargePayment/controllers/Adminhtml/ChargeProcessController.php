@@ -9,35 +9,52 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
         $_id = $this->getRequest()->getParam('order_id');
         /** @var Mage_Sales_Model_Order $_order */
         $_order = Mage::getModel('sales/order')->load($_id);
-
         $_payment = $_order->getPayment();
         $chargeId = preg_replace('/\-capture$/','',$_payment->getLastTransId());
-        $_authorizeAmount = $_payment->getAmountAuthorized();
         $_method = $_payment->getMethod();
+
         if($_method) {
             $this->_code = $_method;
         }
 
-        /** @var CheckoutApi_Client_ClientGW3  $Api */
-        $_Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
         $secretKey = $this->getConfigData('privatekey');
-
         $_config = array();
         $_config['authorization'] = $secretKey ;
         $_config['chargeId'] = $chargeId ;
-        $_config['postedParam'] = array (
-            'value'=>(int)($_authorizeAmount*100)
-        );
+        $_chargeObj = $this->_getCharge($_config);
+        $hasBeenCaptured = false;
 
-        $_captureCharge = $_Api->captureCharge($_config);
+        if($_chargeObj) {
 
-        if($_captureCharge->isValid() && $_captureCharge->getCaptured() &&
-            preg_match('/^1[0-9]+$/',$_captureCharge->getResponseCode()) ) {
+            if(!$_chargeObj->getCaptured()){
+                $_authorizeAmount = $_payment->getAmountAuthorized();
+                /** @var CheckoutApi_Client_ClientGW3  $Api */
+                $_Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
+                $_config['postedParam'] = array (
+                                                'value'=>(int)($_authorizeAmount*100)
+                                                );
+
+                $_captureCharge = $_Api->captureCharge($_config); 
+                if($_captureCharge->isValid() && $_captureCharge->getCaptured() &&
+                    preg_match('/^1[0-9]+$/',$_captureCharge->getResponseCode()) ) {
+                    $hasBeenCaptured = true;
+                    $_captureObj = $_captureCharge;
+                }
+
+            } else {
+
+                $hasBeenCaptured = true;
+                $_captureObj = $_chargeObj;
+            }//!$_chargeObj->getCaptured()
+        }
+
+
+        if($hasBeenCaptured) {
 
             if ($_payment->getMethodInstance() instanceof CheckoutApi_ChargePayment_Model_Method_Abstract) {
 
                 $_payment->capture(null);
-                $_rawInfo = $_captureCharge->toArray();
+                $_rawInfo = $_captureObj->toArray();
 
                 $_payment->setAdditionalInformation('rawrespond',$_rawInfo);
                 $_payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$_rawInfo);
@@ -46,22 +63,36 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
                 $_order->setStatus($orderStatus ,false );
 
                 $_order->addStatusToHistory($orderStatus, 'Payment Sucessfully captured
-                  with Transaction ID '.$_captureCharge->getId());
+                  with Transaction ID '.$_captureObj->getId());
 
                 $_order->save();
                 Mage::getSingleton('adminhtml/session')->addSuccess('Payment Sucessfully Placed
-                  with Transaction ID '.$_captureCharge->getId());
+                  with Transaction ID '.$_captureObj->getId());
             }
 
 
         } else {
 
-            Mage::getSingleton('adminhtml/session')->addError($_captureCharge->getExceptionState()->getErrorMessage());
+            Mage::getSingleton('adminhtml/session')->addError($_captureObj->getExceptionState()->getErrorMessage());
 
         }
 
 
      $this->_redirectReferer();
+    }
+
+    private  function _getCharge($_config)
+    {
+        /** @var CheckoutApi_Client_ClientGW3  $Api */
+        $_Api       =   CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
+        $_return    =   false;
+        $charge     =   $_Api->updateCharge($_config);
+
+        if($charge->isValid()){
+            $_return    =   $charge;
+        }
+
+        return  $_return;
     }
 
     public  function  VoidAction()

@@ -33,14 +33,7 @@ function fn_checkoutapipayment_delete_payment_processors()
 function fn_checkoutapipayment_get_checkout_payment_buttons(&$cart, &$cart_products, &$auth, &$checkout_buttons, &$checkout_payments, &$payment_id)
 {
     $processor_data = fn_get_processor_data($payment_id);
-    if (!empty($processor_data) && empty($checkout_buttons[$payment_id]) && Registry::get('runtime.mode') == 'cart') {
-        $checkout_buttons[$payment_id] = '
-            <form name="pp_express" action="'. fn_payment_url('current', 'checkoutapipayment.php') . '" method="post">
-            <input name="payment_id" value="' . $payment_id . '" type="hidden" />
-            <input src="https://www.checkoutapipaymentobjects.com/webstatic/en_US/i/buttons/checkout-logo-small.png" type="image" />
-            <input name="mode" value="express" type="hidden" />
-            </form>';
-    }
+
 }
 
 function fn_checkoutapipayment_payment_url(&$method, &$script, &$url, &$payment_dir)
@@ -89,60 +82,12 @@ function fn_checkoutapipayment_get_logo_id()
 
 function fn_checkoutapipayment_update_payment_pre(&$payment_data, &$payment_id, &$lang_code, &$certificate_file, &$certificates_dir)
 {
-    if (!empty($payment_data['processor_id']) && db_get_field("SELECT processor_id FROM ?:payment_processors WHERE processor_id = ?i AND processor_script IN ('checkoutapipayment.php', 'checkoutapipayment_pro.php', 'payflow_pro.php', 'checkoutapipayment_express.php', 'checkoutapipayment_advanced.php')", $payment_data['processor_id'])) {
-        $p_surcharge = floatval($payment_data['p_surcharge']);
-        $a_surcharge = floatval($payment_data['a_surcharge']);
-        if (!empty($p_surcharge) || !empty($a_surcharge)) {
-            $payment_data['p_surcharge'] = 0;
-            $payment_data['a_surcharge'] = 0;
-            fn_set_notification('E', __('error'), __('text_checkoutapipayment_surcharge'));
-        }
-    }
+
 }
 
 function fn_checkoutapipayment_rma_update_details_post(&$data, &$show_confirmation_page, &$show_confirmation, &$is_refund, &$_data, &$confirmed)
 {
-    $change_return_status = $data['change_return_status'];
-    if (($show_confirmation == false || ($show_confirmation == true && $confirmed == 'Y')) && $is_refund == 'Y') {
-        $order_info = fn_get_order_info($change_return_status['order_id']);
-        $amount = 0;
-        $st_inv = fn_get_statuses(STATUSES_RETURN);
-        if ($change_return_status['status_to'] != $change_return_status['status_from'] && $st_inv[$change_return_status['status_to']]['params']['inventory'] != 'D') {
-            if (!empty($order_info['payment_method']) && !empty($order_info['payment_method']['processor_params']) && !empty($order_info['payment_info']) && !empty($order_info['payment_info']['transaction_id'])) {
-                if (!empty($order_info['payment_method']['processor_params']['username']) && !empty($order_info['payment_method']['processor_params']['password'])) {
-                    $request_data = array(
-                        'METHOD' => 'RefundTransaction',
-                        'VERSION' => '94',
-                        'TRANSACTIONID' => $order_info['payment_info']['transaction_id']
-                    );
-                    if (!empty($order_info['returned_products'])) {
-                        foreach ($order_info['returned_products'] as $product) {
-                            $amount += $product['subtotal'];
-                        }
-                    } elseif (!empty($order_info['products'])) {
-                        foreach ($order_info['products'] as $product) {
-                            if (isset($product['extra']['returns'])) {
-                                foreach ($product['extra']['returns'] as $return_id => $return_data)  {
-                                    $amount += $return_data['amount'] * $product['subtotal'];
-                                }
-                            }
-                        }
-                    }
 
-                    if ($amount != $order_info['subtotal'] || fn_allowed_for('MULTIVENDOR')) {
-                        $request_data['REFUNDTYPE'] = 'Partial';
-                        $request_data['AMT'] = $amount;
-                        $request_data['CURRENCYCODE'] = isset($order_info['payment_method']['processor_params']['currency']) ? $order_info['payment_method']['processor_params']['currency'] : 'USD';
-                        $request_data['NOTE'] = !empty($_REQUEST['comment']) ? $_REQUEST['comment'] : '';
-                    } else {
-                        $request_data['REFUNDTYPE'] = 'Full';
-                    }
-                    fn_checkoutapipayment_build_request($order_info['payment_method'], $request_data, $post_url, $cert_file);
-                    $result = fn_checkoutapipayment_request($request_data, $post_url, $cert_file);
-                }
-            }
-        }
-    }
 }
 
 function fn_validate_checkoutapipayment_order_info($data, $order_info)
@@ -174,45 +119,7 @@ function fn_validate_checkoutapipayment_order_info($data, $order_info)
 function fn_checkoutapipayment_get_customer_info($data)
 {
     $user_data = array();
-    if (!empty($data['address_street'])) {
-        $user_data['b_address'] = $user_data['s_address'] = $data['address_street'];
-    }
-    if (!empty($data['address_city'])) {
-        $user_data['b_city'] = $user_data['s_city'] = $data['address_city'];
-    }
-    if (!empty($data['address_state'])) {
-        $user_data['b_state'] = $user_data['s_state'] = $data['address_state'];
-    }
-    if (!empty($data['address_country'])) {
-        $user_data['b_country'] = $user_data['s_country'] = $data['address_country'];
-    }
-    if (!empty($data['address_zip'])) {
-        $user_data['b_zipcode'] = $user_data['s_zipcode'] = $data['address_zip'];
-    }
-    if (!empty($data['contact_phone'])) {
-        $user_data['b_phone'] = $user_data['s_phone'] = $data['contact_phone'];
-    }
-    if (!empty($data['address_country_code'])) {
-        $user_data['b_country'] = $user_data['s_country'] = $data['address_country_code'];
-    }
-    if (!empty($data['first_name'])) {
-        $user_data['firstname'] = $data['first_name'];
-    }
-    if (!empty($data['last_name'])) {
-        $user_data['lastname'] = $data['last_name'];
-    }
-    if (!empty($data['address_name'])) {
-        //When customer set a shipping name we should use it
-        $_address_name = explode(' ', $data['address_name']);
-        $user_data['s_firstname'] = $_address_name[0];
-        $user_data['s_lastname'] = $_address_name[1];
-    }
-    if (!empty($data['payer_business_name'])) {
-        $user_data['company'] = $data['payer_business_name'];
-    }
-    if (!empty($data['payer_email'])) {
-        $user_data['email'] = $data['payer_email'];
-    }
+
 
     return $user_data;
 }
@@ -220,41 +127,7 @@ function fn_checkoutapipayment_get_customer_info($data)
 function fn_process_checkoutapipayment_ipn($order_id, $data)
 {
     $order_info = fn_get_order_info($order_id);
-    if (!empty($order_info) && !empty($data['txn_id']) && (empty($order_info['payment_info']['txn_id']) || $data['payment_status'] != 'Completed' || ($data['payment_status'] == 'Completed' && $order_info['payment_info']['txn_id'] !== $data['txn_id']))) {
-        //Can't check refund transactions.
-        if (isset($data['txn_type']) && !fn_validate_checkoutapipayment_order_info($data, $order_info)) {
-            return false;
-        }
-        $pp_settings = fn_get_checkoutapipayment_settings();
-        $data['payment_status'] = strtolower($data['payment_status']);
-        fn_clear_cart($cart, true);
-        $customer_auth = fn_fill_auth(array(), array(), false, 'C');
-        fn_form_cart($order_id, $cart, $customer_auth);
 
-        if ($pp_settings['override_customer_info'] == 'Y') {
-            $cart['user_data'] = fn_checkoutapipayment_get_customer_info($data);
-        }
-
-        $cart['payment_info'] = $order_info['payment_info'];
-        $cart['payment_info']['protection_eligibility'] = !empty($data['protection_eligibility']) ? $data['protection_eligibility'] : '';
-        $cart['payment_id'] = $order_info['payment_id'];
-        if (!empty($data['memo'])) {
-            //Save customer notes
-            $cart['notes'] = $data['memo'];
-        }
-        if ($data['payment_status'] == 'Completed') {
-            //save uniq ipn id to avoid double ipn processing
-            $cart['payment_info']['txn_id'] = $data['txn_id'];
-        }
-
-        fn_calculate_cart_content($cart, $customer_auth);
-        list($order_id, ) = fn_update_order($cart, $order_id);
-        if ($order_id) {
-            fn_change_order_status($order_id, $pp_settings['pp_statuses'][$data['payment_status']]);
-        }
-
-        return true;
-    }
 }
 
 //function fn_pp_get_ipn_order_ids($data)
@@ -267,22 +140,5 @@ function fn_process_checkoutapipayment_ipn($order_id, $data)
 
 function fn_checkoutapipayment_prepare_checkout_payment_methods(&$cart, &$auth, &$payment_groups)
 {
-    if (isset($cart['payment_id'])) {
-        foreach ($payment_groups as $tab => $payments) {
-            foreach ($payments as $payment_id => $payment_data) {
-                if (isset($_SESSION['pp_express_details'])) {
-                    if ($payment_id != $cart['payment_id']) {
-                        unset($payment_groups[$tab][$payment_id]);
-                    } else {
-                        $_tab = $tab;
-                    }
-                }
-            }
-        }
-        if (isset($_tab)) {
-            $_payment_groups = $payment_groups[$_tab];
-            $payment_groups = array();
-            $payment_groups[$_tab] = $_payment_groups;
-        }
-    }
+
 }

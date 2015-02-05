@@ -20,7 +20,8 @@ class CheckoutApi_ChargePayment_Model_Observer
                 || $payment->getMethodInstance() instanceof CheckoutApi_ChargePayment_Model_Method_Creditcardpci) {
                 $rawrespond = $payment->getAdditionalInformation('rawrespond');
 
-                if( $tnxType!=Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE && $order->getStatus()!= 'canceled') {
+
+                if(!$rawrespond['captured']&& $order->getStatus()!= 'canceled') {
                     $message = Mage::helper('checkoutapi_chargePayment')->__('Are you sure you want to do caputre this transaction?');
                     $block->addButton('checkoutapi_capture', array(
                         'label'     => Mage::helper('checkoutapi_chargePayment')->__('Capture payment'),

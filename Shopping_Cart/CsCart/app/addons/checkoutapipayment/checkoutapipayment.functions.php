@@ -69,65 +69,6 @@ function fn_checkoutapipaymentl_ack_success($checkoutapipayment_checkout_details
 
 function fn_checkoutapipayment_user_login($checkout_details)
 {
-    $s_firstname = $s_lastname = '';
-    if (!empty($checkout_details['SHIPTONAME'])) {
-        $name = explode(' ', $checkout_details['SHIPTONAME']);
-        $s_firstname = $name[0];
-        unset($name[0]);
-        $s_lastname = (!empty($name[1]))? implode(' ', $name) : '';
-    }
-
-    $s_state = $checkout_details['SHIPTOSTATE'];
-    $s_state_codes = db_get_hash_array("SELECT ?:states.code, lang_code FROM ?:states LEFT JOIN ?:state_descriptions ON ?:state_descriptions.state_id = ?:states.state_id WHERE ?:states.country_code = ?s AND ?:state_descriptions.state = ?s", 'lang_code',  $checkout_details['SHIPTOCOUNTRYCODE'], $s_state);
-
-    if (!empty($s_state_codes[CART_LANGUAGE])) {
-        $s_state = $s_state_codes[CART_LANGUAGE]['code'];
-    } elseif (!empty($s_state_codes)) {
-        $s_state = array_pop($s_state_codes);
-        $s_state = $s_state['code'];
-    }
-
-    $address = array (
-        's_firstname' => $s_firstname,
-        's_lastname' => $s_lastname,
-        's_address' => $checkout_details['SHIPTOSTREET'],
-        's_address_2' => !empty($checkout_details['SHIPTOSTREET2']) ? $checkout_details['SHIPTOSTREET2'] : '',
-        's_city' => $checkout_details['SHIPTOCITY'],
-        //'s_county' => $checkout_details['SHIPTOCOUNTRYNAME'],
-        's_state' => $s_state,
-        's_country' => $checkout_details['SHIPTOCOUNTRYCODE'],
-        's_zipcode' => $checkout_details['SHIPTOZIP']
-    );
-
-    $_SESSION['auth'] = empty($_SESSION['auth']) ? array() : $_SESSION['auth'];
-    $auth = & $_SESSION['auth'];
-
-    // Update profile info if customer is registered user
-    if (!empty($auth['user_id']) && $auth['area'] == 'C') {
-        foreach ($address as $k => $v) {
-            $_SESSION['cart']['user_data'][$k] = $v;
-        }
-
-        $profile_id = !empty($_SESSION['cart']['profile_id']) ? $_SESSION['cart']['profile_id'] : db_get_field("SELECT profile_id FROM ?:user_profiles WHERE user_id = ?i AND profile_type='P'", $auth['user_id']);
-        db_query('UPDATE ?:user_profiles SET ?u WHERE profile_id = ?i', $_SESSION['cart']['user_data'], $profile_id);
-
-        // Or jyst update info in the cart
-    } else {
-        // fill customer info
-        $_SESSION['cart']['user_data'] = array(
-            'firstname' => $checkout_details['FIRSTNAME'],
-            'lastname' => $checkout_details['LASTNAME'],
-            'email' => $checkout_details['EMAIL'],
-            'company' => '',
-            'phone' => '',
-            'fax' => '',
-        );
-
-        foreach ($address as $k => $v) {
-            $_SESSION['cart']['user_data'][$k] = $v;
-            $_SESSION['cart']['user_data']['b_' . substr($k, 2)] = $v;
-        }
-    }
 
     return true;
 }
@@ -150,46 +91,11 @@ function fn_checkoutapipayment_do_express_checkout($processor_data, $checkoutapi
 {
 
 
-    fn_checkoutapipaymentl_build_request($processor_data, $request, $post_url, $cert_file);
-
-    $order_details = (!empty($order_info)) ? fn_checkoutapipayment_build_details($order_info, $processor_data, false) : fn_checkoutapipayment_build_details($cart, $processor_data);
-    $request = array_merge($request, $order_details);
-
-    if (!empty($order_info)) {
-        //We need to minus taxes when it based on unit price because product subtotal already include this tax.
-        if (Registry::get('settings.General.tax_calculation') == 'unit_price') {
-            $sum_taxes = fn_checkoutapipayment_sum_taxes($order_info);
-            $request['PAYMENTREQUEST_0_ITEMAMT'] -= $sum_taxes['P'];
-            $request['PAYMENTREQUEST_0_SHIPPINGAMT'] -= $sum_taxes['S'];
-        }
-    }
-
-    $result = fn_checkoutapipayment_request($request, $post_url, $cert_file);
-    if (isset($result['L_ERRORCODE0']) && $result['L_ERRORCODE0'] == 10486 && (!isset($order_info['payment_info']['attempts_number']) || $order_info['payment_info']['attempts_number'] < 2)) {
-        //According checkoutapipayment documetation we should make two attempt and redirect customer back to checkoutapipayment.
-        $count = isset($order_info['payment_info']['attempts_number']) ? $order_info['payment_info']['attempts_number'] : 0;
-        $count ++;
-        fn_update_order_payment_info($order_info['order_id'], array('attempts_number' => $count));
-        fn_checkoutapipayment_payment_form($processor_data, $checkoutapipayment_checkout_details['TOKEN']);
-    }
-    return $result;
 }
 
 function fn_checkoutapipayment_payment_form($processor_data, $token)
 {
-    if ($processor_data['processor_params']['mode'] == 'live') {
-        $host = 'https://www.checkoutapipayment.com';
-    } else {
-        $host = 'https://www.sandbox.checkoutapipayment.com';
-    }
 
-    $post_data = array(
-        'cmd' => '_express-checkout',
-        'token' => $token,
-    );
-
-    $submit_url = "$host/webscr";
-    fn_create_payment_form($submit_url, $post_data, 'checkoutapipayment Express');
 }
 
 function fn_checkoutapipayment_request($request, $post_url, $cert_file)
@@ -235,203 +141,43 @@ function fn_checkoutapipayment_get_shipping_data($data)
 {
     $shipping_data = array();
 
-    if (!empty($data)) {
-        $shipping_data['ADDROVERRIDE'] = 1;
-        $shipping_data['PAYMENTREQUEST_0_SHIPTONAME'] = $data['s_firstname'] . ' ' . $data['s_lastname'];
-        $shipping_data['PAYMENTREQUEST_0_SHIPTOSTREET'] = $data['s_address'];
-        if (!empty($data['s_address_2'])) {
-            $shipping_data['PAYMENTREQUEST_0_SHIPTOSTREET2'] = $data['s_address_2'];
-        }
-        $shipping_data['PAYMENTREQUEST_0_SHIPTOCITY'] = $data['s_city'];
-        $shipping_data['PAYMENTREQUEST_0_SHIPTOSTATE'] = $data['s_state'];
-        $shipping_data['PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE'] = $data['s_country'];
-        $shipping_data['PAYMENTREQUEST_0_SHIPTOZIP'] = $data['s_zipcode'];
-    }
 
     return $shipping_data;
 }
 
 function fn_checkoutapipayment_get_order_data($data)
 {
-    $order_data = array();
-    $product_index = 0;
 
-    foreach ($data['products'] as $product) {
-        if ($product['price'] != 0) {
-            $order_data['L_PAYMENTREQUEST_0_NAME' . $product_index] = $product['product'];
-            $order_data['L_PAYMENTREQUEST_0_NUMBER' . $product_index] = $product['product_code'];
-            $order_data['L_PAYMENTREQUEST_0_DESC' . $product_index] = fn_checkoutapipayment_get_product_option($product);
-            $order_data['L_PAYMENTREQUEST_0_QTY' . $product_index] = $product['amount'];
-            $order_data['L_PAYMENTREQUEST_0_AMT' . $product_index] = $product['price'];
 
-            $product_index++;
-        }
-    }
-
-    $sum_taxes = fn_checkoutapipayment_sum_taxes($data);
-    $order_data['PAYMENTREQUEST_0_ITEMAMT'] = empty($data['subtotal_discount']) ? $data['subtotal'] : $data['subtotal'] - $data['subtotal_discount'];
-    $order_data['PAYMENTREQUEST_0_TAXAMT'] = array_sum($sum_taxes);
-    $order_data['PAYMENTREQUEST_0_SHIPPINGAMT'] = $data['shipping_cost'];
-    $order_data['PAYMENTREQUEST_0_AMT'] = $data['total'];
-
-    fn_checkoutapipayment_apply_discount($data, $order_data, $product_index);
-    fn_set_hook('checkoutapipayment_express_get_order_data', $data, $order_data, $product_index);
-
-    return $order_data;
 }
 
 function fn_checkoutapipayment_sum_taxes($order_info)
 {
-    $sum_taxes = array('P' => 0, 'S' => 0, 'O' => 0);
-    if (!empty($order_info['taxes'])) {
-        foreach ($order_info['taxes'] as $tax) {
-            if ($tax['price_includes_tax'] != 'Y') {
-                foreach ($tax['applies'] as $key => $value) {
-                    if (strpos($key, 'P_') !== false) {
-                        $sum_taxes['P'] += $value;
-                    } elseif (strpos($key, 'S_') !== false) {
-                        $sum_taxes['S'] += $value;
-                    } elseif (!is_array($value)) {
-                        $sum_taxes['O'] += $value;
-                    }
-                }
-            }
-        }
-    }
 
-    return $sum_taxes;
 }
 
 function fn_checkoutapipayment_apply_discount($data, &$order_data, $product_index)
 {
-    $discount_applied = false;
-    if (!fn_is_empty(floatval($data['subtotal_discount']))) {
-        $order_data['L_PAYMENTREQUEST_0_NAME' . $product_index] = __('discount');
-        $order_data['L_PAYMENTREQUEST_0_QTY' . $product_index] = 1;
-        $order_data['L_PAYMENTREQUEST_0_AMT' . $product_index] = -$data['subtotal_discount'];
-        $discount_applied = true;
-    }
 
-    fn_set_hook('checkoutapipayment_apply_discount_post', $data, $order_data, $product_index, $discount_applied);
 }
 
 function fn_checkoutapipayment_get_product_option($product)
 {
-    $options = array();
-    if (!empty($product['extra']['product_options'])) {
-        foreach ($product['extra']['product_options'] as $option_id => $variant_id) {
-            $option = fn_get_product_option_data($option_id, $product['product_id']);
 
-            if (!empty($option)) {
-                if ($option['option_type'] == 'F') {
-                    if (!empty($product['extra']['custom_files'][$option_id])) {
-                        $files = array();
-                        foreach ($product['extra']['custom_files'][$option_id] as $file) {
-                            $files[] = $file['name'];
-                        }
-                        $options[] = $option['option_name'] . ': ' . implode(',', $files);
-                    }
-                } elseif ($option['option_type'] == 'C') {
-                    if (!empty($option['variants'][$variant_id])) {
-                        $options[] = $option['option_name'];
-                    }
-
-                } elseif (empty($option['variants'])) {
-                    if (!empty($variant_id)) {
-                        $options[] = $option['option_name'] . ': ' . $variant_id;
-                    }
-                } else {
-                    $options[] = $option['option_name'] . ': ' . $option['variants'][$variant_id]['variant_name'];
-                }
-            }
-        }
-    }
-
-    return implode(", ", $options);
 }
 
 function fn_checkoutapipayment_process_add_fields($result, $reason_text)
 {
-    $fields = array();
-    //'ExchangeRate', 'GrossAmount','SettleAmount'
-    $result_fields = array(
-        'FEEAMT' => 'FeeAmount',
-        'TAXAMT' => 'TaxAmount',
-        'TRANSACTIONTYPE' => 'TransactionType',
-        'PAYMENTTYPE' => 'PaymentType'
-    );
 
-    foreach ($result_fields as $field_id => $field_name) {
-        $field = 'PAYMENTINFO_0_' . $field_id;
-        if (isset($result[$field]) && strlen($result[$field]) > 0) {
-            $fields[] = $field_name . ': ' . $result[$field];
-        }
-    }
-
-    if (!empty($fields)) {
-        $reason_text .= '(' . implode(', ', $fields) . ')';
-    }
-
-    return $reason_text;
 }
 
 function fn_checkoutapipayment_get_error($result)
 {
-    $error_text = '';
 
-    if (!empty($result['L_ERRORCODE0'])) {
-        $error_text = $result['L_SHORTMESSAGE0'] . ': ' . $result['L_LONGMESSAGE0'];
-        fn_set_notification('E', __('Error') . ' ' . $result['L_ERRORCODE0'], $error_text);
-
-        $error_text = '(' . $result['L_ERRORCODE0'] . ') ' . $error_text;
-    }
-
-    return $error_text;
 }
 
 function fn_checkoutapipayment_set_express_checkout($payment_id, $order_id = 0, $order_info = array(), $cart = array(), $area = AREA)
 {
-    $processor_data = fn_get_payment_method_data($payment_id);
 
-    if (!empty($order_id)) {
-        $return_url = fn_url("payment_notification.notify?payment=checkoutapipayment_express&order_id=$order_id", $area, 'current');
-        $cancel_url = fn_url("payment_notification.cancel?payment=checkoutapipayment_express&order_id=$order_id", $area, 'current');
-    } else {
-        $return_url = fn_payment_url('current', "checkoutapipayment_express.php?mode=express_return&payment_id=$payment_id");
-        $cancel_url = fn_url("checkout.cart", $area, 'current');
-    }
-
-    $request = array(
-        'PAYMENTREQUEST_0_PAYMENTACTION' => 'SALE',
-        'PAYMENTREQUEST_0_CURRENCYCODE' => $processor_data['processor_params']['currency'],
-        'LOCALECODE' => CART_LANGUAGE,
-        'RETURNURL' => $return_url,
-        'CANCELURL' => $cancel_url,
-        'METHOD' => 'SetExpressCheckout',
-        'SOLUTIONTYPE' => 'Sole',
-
-    );
-    if (isset($_SESSION['checkoutapipayment_token'])) {
-        $request['IDENTITYACCESSTOKEN'] = $_SESSION['checkoutapipayment_token'];
-    }
-    $checkoutapipayment_settings = fn_get_checkoutapipayment_settings();
-    if (!empty($checkoutapipayment_settings) && !empty($checkoutapipayment_settings['main_pair']['detailed'])) {
-        $request['LOGOIMG'] = !empty($checkoutapipayment_settings['main_pair']['detailed']['http_image_path']) ? $checkoutapipayment_settings['main_pair']['detailed']['http_image_path'] : $checkoutapipayment_settings['main_pair']['detailed']['image_path'];
-    }
-    fn_checkoutapipayment_build_request($processor_data, $request, $post_url, $cert_file);
-
-    $order_details = (!empty($order_info)) ? fn_checkoutapipayment_build_details($order_info, $processor_data, false) : fn_checkoutapipayment_build_details($cart, $processor_data);
-    $request = array_merge($request, $order_details);
-
-    if (!empty($order_info)) {
-        //We need to minus taxes when it based on unit price because product subtotal already include this tax.
-        if (Registry::get('settings.General.tax_calculation') == 'unit_price') {
-            $sum_taxes = fn_checkoutapipayment_sum_taxes($order_info);
-            $request['PAYMENTREQUEST_0_ITEMAMT'] -= $sum_taxes['P'];
-            $request['PAYMENTREQUEST_0_SHIPPINGAMT'] -= $sum_taxes['S'];
-        }
-    }
-    $result = fn_checkoutapipayment_request($request, $post_url, $cert_file);
-
-    return $result;
 }
+CURL_SSLVERSION_TLSv1_2;

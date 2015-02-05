@@ -5,7 +5,8 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
     protected $_canAuthorize            = true;
     protected $_canCapture              = true;
     protected $_canRefund               = true;
-    protected $_canVoid              = true;
+    protected $_canVoid                 = true;
+    protected $_canOrder                = true;
 
 
     private function _placeOrder(Varien_Object $payment,$amount ,$messageSuccess, $extraConfig)
@@ -140,6 +141,17 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
 
     }
 
+    protected  function _capture(Varien_Object $payment, $amount)
+    {
+
+        $extraConfig = array (
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE,
+            'autoCapTime' => $this->getConfigData('auto_capture_time')
+        );
+
+        $this->_placeOrder($payment, $amount, "Payment has been successfully captured for Transaction ",$extraConfig);
+
+    }
     /**
      * Capture payment abstract method
      *
@@ -155,19 +167,10 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
             Mage::throwException(Mage::helper('payment')->__('Capture action is not available.'));
 
         }else {
-            $lastTransactionId =  $payment->getLastTransId();
-            $lastTransactionIdCapture =  $payment->getTransactionId();
 
-            if($lastTransactionId.'-capture' == $lastTransactionIdCapture ) {
-                return $this;
+            if(!$payment->getLastTransId()) {
+                $this->_capture($payment,$amount);
             }
-
-            $extraConfig = array (
-                'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE,
-                'autoCapTime' => $this->getConfigData('auto_capture_time')
-            );
-
-            $this->_placeOrder($payment, $amount, "Payment has been successfully captured for Transaction ",$extraConfig);
         }
 
         return $this;
@@ -202,6 +205,21 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
     }
 
 
+    public function order(Varien_Object $payment, $amount)
+    {
+        if(!$this->canOrder()) {
+            parent::order( $payment, $amount);
+
+        }else {
+
+            $this->_capture($payment, $amount);
+            $order = $payment->getOrder();
+            $payment->setAmountAuthorized($order->getTotalDue());
+            $payment->setBaseAmountAuthorized($order->getBaseTotalDue());
+        }
+
+        return $this;
+    }
 
 
 }
