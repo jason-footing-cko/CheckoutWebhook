@@ -11,12 +11,12 @@
            <td><input type="text" name="cc_number" id="cc_number" value="" />
                <span id="CCError" class="error" style="display: none;"></span>
                <div class="cards-left">
-                   <img id="img_Visa" src="catalog/view/theme/default/image/cc-visa.png" alt="Visa"  class="cc-icon disable">
-                   <img id="img_mastercard" src="catalog/view/theme/default/image/cc-mastercard.png" alt="MasterCard" class="cc-icon disable">
-                   <img id="img_discover" src="catalog/view/theme/default/image/cc-discover.png" alt="Discover" class="cc-icon disable">
-                   <img id="img_amex" src="catalog/view/theme/default/image/cc-amex.png" alt="American Expres" class="cc-icon disable">
-                   <img id="img_jcb" src="catalog/view/theme/default/image/cc-jcb.png" alt="JCB" class="cc-icon disable">
-                   <img id="img_diners" src="catalog/view/theme/default/image/cc-diners.png" alt="Diners Club" class="cc-icon disable">
+                   <img id="img_Visa" src="catalog/view/theme/default/image/payment/checkoutapi/cc-visa.png" alt="Visa"  class="cc-icon disable">
+                   <img id="img_mastercard" src="catalog/view/theme/default/image/payment/checkoutapi/cc-mastercard.png" alt="MasterCard" class="cc-icon disable">
+                   <img id="img_discover" src="catalog/view/theme/default/image/payment/checkoutapi/cc-discover.png" alt="Discover" class="cc-icon disable">
+                   <img id="img_amex" src="catalog/view/theme/default/image/payment/checkoutapi/cc-amex.png" alt="American Expres" class="cc-icon disable">
+                   <img id="img_jcb" src="catalog/view/theme/default/image/payment/checkoutapi/cc-jcb.png" alt="JCB" class="cc-icon disable">
+                   <img id="img_diners" src="catalog/view/theme/default/image/payment/checkoutapi/cc-diners.png" alt="Diners Club" class="cc-icon disable">
                </div>
            </td>
        </tr>

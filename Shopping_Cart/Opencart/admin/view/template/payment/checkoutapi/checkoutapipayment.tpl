@@ -28,7 +28,7 @@
 
             <div class="checkoutapi-wrapper">
                 <a href="http://dev.checkout.com/" class="checkoutapi-logo" target="_blank">
-                    <img src="../admin/view/image/payment/checkout-logo@2x.png" alt="Checkout.com" border="0" />
+                    <img src="../admin/view/image/payment/checkoutapi/checkout-logo@2x.png" alt="Checkout.com" border="0" />
                 </a>
 
                 <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
