@@ -348,6 +348,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
     {
         $hasError = false;
         $param['postedParam']['type'] = CheckoutApi_Client_Constant::CHARGE_TYPE;
+        $param['method'] = CheckoutApi_Client_Adapter_Constant::API_POST;
         $postedParam = $param['postedParam'];
         $this->flushState();
         $isAmountValid = CheckoutApi_Client_Validation_GW3::isValueValid($postedParam);

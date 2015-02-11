@@ -106,7 +106,7 @@ class CheckoutApi_Client_Adapter_Curl extends CheckoutApi_Client_Adapter_Abstrac
 					'curl_info' => curl_getinfo($resource),
 					'respondBody'=>	$response,
 					'postedParam' =>$this->getPostedParam(),
-					'rawPostedParam' => $this->getRawpostedParam()
+					'rawPostedParam' => $this->getRawpostedParam(),
 					)
 				);
 

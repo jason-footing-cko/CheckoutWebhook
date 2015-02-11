@@ -9,7 +9,6 @@ dependencies[] = commerce_order
 core = 7.x
 
 ; Simple tests
-; files[] = tests/commerce_paypal_wps.test
 
 ; Information added by Drupal.org packaging script on 2014-26-14
 version = "7.x-2.3"

@@ -1,0 +1,9 @@
+app/addons/checkoutapipayment app/addons/checkoutapipayment
+design/backend/templates/views/orders/components/payments/checkoutapipaymentjs.tpl design/backend/templates/views/orders/components/payments/checkoutapipaymentjs.tpl
+design/backend/templates/addons/checkoutapipayment design/backend/templates/addons/checkoutapipayment
+var/langs/en/addons/checkoutapipayment.po var/langs/en/addons/checkoutapipayment.po
+app/payments/checkoutapipayment.php app/payments/checkoutapipayment.php
+app/payments/CheckoutApi app/payments/CheckoutApi
+design/themes/responsive/templates/addons/checkoutapipayment design/themes/responsive/templates/addons/checkoutapipayment
+design/themes/responsive/templates/views/orders/components/payments/checkoutapipaymentjs.tpl design/themes/responsive/templates/views/orders/components/payments/checkoutapipaymentjs.tpl
+app/functions/smarty_plugins/function.checkoutapijs.php app/functions/smarty_plugins/function.checkoutapijs.php

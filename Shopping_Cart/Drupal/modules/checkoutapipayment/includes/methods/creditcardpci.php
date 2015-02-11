@@ -24,6 +24,7 @@ class methods_creditcardpci extends methods_Abstract
 
         return commerce_payment_credit_card_form($fields);
     }
+    
     public function submitFormCharge ($payment_method, $pane_form, $pane_values, $order, $charge) {
         $config = parent::submitFormCharge($payment_method, $pane_form, $pane_values, $order, $charge);
         $config['postedParam']['card']['number'] = $pane_values['credit_card']['number'];
