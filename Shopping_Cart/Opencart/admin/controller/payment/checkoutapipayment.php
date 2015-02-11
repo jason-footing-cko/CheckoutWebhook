@@ -20,8 +20,8 @@ class ControllerPaymentcheckoutapipayment extends Controller
         }
 
         $this->data['heading_title']                 = $this->language->get('heading_title');
-        $this->data['text_checkapipayment_join']     = $this->language->get('text_checkapipayment_join');
-        $this->data['text_checkapipayment']          = $this->language->get('text_checkapipayment');
+        $this->data['text_checkoutapipayment_join']     = $this->language->get('text_checkoutapipayment_join');
+        $this->data['text_checkoutapipayment']          = $this->language->get('text_checkoutapipayment');
         $this->data['text_payment']                  = $this->language->get('text_payment');
         $this->data['text_success']                  = $this->language->get('text_success');
         $this->data['text_page_title']               = $this->language->get('text_page_title');

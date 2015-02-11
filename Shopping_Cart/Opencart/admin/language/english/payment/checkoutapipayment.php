@@ -2,8 +2,8 @@
 // Heading
 $_['heading_title']		  = 'Checkout.com (Gateway 3.0)';
 
-$_['text_checkapipayment'] = '<a onclick="window.open(\'https://www.checkout.com\');"><img src="https://www.checkout.com/wp-content/uploads/2014/08/logo.png" alt="www.checkout.com" title="www.checkout.com" style="border: 1px solid #EEEEEE;height:22px;width:92px;" /></a>';
-$_['text_checkapipayment_join'] = '<a onclick="window.open(\'https://www.checkout.com\');" title="Click here to join Checkout.com">Click here to create your Checkout.com account</a>';
+$_['text_checkoutapipayment'] = '<a onclick="window.open(\'https://www.checkout.com\');"><img src="https://www.checkout.com/wp-content/uploads/2014/08/logo.png" alt="www.checkout.com" title="www.checkout.com" style="border: 1px solid #EEEEEE;height:22px;width:92px;" /></a>';
+$_['text_checkoutapipayment_join'] = '<a onclick="window.open(\'https://www.checkout.com\');" title="Click here to join Checkout.com">Click here to create your Checkout.com account</a>';
 
 
 // Text
