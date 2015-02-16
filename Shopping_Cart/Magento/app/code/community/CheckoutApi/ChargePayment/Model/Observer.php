@@ -13,7 +13,6 @@ class CheckoutApi_ChargePayment_Model_Observer
         if ($block instanceof Mage_Adminhtml_Block_Sales_Order_View) {
             $order = $block->getOrder();
             $payment = $order->getPayment();
-            $tnxType  = $order->getPayment()->getTransaction($order->getPayment()->getLastTransId())->getTxnType();
 
                 //Mage::getModel('sales/order_payment_transaction')
             if ($payment->getMethodInstance() instanceof CheckoutApi_ChargePayment_Model_Method_Creditcard

@@ -65,6 +65,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 	private $_mode = 'dev';
 
 
+
     /**
      * Constructor
      * @param array $config configuration for class
@@ -81,6 +82,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 		$this->setUriCharge();
         $this->setUriToken();
         $this->setUriCustomer();
+        $this->setUriProvider();
         $this->setUriProvider();
 	}
 
@@ -149,7 +151,7 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
         $this->flushState();
         $isAmountValid = CheckoutApi_Client_Validation_GW3::isValueValid($postedParam);
         $isCurrencyValid = CheckoutApi_Client_Validation_GW3::isValidCurrency($postedParam);
-        $uri = $this->getUriToken();
+        $uri = $this->getUriToken().'/'.CheckoutApi_Client_Constant::PAYMENTTOKEN_TYPE;
 
         if(!$isAmountValid) {
             $hasError =  true;
@@ -1215,15 +1217,16 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
 	private function getUriPrefix()
 	{
 		$mode = strtolower($this->getMode());
+        $version = $this->getVersion().'/';
 		switch ($mode) {
 			case 'live':
-				$prefix = CheckoutApi_Client_Constant::APIGW3_URI_PREFIX_LIVE;
+				$prefix = CheckoutApi_Client_Constant::APIGW3_URI_PREFIX_LIVE.$version;
 				break;
 			case 'preprod':
-				$prefix = CheckoutApi_Client_Constant::APIGW3_URI_PREFIX_PREPOD;
+				$prefix = CheckoutApi_Client_Constant::APIGW3_URI_PREFIX_PREPOD.$version;
 				break;
 			default:
-				$prefix = CheckoutApi_Client_Constant::APIGW3_URI_PREFIX_DEV;
+				$prefix = CheckoutApi_Client_Constant::APIGW3_URI_PREFIX_DEV.$version;
 				break;
 		}
 		return $prefix;
@@ -1293,5 +1296,10 @@ class CheckoutApi_Client_ClientGW3 extends CheckoutApi_Client_Client
                 }
             }";
         return $script;
+    }
+
+    public function getVersion()
+    {
+        return VERSION_API;
     }
 }

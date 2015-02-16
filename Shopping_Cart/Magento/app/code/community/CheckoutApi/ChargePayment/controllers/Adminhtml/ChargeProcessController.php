@@ -34,7 +34,7 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
                                                 'value'=>(int)($_authorizeAmount*100)
                                                 );
 
-                $_captureCharge = $_Api->captureCharge($_config); 
+                $_captureCharge = $_Api->captureCharge($_config);
                 if($_captureCharge->isValid() && $_captureCharge->getCaptured() &&
                     preg_match('/^1[0-9]+$/',$_captureCharge->getResponseCode()) ) {
                     $hasBeenCaptured = true;

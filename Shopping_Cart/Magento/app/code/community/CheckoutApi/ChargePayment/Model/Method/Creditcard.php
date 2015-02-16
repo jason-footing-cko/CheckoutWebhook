@@ -24,10 +24,10 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
         /** @var CheckoutApi_Client_ClientGW3  $Api */
         $Api = CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
         $config = parent::_createCharge($payment,$amount,$extraConfig);
-        $config['postedParam']['email'] = $payment->getAdditionalData('cko_cc_email');
-        $config['postedParam']['cardToken'] = $payment->getAdditionalData('cko_cc_token');
+        $config['paymentToken'] = $payment->getAdditionalData('cko_cc_paymenToken');
 
-        return $Api->createCharge($config);
+
+        return $Api->verifyChargePaymentToken($config);
 
     }
 
@@ -56,11 +56,8 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
 
         parent::assignData($data);
         $info = $this->getInfoInstance();
+        $details['cko_cc_paymenToken'] = $data->getData('cko_cc_paymenToken');
 
-//        $info->setData('cko_cc_token',$data->getData('cko_cc_token'));
-//        $info->setData('cko_cc_email',$data->getData('cko_cc_email'));
-        $details['cko_cc_token'] = $data->getData('cko_cc_token');
-        $details['cko_cc_email'] = $data->getData('cko_cc_email');
         $info->setAdditionalData($details);
         return $this;
     }

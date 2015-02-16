@@ -29,6 +29,12 @@
 
      }
 
+     public function getName()
+     {
+         return  $this->_getQuote()->getBillingAddress()->getFirstname(). ' '. $this->_getQuote()->getBillingAddress()->getLastname();
+
+     }
+
      public function getConfigData($field, $storeId = null)
      {
          if (null === $storeId) {
@@ -37,10 +43,18 @@
          $path = 'payment/creditcard/'.$field;
          return Mage::getStoreConfig($path, $storeId);
      }
-     public function getName()
-     {
-         return  $this->_getQuote()->getBillingAddress()->getName();
 
+     public function getStoreName()
+     {
+
+         return  Mage::app()->getStore()->getName();
      }
 
+
+
+     public function isSelected()
+     {
+
+        return $this->_getQuote()->getPayment()->getMethod() == 'creditcard';
+     }
 }
