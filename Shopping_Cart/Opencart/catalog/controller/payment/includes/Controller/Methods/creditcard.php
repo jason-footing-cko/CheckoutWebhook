@@ -1,5 +1,5 @@
 <?php
-class Controller_Methods_creditcard extends Controller implements Controller_Interface
+class Controller_Methods_creditcard extends Controller_Methods_Abstract implements Controller_Interface
 {
 
     public function getData()
@@ -10,7 +10,14 @@ class Controller_Methods_creditcard extends Controller implements Controller_Int
 
         $this->load->model('checkout/order');
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-        $jsConfig = $this->renderJsConfig();
+        $config['debug'] = false;
+        $config['email'] =  $order_info['email'];
+        $config['name'] = $order_info['firstname']. ' '.$order_info['lastname'];
+        $config['amount'] =  (int) $order_info['total'] * 100;
+        $config['currency'] =  $this->currency->getCode();
+        $config['widgetSelector'] =  '.widget-container';
+        $paymentTokenArray    =    $this->generatePaymentToken();
+
         $toReturn = array(
             'text_card_details' => $this->language->get('text_card_details'),
             'text_wait'         => $this->language->get('text_wait'),
@@ -18,7 +25,15 @@ class Controller_Methods_creditcard extends Controller implements Controller_Int
             'order_email'       => $order_info['email'],
             'order_currency'    => $this->currency->getCode(),
             'amount'            => (int) $order_info['total'] * 100,
-            'jsconfig'            => $jsConfig,
+            'publicKey'         => $this->config->get('public_key'),
+            'email'             =>  $order_info['email'],
+            'name'  => $order_info['firstname']. ' '.$order_info['lastname'],
+            'paymentToken'      =>   $paymentTokenArray['token'],
+            'message'           =>   $paymentTokenArray['message'],
+            'success'           =>   $paymentTokenArray['success'],
+            'eventId'           =>   $paymentTokenArray['eventId'],
+            'textWait'           =>   $this->language->get('text_wait'),
+
         );
 
         foreach ($toReturn as $key=>$val) {
@@ -35,61 +50,110 @@ class Controller_Methods_creditcard extends Controller implements Controller_Int
         $toReturn['tpl'] =   $this->render();
         return $toReturn;
     }
-    public function createCharge($config,$order_info)
+    protected function _createCharge($order_info)
     {
+        $config = array();
 
-        $config['postedParam']['cardToken']  = $this->request->post['cko_cc_token'];
-        $config['postedParam']['email']  = $this->request->post['cko_cc_email'];
-        return $config;
+        $scretKey = $this->config->get('secret_key');
+
+        $config['authorization'] = $scretKey  ;
+        $config['timeout'] =  $this->config->get('gateway_timeout');
+        $config['paymentToken']  = $this->request->post['cko_cc_paymenToken'];
+        $Api = CheckoutApi_Api::getApi(array('mode'=> $this->config->get('test_mode')));
+
+        return $Api->verifyChargePaymentToken($config);
     }
 
 
-    public function renderJsConfig()
+
+    public function generatePaymentToken()
     {
-        $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-        $Api = CheckoutApi_Api::getApi(array('mode'=> $this->config->get('test_mode')));
-
         $config = array();
-        $config['debug'] = false;
-        $config['publicKey'] = $this->config->get('public_key') ;
-        $config['email'] =  $order_info['email'];
-        $config['name'] = $order_info['firstname']. ' '.$order_info['lastname'];
-        $config['amount'] =  (int) $order_info['total'] * 100;
-        $config['currency'] =  $this->currency->getCode();
-        $config['widgetSelector'] =  '.widget-container';
-        $config['cardTokenReceivedEvent'] = "
-                        document.getElementById('cko-cc-token').value = event.data.cardToken;
-                        document.getElementById('cko-cc-email').value = event.data.email;
+        $this->load->model('checkout/order');
+        $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+        $productsLoad= $this->cart->getProducts();
+        $scretKey = $this->config->get('secret_key');
+        $orderId = $this->session->data['order_id'];
+        $amountCents = (int) $order_info['total'] * 100;
+        $config['authorization'] = $scretKey  ;
+        $config['mode'] = $this->config->get('test_mode');
+        $config['timeout'] =  $this->config->get('gateway_timeout');
 
-                           $.ajax({
-                        url: 'index.php?route=payment/checkoutapipayment/send',
-                        type: 'post',
-                        data: $('#payment :input'),
-                        dataType: 'json',
-                        beforeSend: function () {
-                            $('#button-confirm').attr('disabled', true);
-                            $('#payment').before('<div class=\"attention\"><img src=\"catalog/view/theme/default/image/loading.gif\" alt=\"\" />".$this->language->get('text_wait')."</div>');
-                        },
-                        complete: function () {
-                            $('#button-confirm').attr('disabled', false);
-                            $('.attention').remove();
-                        },
-                        success: function (json) {
+        if($this->config->get('payment_action') =='authorize_capture') {
+            $config = array_merge($config, $this->_captureConfig());
 
-                            if (json['error']) {
-                                alert(json['error']);
-                            }
+        }else {
 
-                            if (json['success']) {
-                                 location = json['success'];
-                            }
-                        }
-                    });
+            $config = array_merge($config,$this->_authorizeConfig());
+        }
 
-                        ";
-        $config['readyEvent'] = '';
-        $jsConfig = $Api->getJsConfig($config);
+        $products = array();
+        foreach ($productsLoad as $item ) {
 
-        return $jsConfig;
+            $products[] = array (
+                'name'       =>     $item['name'],
+                'sku'        =>     $item['key'],
+                'price'      =>     $this->currency->format($item['price'], $this->currency->getCode(), false, false),
+                'quantity'   =>     $item['quantity']
+            );
+        }
+
+        $billingAddressConfig = array(
+            'addressLine1'       =>  $order_info['payment_address_1'],
+            'addressLine2'       =>  $order_info['payment_address_2'],
+            'postcode'           =>  $order_info['payment_postcode'],
+            'country'            =>  $order_info['payment_iso_code_3'],
+            'city'               =>  $order_info['payment_city'],
+            'phone'              =>  $order_info['telephone'],
+
+        );
+
+        $shippingAddressConfig = array(
+            'addressLine1'       =>  $order_info['shipping_address_1'],
+            'addressLine2'       =>  $order_info['shipping_address_2'],
+            'postcode'           =>  $order_info['shipping_postcode'],
+            'country'            =>  $order_info['shipping_iso_code_3'],
+            'city'               =>  $order_info['shipping_city'],
+            'phone'              =>  $order_info['telephone'],
+            'recipientName'		 =>   $order_info['firstname']. ' '. $order_info['lastname']
+
+        );
+
+        $config['postedParam'] = array_merge($config['postedParam'],array (
+            'email'              =>  $order_info['email'],
+            'value'              =>  $amountCents,
+            'currency'           =>  $this->currency->getCode(),
+            'description'        =>  "Order number::$orderId",
+            'shippingDetails'    =>    $shippingAddressConfig,
+            'products'           =>    $products,
+            'metadata'           =>  array("trackId" => $orderId),
+            'billingDetails'     =>    $billingAddressConfig
+
+        ));
+
+        $Api = CheckoutApi_Api::getApi(array('mode' => $this->config->get('test_mode')));
+        $paymentTokenCharge = $Api->getPaymentToken($config);
+
+        $paymentTokenArray    =   array(
+            'message'   =>    '',
+            'success'   =>    '',
+            'eventId'   =>    '',
+            'token'     =>    '',
+        );
+
+        if($paymentTokenCharge->isValid()){
+            $paymentTokenArray['token'] = $paymentTokenCharge->getId();
+            $paymentTokenArray['success'] = true;
+
+        }else {
+
+
+            $paymentTokenArray['message']    =    $paymentTokenCharge->getExceptionState()->getErrorMessage();
+            $paymentTokenArray['success']    =    false;
+            $paymentTokenArray['eventId']    =    $paymentTokenCharge->getEventId();
+
+        }
+
+        return $paymentTokenArray;
     }
 }

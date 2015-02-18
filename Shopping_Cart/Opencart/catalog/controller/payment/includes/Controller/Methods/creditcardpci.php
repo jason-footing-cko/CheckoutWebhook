@@ -1,5 +1,5 @@
 <?php
-class Controller_Methods_creditcardpci extends Controller implements Controller_Interface
+class Controller_Methods_creditcardpci extends Controller_Methods_Abstract implements Controller_Interface
 {
 
     public function getData()
@@ -59,21 +59,23 @@ class Controller_Methods_creditcardpci extends Controller implements Controller_
         return $toReturn;
     }
 
-    public function createCharge($config,$order_info)
+    protected function _createCharge($order_info)
     {
+        $config = parent::_createCharge($order_info);
 
-        $config['postedParam']['card']  = array(
+        $config['postedParam']['card']  = array_merge( $config['postedParam']['card'] , array(
 
-            'phoneNumber'   =>   $order_info['telephone'] ,
-            'name'          =>   str_replace(' ', '', $this->request->post['cc_owner']),
-            'number'        =>   str_replace(' ', '', $this->request->post['cc_number']),
-            'expiryMonth'   =>   str_replace(' ', '', $this->request->post['cc_expire_date_month']),
-            'expiryYear'    =>   str_replace(' ', '', $this->request->post['cc_expire_date_year']),
-            'cvv'           =>   str_replace(' ', '', $this->request->post['cc_cvv2']),
+                        'phoneNumber'   =>   $order_info['telephone'] ,
+                        'name'          =>   str_replace(' ', '', $this->request->post['cc_owner']),
+                        'number'        =>   str_replace(' ', '', $this->request->post['cc_number']),
+                        'expiryMonth'   =>   str_replace(' ', '', $this->request->post['cc_expire_date_month']),
+                        'expiryYear'    =>   str_replace(' ', '', $this->request->post['cc_expire_date_year']),
+                        'cvv'           =>   str_replace(' ', '', $this->request->post['cc_cvv2']),
 
+                    )
         );
 
-        return $config;
+        return $this->_getCharge($config);
     }
 
 

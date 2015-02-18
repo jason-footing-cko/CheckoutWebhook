@@ -4,3 +4,6 @@
 [submodule "Shopping_Cart/Prestashop/checkoutapipayment/CheckoutApi"]
 	path = Shopping_Cart/Prestashop/checkoutapipayment/CheckoutApi
 	url = https://github.com/dhiraj-gangoosirdar-cko/CheckoutApi.git
+[submodule "Shopping_Cart/Opencart/catalog/controller/payment/includes/CheckoutApi"]
+	path = Shopping_Cart/Opencart/catalog/controller/payment/includes/CheckoutApi
+	url = https://github.com/dhiraj-gangoosirdar-cko/CheckoutApi.git

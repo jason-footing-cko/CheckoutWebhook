@@ -1,6 +1,6 @@
 <?php
 include ('includes/autoload.php');
-class ControllerPaymentcheckoutapipayment extends Controller_Abstract
+class ControllerPaymentcheckoutapipayment extends Controller_Model
 {
     protected function index()
     {
