@@ -133,13 +133,13 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
         $street = Mage::helper('customer/address')
             ->convertStreetLines($shippingAddress->getStreet(), 2);
         $shippingAddressConfig = array(
-            'addressLine1'       =>  $street[0],
-            'addressLine2'       =>  $street[1],
-            'postcode'    =>  $shippingAddress->getPostcode(),
-            'country'     =>  $shippingAddress->getCountry(),
-            'city'        =>  $shippingAddress->getCity(),
-            'phone'       =>  $shippingAddress->getTelephone(),
-            'recipientName'      =>  $shippingAddress->getFirstname(). ' '.$shippingAddress->getLastname()
+            'addressLine1'       =>     $street[0],
+            'addressLine2'       =>     $street[1],
+            'postcode'           =>     $shippingAddress->getPostcode(),
+            'country'            =>     $shippingAddress->getCountry(),
+            'city'               =>     $shippingAddress->getCity(),
+            'phone'              =>     $shippingAddress->getTelephone(),
+            'recipientName'      =>     $shippingAddress->getFirstname(). ' '.$shippingAddress->getLastname()
 
         );
 
@@ -163,25 +163,37 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
 
         $street = Mage::helper('customer/address')
             ->convertStreetLines($billingAddress->getStreet(), 2);
+
         $billingAddressConfig = array(
-            'addressLine1'       =>  $street[0],
-            'addressLine2'       =>  $street[1],
-            'postcode'    =>  $billingAddress->getPostcode(),
-            'country'     =>  $billingAddress->getCountry(),
-            'city'        =>  $billingAddress->getCity(),
-            'phone'       =>  $billingAddress->getTelephone(),
+            'addressLine1'   =>    $street[0],
+            'addressLine2'   =>    $street[1],
+            'postcode'       =>    $billingAddress->getPostcode(),
+            'country'        =>    $billingAddress->getCountry(),
+            'city'           =>    $billingAddress->getCity(),
+            'phone'          =>    $billingAddress->getTelephone(),
 
         );
+
         $config['postedParam'] = array (
             'value'             =>    $amountCents,
             "chargeMode"        =>    1,
             'currency'          =>    $currencyDesc,
             'shippingDetails'   =>    $shippingAddressConfig,
             'products'          =>    $products,
-
-            'billingDetails'   =>    $billingAddressConfig
+            'billingDetails'    =>    $billingAddressConfig
 
         );
+
+        if($this->getConfigData('order_status_capture') == Mage_Paygate_Model_Authorizenet::ACTION_AUTHORIZE ) {
+            $config['postedParam']['autoCapture']  = CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH;
+            $config['postedParam']['autoCapTime']  = 0;
+
+        } else {
+
+            $config['postedParam']['autoCapture']  = CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE;
+            $config['postedParam']['autoCapTime']  = $this->getConfigData('auto_capture_time');
+
+        }
 
         $paymentTokenCharge = $Api->getPaymentToken($config);
 
