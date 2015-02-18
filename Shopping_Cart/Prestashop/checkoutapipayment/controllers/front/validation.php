@@ -47,7 +47,7 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
 
             if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
 
-                $order_state =( Configuration::get('CHECKOUTAPI_PAYMENT_ACTION') =='authorize_capture' &&
+                $order_state =( Configuration::get('CHECKOUTAPI_PAYMENT_ACTION') == 'authorize_capture' &&
                 $respondCharge->getCaptured())
                     ? Configuration::get('PS_OS_PAYMENT'):Configuration::get('PS_OS_CHECKOUT');
 
@@ -102,13 +102,7 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
         $config['mode'] = Configuration::get('CHECKOUTAPI_TEST_MODE');
         $config['timeout'] =  Configuration::get('CHECKOUTAPI_GATEWAY_TIMEOUT');
 
-        if(Configuration::get('CHECKOUTAPI_PAYMENT_ACTION') =='authorize_capture') {
-            $config = array_merge($config, $this->_captureConfig());
 
-        }else {
-
-            $config = array_merge($config,$this->_authorizeConfig());
-        }
 
         $billingAddressConfig = array(
             'addressLine1'       =>  $billingAddress->address1,
@@ -143,18 +137,19 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
             );
         }
       //  print_r($products); die();
-        $config['postedParam'] = array_merge($config['postedParam'],array (
-            'email'=>$customer->email ,
-            'value'=>$amountCents,
-            'currency'=> $currency->iso_code,
-            'description'=>"Order number::$orderId",
-            'shippingDetails'  =>    $shippingAddressConfig,
-            'products'         =>    $products,
-            'card'             =>     array (
+        $config['postedParam'] = array (
+            'email'             =>  $customer->email ,
+            'value'             =>  $amountCents,
+            'currency'          =>  $currency->iso_code,
+            'description'       =>  "Order number::$orderId",
+            'shippingDetails'   =>  $shippingAddressConfig,
+            'products'          =>  $products,
+            'metadata'          =>  array('trackId' => $orderId),
+            'card'              =>  array (
                 'billingDetails'   =>    $billingAddressConfig
 
             )
-        ));
+        );
 
 
        return $this->module->getInstanceMethod()->createCharge($config,$cart);

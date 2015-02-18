@@ -33,4 +33,25 @@ abstract class models_methods_Abstract extends PaymentModule  implements models_
 
         return $Api->createCharge($config);
     }
+
+
+    protected function _captureConfig()
+    {
+        $to_return['postedParam'] = array (
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE,
+            'autoCapTime' => Configuration::get('CHECKOUTAPI_AUTOCAPTURE_DELAY')
+        );
+
+        return $to_return;
+    }
+
+    protected function _authorizeConfig()
+    {
+        $to_return['postedParam'] = array (
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH,
+            'autoCapTime' => 0
+        );
+
+        return $to_return;
+    }
 }

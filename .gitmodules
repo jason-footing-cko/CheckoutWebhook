@@ -1,3 +1,6 @@
 [submodule "Shopping_Cart/Magento/lib/CheckoutApi"]
 	path = Shopping_Cart/Magento/lib/CheckoutApi
 	url = https://github.com/dhiraj-gangoosirdar-cko/CheckoutApi.git
+[submodule "Shopping_Cart/Prestashop/checkoutapipayment/CheckoutApi"]
+	path = Shopping_Cart/Prestashop/checkoutapipayment/CheckoutApi
+	url = https://github.com/dhiraj-gangoosirdar-cko/CheckoutApi.git
