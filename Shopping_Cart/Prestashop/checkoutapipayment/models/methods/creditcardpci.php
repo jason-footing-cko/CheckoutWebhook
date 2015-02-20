@@ -66,11 +66,11 @@ class models_methods_creditcardpci extends models_methods_Abstract
                                 );
 
         if(Configuration::get('CHECKOUTAPI_PAYMENT_ACTION') =='authorize_capture') {
-            $config = array_merge($config, $this->_captureConfig());
+            $config = array_merge($this->_captureConfig(),$config);
 
         }else {
 
-            $config = array_merge($config,$this->_authorizeConfig());
+            $config = array_merge($this->_authorizeConfig(),$config);
         }
 
        return parent::_createCharge($config);
