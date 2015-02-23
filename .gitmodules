@@ -7,3 +7,7 @@
 [submodule "Shopping_Cart/Opencart/catalog/controller/payment/includes/CheckoutApi"]
 	path = Shopping_Cart/Opencart/catalog/controller/payment/includes/CheckoutApi
 	url = https://github.com/dhiraj-gangoosirdar-cko/CheckoutApi.git
+
+[submodule "Shopping_Cart/Woocommerce/wp-content/plugins/woocommerce/gateways/checkoutapipayment/CheckoutApi"]
+	path = Shopping_Cart/Woocommerce/wp-content/plugins/woocommerce/gateways/checkoutapipayment/CheckoutApi
+	url = https://github.com/dhiraj-gangoosirdar-cko/CheckoutApi.git
