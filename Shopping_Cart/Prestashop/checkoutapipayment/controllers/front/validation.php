@@ -73,7 +73,7 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
                 $total, $this->module->displayName, $respondCharge->getExceptionState()->getErrorMessage(), NULL, (int)$currency->id,
                 false, $customer->secure_key);
             $dbLog = models_FactoryInstance::getInstance( 'models_DataLayer' );
-            $dbLog->logCharge($this->module->currentOrder,$respondCharge,$respondCharge);
+            $dbLog->logCharge($this->module->currentOrder,$respondCharge->getId(),$respondCharge);
 
         }
 
