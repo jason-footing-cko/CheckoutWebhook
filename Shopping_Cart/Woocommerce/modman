@@ -1,2 +1,2 @@
 #Modman file for mapping checkoutapi 
-wp-content/plugins/woocommerce/includes/gateways/checkoutapipayment wp-content/plugins/woocommerce/includes/gateways/checkoutapipayment
+wp-content/plugins/checkoutapipayment wp-content/plugins/checkoutapipayment
