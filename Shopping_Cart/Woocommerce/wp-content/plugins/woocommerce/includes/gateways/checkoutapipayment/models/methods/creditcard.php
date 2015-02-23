@@ -2,19 +2,18 @@
  class models_methods_creditcard extends models_methods_Abstract{
 
  	protected $_code = 'creditcard';
-
- 	public function __construct(){
+ 	public function __construct()
+    {
  		$this ->id = 'checkoutapipayment';
  		$this->has_fields = true;
  		$this->checkoutapipayment_ispci = 'no';
  		parent::__construct();
  	}
 
- 	public function _initCode(){
+ 	public function _initCode(){}
 
- 	}
-
- 	public function payment_fields(){
+ 	public function payment_fields()
+    {
         global $woocommerce;;
         $grand_total = (float) WC()->cart->total;
         $amount = (int)$grand_total*100;
@@ -46,7 +45,8 @@
 
  	}
 
- 	public function process_payment($order_id){
+ 	public function process_payment($order_id)
+    {
         global $woocommerce;
         $order = new WC_Order( $order_id );
         $grand_total = $order->order_total;
@@ -59,33 +59,30 @@
             'currency' => $order->order_currency,
             'description'=>"Order number::$order_id"
         );
+
         $extraConfig = array();
+
         if(CHECKOUTAPI_PAYMENTACTION == 'Capture'){
             $extraConfig = parent::_captureConfig();
-        }
-        else {
+        } else {
             $extraConfig= parent::_authorizeConfig();
         }
 
         $config['postedParam'] = array_merge($config['postedParam'],$extraConfig);
         $config['postedParam']['cardToken'] = parent::get_post('cko_cc_token');
-		
-		$config['postedParam']['shippingdetails'] = array(
-			'addressline1' => $order->shipping_address_1,
-			'addressline2' => $order->shipping_address_2,
-			'city'=>$order->shipping_city,
-			'country' => $order->shipping_country,
-			'phone' => $order->shipping_phone,
-			'postcode' => $order->shipping_postcode,
-			'state'=>$order->shipping_state
+
+        $config['postedParam']['shippingdetails'] = array(
+			'addressline1'   =>    $order->shipping_address_1,
+			'addressline2'   =>    $order->shipping_address_2,
+			'city'           =>    $order->shipping_city,
+			'country'        =>    $order->shipping_country,
+			'phone'          =>    $order->shipping_phone,
+			'postcode'       =>    $order->shipping_postcode,
+			'state'          =>    $order->shipping_state
 		);
 
         $respondCharge = parent::_createCharge($config);
-
-
         return parent::_validateChrage($order, $respondCharge);
-
-
  	}
 	
 	private function renderJsConfig($email, $amount, $name)
@@ -103,6 +100,7 @@
                         document.getElementById('cko-cc-token').value = event.data.cardToken;
                         document.getElementById('cko-cc-email').value = event.data.email;
                         payment.save();";
+
         $config['widgetRenderedEvent'] ="if (jQuery('.cko-pay-now')) {
                                                 jQuery('.cko-pay-now').hide();
                                             }";
@@ -114,6 +112,3 @@
         return $jsConfig;
     }
  }
-
-
-?>

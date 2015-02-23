@@ -7,4 +7,3 @@ final class models_FactoryInstance
     }
 }
 
-?>
