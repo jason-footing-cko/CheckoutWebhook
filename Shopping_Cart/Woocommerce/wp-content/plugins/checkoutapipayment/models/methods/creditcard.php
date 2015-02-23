@@ -1,13 +1,14 @@
 <?php
- class models_methods_creditcard extends models_methods_Abstract{
+ class models_methods_creditcard extends models_methods_Abstract
+ {
 
  	protected $_code = 'creditcard';
- 	public function __construct()
+ 	public function _construct()
     {
  		$this ->id = 'checkoutapipayment';
  		$this->has_fields = true;
  		$this->checkoutapipayment_ispci = 'no';
- 		parent::__construct();
+
  	}
 
  	public function _initCode(){}
