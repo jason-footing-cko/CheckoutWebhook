@@ -2,7 +2,7 @@
 
 <form id="checkoutapipayment" class="form-horizontal validate-creditcard">
     <div class="widget-container"></div>
-    <div>
+    <div class="paymentokenWrapper" style="height: 30px">
         <input type="hidden" name="cko_cc_paymenToken" id="cko-cc-paymenToken" value="<?php echo $paymentToken ?>">
     </div>
     <div class="form-group action-buttons text-center">
@@ -21,7 +21,7 @@
 <script type="text/javascript">
     window.CKOConfig = {
         debugMode: false,
-        renderMode: 0,
+        renderMode: 2,
         namespace: 'CheckoutIntegration',
         publicKey: '<?php echo $publicKey ?>',
         paymentToken: '<?php echo $paymentToken ?>',
@@ -35,9 +35,46 @@
         widgetContainerSelector: '.widget-container',
         cardCharged: function (event) {
             document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
+            $.ajax({
+                type: 'POST',
+                url: 'index.php?rt=extension/checkoutapipayment/send',
+                data: $('#checkoutapipayment :input'),
+                dataType: 'json',
+                beforeSend: function () {
+                    $('.alert').remove();
+                    $('#checkoutapipayment .action-buttons').hide();
+                    $('#checkoutapipayment .action-buttons').before('<div class="wait alert alert-info text-center"><i class="fa fa-refresh fa-spin"></i> <?php echo $text_wait; ?></div>');
+                },
+                success: function (data) {
+                    if (!data) {
+                        $('.wait').remove();
+                        $('#checkoutapipayment .action-buttons').show();
+                        $('#checkoutapipayment').before('<div class="alert alert-danger"><i class="fa fa-bug"></i> <?php echo $error_unknown; ?></div>');
+                    } else {
+                        if (data.error) {
+                            $('.wait').remove();
+                            $('#checkoutapipayment .action-buttons').show();
+                            $('#checkoutapipayment').before('<div class="alert alert-warning"><i class="fa fa-exclamation"></i> ' + data.error + '</div>');
+                        }
+                        if (data.success) {
+                            location = data.success;
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $('.wait').remove();
+                    $('#checkoutapipayment .action-buttons').show();
+                    $('#checkoutapipayment').before('<div class="alert alert-danger"><i class="fa fa-exclamation"></i> ' + textStatus + ' ' + errorThrown + '</div>');
+                }
+            });
+
         },
-        ready: function () {
-        }
     };
+</script>
+<script>
+    $('form#checkoutapipayment').submit(function (event) {
+        event.preventDefault();
+        CheckoutIntegration.open();
+    });
 </script>
 

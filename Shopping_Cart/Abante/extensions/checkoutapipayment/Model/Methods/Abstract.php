@@ -18,7 +18,6 @@ abstract class Model_Methods_Abstract extends ControllerResponsesExtensionChecko
 
         //building charge
         $respondCharge = $this->_createCharge($order_info);
-        //var_dump($respondCharge);
         if ($respondCharge->isValid()) {
 
             if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
