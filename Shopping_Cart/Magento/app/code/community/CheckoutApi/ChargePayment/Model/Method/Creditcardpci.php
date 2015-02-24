@@ -49,11 +49,9 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcardpci extends CheckoutApi_C
         if (!($data instanceof Varien_Object)) {
             $data = new Varien_Object($data);
         }
-
         parent::assignData($data);
         $info = $this->getInfoInstance();
         $info->setCcOwner($data->getCcOwner());
-
 
         return $this;
     }
