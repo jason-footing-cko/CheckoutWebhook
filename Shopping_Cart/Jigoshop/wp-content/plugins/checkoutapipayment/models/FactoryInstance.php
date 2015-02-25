@@ -6,5 +6,3 @@ final class models_FactoryInstance
         return new $className;
     }
 }
-
-?>

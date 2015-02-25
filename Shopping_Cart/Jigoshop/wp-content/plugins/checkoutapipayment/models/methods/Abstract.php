@@ -23,15 +23,15 @@ abstract class models_methods_Abstract extends jigoshop_payment_gateway implemen
 	protected function _createCharge($config)
     {
 
-        $Api = CheckoutApi_Api::getApi(array('mode'=>CHECKOUTAPI_ENDPOINT));
-        
+        $Api = CheckoutApi_Api::getApi(array('mode'=>CHECKOUTAPI_MODE));
+
         return $Api->createCharge($config);
     }
 
-    protected function _validateChrage($order,$respondCharge)
-    {	
+    protected function _validateChrage($order,$respondCharge,$order_id)
+    {
+        //CheckoutApi_Utility_Utilities::dump($respondCharge); die();
 
-    	
 		if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())){
 
 			$order->payment_complete( $respondCharge->getId() );
@@ -39,24 +39,19 @@ abstract class models_methods_Abstract extends jigoshop_payment_gateway implemen
 			$order->add_order_note( sprintf(__('Checkout.com Credit Card Payment Approved - ChargeID: %s with Response Code: %s', 'woocommerce'), 
 				$respondCharge->getId(), $respondCharge->getResponseCode()));
 
-			//WC()->cart->empty_cart();
-
-			return array (
-				  'result'   => 'success',
-				  'redirect' => $this->get_return_url( $order )
-			);
-
+            jigoshop_cart::empty_cart();
+            return array(
+                'result' 	=> 'success',
+                'redirect'	=> add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(jigoshop_get_page_id('thanks'))))
+            );
 		}
 		else {
 
 			$order->add_order_note( sprintf(__('Checkout.com Credit Card Payment Declined - Error Code: %s, Decline Reason: %s', 'woocommerce'), 
 				$respondCharge->getErrorCode(), $respondCharge->getMessage()));
 
-			$error_message = 'The transaction was declined. Please check your Payment Details';
-			wc_add_notice( __('Payment error: ', 'woothemes') . $error_message, 'error' );
+            echo '<p>'.__('The transaction was declined. Please check your Payment Details / Card info', 'jigoshop').'</p>';
 			return;
-
-			
 		}
 
     }
@@ -89,7 +84,3 @@ abstract class models_methods_Abstract extends jigoshop_payment_gateway implemen
     }
 }
 
-
-
-
-?>

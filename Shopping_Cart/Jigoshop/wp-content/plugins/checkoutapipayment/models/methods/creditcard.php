@@ -1,54 +1,81 @@
 <?php
+
  class models_methods_creditcard extends models_methods_Abstract{
 
  	protected $_code = 'creditcard';
 
- 	public function __construct(){
- 		$this ->id = 'checkoutapipayment';
- 		$this->has_fields = true;
- 		$this->checkoutapipayment_ispci = 'no';
- 		parent::__construct();
- 	}
+    public function __construct()
+    {
+         $this ->id = 'checkoutapipayment';
+         $this->has_fields = true;
+         $this->pci_enable = 'no';
+         parent::__construct();
+    }
 
  	public function _initCode(){
 
  	}
 
  	public function payment_fields(){
-        global $woocommerce;;
-        $grand_total = (float) WC()->cart->total;
-        $amount = (int)$grand_total*100;
-        $current_user = wp_get_current_user();
 
-        $email = "Email@youremail.com";
-        if(isset($current_user->data)){
-            $email = $current_user->user_email;
-			$name = $current_user->user_first_name;
-        }
-            
- 	?>
-		
-	    <div style="" class="widget-container">
-            <p>Please select your credit card type</p>
-            <input type="hidden" name="cko_cc_token" id="cko-cc-token" value="">
-            <input type="hidden" name="cko_cc_email" id="cko-cc-email" value="" />
-			<script  src="https://www.checkout.com/cdn/js/Checkout.js"></script>
-            <script>
-                <?php echo $this->renderJsConfig($email, $amount, $name) ?>
-                //Checkout.render();
-            </script>
-			
-        </div>
- 	
-		
+       print_r($this->generatePaymentToken());
 
-	<?php
 
  	}
 
+    public function generatePaymentToken()
+    {
+         $config = array();
+         $amountCents = (int)(jigoshop_cart::$total)*100;
+         $currencyCode = Jigoshop_Base::get_options()->get('jigoshop_currency');
+
+         $config['authorization'] = CHECKOUTAPI_SECRET_KEY;
+         $config['mode'] = CHECKOUTAPI_MODE;
+         $config['timeout'] = CHECKOUTAPI_TIMEOUT;
+
+         if (CHECKOUTAPI_PAYMENTACTION == 'Capture') {
+             $config = array_merge($config, $this->_captureConfig());
+         }
+         else {
+
+             $config = array_merge($config, $this->_authorizeConfig());
+         }
+
+         $config['postedParam'] = array_merge($config['postedParam'], array(
+             'value' => $amountCents,
+             'currency' => $currencyCode
+         ));
+
+         $Api = CheckoutApi_Api::getApi(array('mode' => CHECKOUTAPI_MODE));
+         $paymentTokenCharge = $Api->getPaymentToken($config);
+
+         $paymentTokenArray = array(
+             'message' => '',
+             'success' => '',
+             'eventId' => '',
+             'token' => '',
+         );
+
+         if ($paymentTokenCharge->isValid()) {
+             $paymentTokenArray['token'] = $paymentTokenCharge->getId();
+             $paymentTokenArray['success'] = true;
+         }
+         else {
+
+
+             $paymentTokenArray['message'] = $paymentTokenCharge->getExceptionState()->getErrorMessage();
+             $paymentTokenArray['success'] = false;
+             $paymentTokenArray['eventId'] = $paymentTokenCharge->getEventId();
+         }
+
+        return $paymentTokenArray;
+    }
+
  	public function process_payment($order_id){
+
+        die('here');
         global $woocommerce;
-        $order = new WC_Order( $order_id );
+        //$order = new WC_Order( $order_id );
         $grand_total = $order->order_total;
         $amount = (int)$grand_total*100;
         $config['authorization'] = CHECKOUTAPI_SECRET_KEY;
@@ -114,6 +141,3 @@
         return $jsConfig;
     }
  }
-
-
-?>

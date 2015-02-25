@@ -27,9 +27,9 @@ function checkoutapipayment_init()
         protected $_methodInstance;
 
         public function _initCode()
-        {
-            $this->_code = $this->_methodInstance->getCode();
-        }
+    {
+        $this->_code = $this->_methodInstance->getCode();
+    }
 
         public function __construct(){
             parent::__construct();
