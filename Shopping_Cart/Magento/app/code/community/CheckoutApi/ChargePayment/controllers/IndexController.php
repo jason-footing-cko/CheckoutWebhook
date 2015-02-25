@@ -3,7 +3,7 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 {
 	private $_code    =    null;
 
-	public function _process()
+	private function _process()
 	{
 		$config['chargeId']    =    $this->getRequest()->getParam('chargeId');
 		$config['authorization']    =    $this->_requesttConfigData('privatekey');

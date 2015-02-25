@@ -158,7 +158,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <can_be_empty>1</can_be_empty>
-                            <depends><active>1</active>   <payment_action>authorize_capture</payment_action></depends>
+                            <depends><active>1</active>   <payment_action>order</payment_action></depends>
                             <validate>validate-number</validate>
                             <comment>
                                 <![CDATA[ The time for capturing payment to be done (in hr) ]]>
@@ -346,7 +346,7 @@
                             <comment>
                                 <![CDATA[ The time for capturing payment to be done (in hr) ]]>
                             </comment>
-                            <depends><active>1</active>   <payment_action>authorize_capture</payment_action></depends>
+                            <depends><active>1</active>   <payment_action>order</payment_action></depends>
                         </auto_capture_time>
                         <debug translate="label">
                             <label>Debug</label>
