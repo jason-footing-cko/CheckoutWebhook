@@ -23,7 +23,7 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
         $_config['chargeId'] = $chargeId ;
         $_chargeObj = $this->_getCharge($_config);
         $hasBeenCaptured = false;
-
+        $_captureObj = $_chargeObj;
         if($_chargeObj) {
 
             if(!$_chargeObj->getCaptured()){
@@ -45,6 +45,7 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
 
                 $hasBeenCaptured = true;
                 $_captureObj = $_chargeObj;
+
             }//!$_chargeObj->getCaptured()
         }
 
@@ -72,8 +73,13 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
 
 
         } else {
+            if($_captureObj){
+                Mage::getSingleton('adminhtml/session')->addError($_captureObj->getExceptionState()->getErrorMessage());
 
-            Mage::getSingleton('adminhtml/session')->addError($_captureObj->getExceptionState()->getErrorMessage());
+            }else {
+                Mage::getSingleton('adminhtml/session')->addError('An unexpected error has occured. Please contact
+                checkout.com support team');
+            }
 
         }
 
@@ -138,7 +144,7 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
                 $_payment->setAdditionalInformation('rawrespond',$_rawInfo);
                 $_payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$_rawInfo);
                 $_payment->setTransactionId($_refundCharge->getId());
-                $_payment->addTransaction($_refundCharge->getId());
+
                 $_payment
                     ->setIsTransactionClosed(1)
                     ->setShouldCloseParentTransaction(1);

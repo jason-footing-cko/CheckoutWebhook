@@ -53,12 +53,11 @@ class CheckoutApi_ChargePayment_Model_Method_Creditcard extends CheckoutApi_Char
         if (!($data instanceof Varien_Object)) {
             $data = new Varien_Object($data);
         }
-
         parent::assignData($data);
         $info = $this->getInfoInstance();
         $details['cko_cc_paymenToken'] = $data->getData('cko_cc_paymenToken');
-
         $info->setAdditionalInformation('cko_cc_paymenToken',$details['cko_cc_paymenToken']);
+        $info->setAdditionalData(serialize($details));
         $info->setPaymentToken( $details['cko_cc_paymenToken']);
         return $this;
     }

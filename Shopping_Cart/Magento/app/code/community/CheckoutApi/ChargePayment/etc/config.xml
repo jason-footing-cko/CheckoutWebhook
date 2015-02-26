@@ -106,7 +106,7 @@
                 <use>standard</use>
                 <args>
                     <module>CheckoutApi_ChargePayment</module>
-                    <frontname>charges</frontname>
+                    <frontName>webhook</frontName>
                 </args>
             </checkoutapi_chargePayment>
 

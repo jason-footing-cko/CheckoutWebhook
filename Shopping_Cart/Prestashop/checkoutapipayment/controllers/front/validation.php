@@ -51,15 +51,19 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
                 $respondCharge->getCaptured())
                     ? Configuration::get('PS_OS_PAYMENT'):Configuration::get('PS_OS_CHECKOUT');
 
-
                 $this->module->validateOrder((int)$cart->id, $order_state,
-                    $total, $this->module->displayName, 'Your payment was sucessfull with Checkout.com ', NULL, (int)$currency->id,
+                    $total, $this->module->displayName, 'Your payment was sucessfull with Checkout.com ', array
+                    ('transaction_id'=>$respondCharge->getId()),
+                    (int)
+                    $currency->id,
                     false, $customer->secure_key);
 
             } else {
 
                 $this->module->validateOrder((int)$cart->id, Configuration::get('PS_OS_ERROR'),
-                    $total, $this->module->displayName, 'An error has occcur while processing this transaction ('.$respondCharge->getResponseLongMessage().')', NULL, (int)$currency->id,
+                    $total, $this->module->displayName, 'An error has occcur while processing this transaction ('.$respondCharge->getResponseLongMessage().')',
+                    array
+                    ('transaction_id'=>$respondCharge->getId()), (int)$currency->id,
                     false, $customer->secure_key);
 
             }
