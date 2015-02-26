@@ -9,7 +9,7 @@ class CheckoutapipaymentWebhookModuleFrontController extends ModuleFrontControll
 	{
 		$this->display_column_left = false;
 		parent::initContent();
-		$stringCharge =file_get_contents("php://input");
+		$stringCharge     =    file_get_contents("php://input");
 		$Api    =    CheckoutApi_Api::getApi(array('mode' => Configuration::get('CHECKOUTAPI_TEST_MODE')));
 		$objectCharge = $Api->chargeToObj($stringCharge);
 		$dbLog = models_FactoryInstance::getInstance( 'models_DataLayer' );
@@ -82,7 +82,7 @@ class CheckoutapipaymentWebhookModuleFrontController extends ModuleFrontControll
 		$config['chargeId']    =    $_GET['chargeId'];
 		$config['authorization']    =    Configuration::get('CHECKOUTAPI_SECRET_KEY');
 		$Api    =    CheckoutApi_Api::getApi(array('mode' => Configuration::get('CHECKOUTAPI_TEST_MODE')));
-		$respondBody    =    $Api->updateCharge($config);
+		$respondBody    =    $Api->getCharge($config);
 
 		$json = $respondBody->getRawOutput();
 		return $json;
