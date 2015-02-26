@@ -16,9 +16,14 @@
 
  	}
 
- 	public function payment_fields(){
+ 	public function payment_fields()
+    {
+        $amount = (int)(jigoshop_cart::$total)*100;
 
-       print_r($this->generatePaymentToken());
+        $current_user = wp_get_current_user();
+
+      print_r( $current_user->user_email);
+
 
 
  	}
