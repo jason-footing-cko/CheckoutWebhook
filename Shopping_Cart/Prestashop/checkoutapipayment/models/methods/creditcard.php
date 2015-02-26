@@ -151,11 +151,11 @@ class models_methods_creditcard extends models_methods_Abstract
         );
 
         if(Configuration::get('CHECKOUTAPI_PAYMENT_ACTION') =='authorize_capture') {
-            $config = array_merge($this->_captureConfig(),$config);
+            $config['postedParam'] = array_merge($config['postedParam'],$this->_captureConfig());
 
-        } else {
+        }else {
 
-            $config = array_merge($this->_authorizeConfig(),$config);
+            $config['postedParam'] = array_merge($config['postedParam'],$this->_authorizeConfig());
         }
 
         $Api = CheckoutApi_Api::getApi(array('mode'=> Configuration::get('CHECKOUTAPI_TEST_MODE')));

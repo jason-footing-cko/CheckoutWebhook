@@ -57,20 +57,20 @@ class models_methods_creditcardpci extends models_methods_Abstract
 
                                             'phoneNumber'   =>   $invoiceAddress->phone ,
                                             'name'          =>   Tools::getValue('cc_owner'),
-                                            'number'        =>   Tools::getValue('cc_number'),
+                                            'number'        =>   trim((string)Tools::getValue('cc_number')),
                                             'expiryMonth'   =>   (int)Tools::getValue('cc_exp_month'),
                                             'expiryYear'    =>   (int)Tools::getValue('cc_exp_year'),
-                                            'cvv'           =>  Tools::getValue('cc_cid'),
+                                            'cvv'           =>   Tools::getValue('cc_cid'),
 
                                    )
                                 );
 
         if(Configuration::get('CHECKOUTAPI_PAYMENT_ACTION') =='authorize_capture') {
-            $config = array_merge($this->_captureConfig(),$config);
+            $config['postedParam'] = array_merge($config['postedParam'],$this->_captureConfig());
 
         }else {
 
-            $config = array_merge($this->_authorizeConfig(),$config);
+            $config['postedParam'] = array_merge($config['postedParam'],$this->_authorizeConfig());
         }
 
        return parent::_createCharge($config);

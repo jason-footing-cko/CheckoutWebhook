@@ -72,15 +72,15 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
             $dbLog->logCharge($this->module->currentOrder,$respondCharge->getId(),$respondCharge);
 
 
+
         } else  {
+
             $this->module->validateOrder((int)$cart->id, Configuration::get('PS_OS_ERROR'),
                 $total, $this->module->displayName, $respondCharge->getExceptionState()->getErrorMessage(), NULL, (int)$currency->id,
                 false, $customer->secure_key);
             $dbLog = models_FactoryInstance::getInstance( 'models_DataLayer' );
-            $dbLog->logCharge($this->module->currentOrder,$respondCharge->getId(),$respondCharge);
 
         }
-
         Tools::redirectLink(__PS_BASE_URI__.'order-confirmation.php?key='.$customer->secure_key.'&id_cart='
             .(int)$this->context->cart->id.'&id_module='.(int)$this->module->id.'&id_order='
             .(int)$this->module->currentOrder);
