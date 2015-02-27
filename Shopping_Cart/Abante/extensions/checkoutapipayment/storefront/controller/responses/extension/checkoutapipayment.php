@@ -72,6 +72,45 @@ class ControllerResponsesExtensionCheckoutapipayment extends AController
         return $this->getInstance()->send();
     }
 
+    //This is Checkout.com gw webhook callback
+    public function callback()
+    {
+        //init controller data
+        $this->extensions->hk_InitData($this, __FUNCTION__);
+
+        $this->loadLanguage('checkoutapipayment/checkoutapipayment');
+
+        $this->load->model('checkout/order');
+
+        $json = file_get_contents('php://input');
+        if ($json) {
+            $data = json_decode($json, true);
+
+            if (!empty($data['metadata']['trackId'])) {
+                $orderiD = $data['metadata']['trackId'];
+
+                if ($data['captured'] == true && $data['refunded'] == true) {
+
+                    $message = 'Your payment has been refunded';
+                    $this->model_checkout_order->update($orderiD, 11, $message, FALSE);
+                    
+                } elseif ($data['captured'] == true && $data['refunded'] == false) {
+
+                    $message = 'Your payment has been successfully completed';
+                    
+                    $this->model_checkout_order->update($orderiD, 5, $message, FALSE);
+                } elseif ($data['captured'] == false && $data['refunded'] == true || $data['expired'] == true) {
+
+                    $message = 'Your order has been cancelled';
+                    $this->model_checkout_order->update($orderiD, 7, $message, FALSE);
+                }
+            }
+        }
+
+        //init controller data
+        $this->extensions->hk_UpdateData($this, __FUNCTION__);
+    }
+
     public function cvv2_help()
     {
         //init controller data
