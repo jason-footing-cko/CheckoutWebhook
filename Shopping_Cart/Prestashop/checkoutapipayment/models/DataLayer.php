@@ -109,7 +109,7 @@ class models_DataLayer extends PaymentModule
 
         $db = Db::getInstance();
         $moduleName ='checkoutapipayment';
-        $stringCharge = json_encode(serialize($chargeObj));
+        $stringCharge = $chargeObj->getRawOutput();
 
         $db->insert('charge_order_checkout', array(
 
@@ -125,6 +125,14 @@ class models_DataLayer extends PaymentModule
     {
 
         $sql = 'SELECT * FROM '._DB_PREFIX_."charge_order_checkout WHERE id_order = $order_idj";
+        return Db::getInstance()->getRow($sql);
+
+    }
+
+    public function getOrderId ($chargeId)
+    {
+
+        $sql = 'SELECT * FROM '._DB_PREFIX_."charge_order_checkout WHERE charge = '$chargeId'";
         return Db::getInstance()->getRow($sql);
 
     }

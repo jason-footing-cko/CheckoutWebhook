@@ -37,7 +37,7 @@ abstract class models_methods_Abstract extends PaymentModule  implements models_
 
     protected function _captureConfig()
     {
-        $to_return['postedParam'] = array (
+        $to_return = array (
             'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE,
             'autoCapTime' => Configuration::get('CHECKOUTAPI_AUTOCAPTURE_DELAY')
         );
@@ -47,11 +47,16 @@ abstract class models_methods_Abstract extends PaymentModule  implements models_
 
     protected function _authorizeConfig()
     {
-        $to_return['postedParam'] = array (
+        $to_return= array (
             'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH,
             'autoCapTime' => 0
         );
 
         return $to_return;
+    }
+
+    public function getContext()
+    {
+        return $this->context;
     }
 }

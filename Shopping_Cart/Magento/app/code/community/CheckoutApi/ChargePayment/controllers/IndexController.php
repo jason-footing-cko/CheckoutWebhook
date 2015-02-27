@@ -98,7 +98,7 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
                                 with Transaction ID '.$objectCharge->getId());
 							}
 						}elseif(!$objectCharge->getCaptured() && $objectCharge->getRefunded()) {
-
+//cancel order
 						}
 
 
