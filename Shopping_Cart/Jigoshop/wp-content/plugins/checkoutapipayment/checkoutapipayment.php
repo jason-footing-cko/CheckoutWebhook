@@ -27,21 +27,26 @@ function checkoutapipayment_init()
         protected $_methodInstance;
 
         public function _initCode()
-    {
-        $this->_code = $this->_methodInstance->getCode();
-    }
-
-        public function __construct(){
-            parent::__construct();
+        {
+            $this->_code = $this->_methodInstance->getCode();
         }
 
-        public function payment_fields(){
-            return parent::payment_fields();
-        }
+//        public function init_form_fields()
+//        {
+//            parent::init_form_fields();
+//        }
 
-        public function process_payment($order_id){
-            return parent::process_payment($order_id);
-        }
+//        public function __construct(){
+//            parent::__construct();
+//        }
+//
+//        public function payment_fields(){
+//            return parent::payment_fields();
+//        }
+//
+//        public function process_payment($order_id){
+//            return parent::process_payment($order_id);
+//        }
     }
 
 }
