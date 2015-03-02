@@ -28,10 +28,12 @@ if ($charge->isValid()) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
     $response = curl_exec($ch);
     curl_close($ch);
+    
+    echo 'Success';
 }
 else {
 
-    die('here');
+    echo 'Error';
 }
 
 
