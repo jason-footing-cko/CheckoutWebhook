@@ -33,6 +33,7 @@ function checkoutapipayment_init(){
 
     	public function __construct()
 	    {
+
     		parent::__construct();
     	}
 
