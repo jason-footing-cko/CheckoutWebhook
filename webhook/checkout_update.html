@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Capture card charge</title>
+           </head>
+    <body>
+        <ul>
+            <li><a href="index.html">Charge with full Card</a></li>
+            <li><a href="checkout_card_id.html">Charge with Card Id</a></li>
+            <li><a href="checkout_nodetails.html">Charge with no card details</a></li>
+            <li><a href="create_card_token.html">Create cart token</a></li>
+            <li><a href="checkout_card_token.html">Charge with card token</a></li>
+            <li><a href="checkout_refund.html">Charge Refund</a></li>
+            <li><a href="checkout_capture.html">Charge Capture</a></li>
+            <li><a href="checkout_update.html">Charge update</a></li>
+        </ul>
+        <h1>Enter Payment Information</h1>
+        <form action="checkout_update.php" method="POST">
+            <p> Charge id:<input type="text" name="charge_id" value="" required/></p>
+            <p> Url:<input type="text" name="url" value="Sequi" required/></p>
+<!--            <p>code key:<input type="text" name="key" value="test updated" required/></p>-->
+            <p><input type="submit" name="submit" value="Capture"/></p>
+        </form>
+    </body>
+</html>
