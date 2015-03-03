@@ -1,0 +1,3 @@
+[submodule "CheckoutApi"]
+	path = CheckoutApi
+	url = https://github.com/dhiraj-gangoosirdar-cko/CheckoutApi.git
