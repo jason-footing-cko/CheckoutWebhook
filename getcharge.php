@@ -12,9 +12,9 @@ $param = array();
 $param['authorization'] = $_POST['key'];
 $param['chargeId'] = $_POST['charge_id'];
 
-$Api = new CheckoutApi_Api();
-$respond = $Api::getApi(array('mode' => $_POST['mode']));
-$charge = $respond->getCharge($param);
+$Api = CheckoutApi_Api::getApi ( array ( 'mode' => $_POST['mode']) );
+$charge = $Api->getCharge($param);
+
 
 if ($charge->isValid()) {
 
@@ -26,6 +26,7 @@ if ($charge->isValid()) {
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+    curl_setopt($ch, CURLOPT_ENCODING, "UTF-8");
     $response = curl_exec($ch);
     curl_close($ch);
     
