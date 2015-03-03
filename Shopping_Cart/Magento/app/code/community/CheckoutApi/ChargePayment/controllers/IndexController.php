@@ -16,7 +16,8 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 
 
 	public function processAction()
-	{$stringCharge = file_get_contents("php://input");
+	{
+		$stringCharge = file_get_contents("php://input");
 
 
 		if($stringCharge) {
