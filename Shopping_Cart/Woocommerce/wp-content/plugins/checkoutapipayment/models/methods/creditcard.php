@@ -10,12 +10,21 @@
  		$this ->id = 'checkoutapipayment';
  		$this->has_fields = true;
  		$this->checkoutapipayment_ispci = 'no';
-        $this->setPaymentToken();
+
+        add_action ( 'woocommerce_checkout_order_review' , array ( $this , 'setPaymentToken' ) );
+        add_action ( 'woocommerce_checkout_order_review' , array ( $this , 'setJsInit' ) );
 
 
  	}
+    public function _initCode(){}
 
- 	public function _initCode(){}
+    public function setJsInit()
+    {
+        ?> <script src="http://ckofe.com/js/checkout.js" async ></script>
+        <?php
+    }
+
+
 
  	public function payment_fields()
     {
@@ -44,30 +53,41 @@
             <input type="hidden" name="cko_cc_paymenToken" id="cko-cc-paymenToken" value="<?php echo $paymentToken ?>">
 
             <script type="text/javascript">
+                if(window.CKOConfig) {
+                    CheckoutIntegration.render(window.CKOConfig);
+                }else {
+                    window.CKOConfig = {
+                        debugMode: false,
+                        renderMode: 2,
+                        namespace: 'CheckoutIntegration',
+                        publicKey: '<?php echo CHECKOUTAPI_PUBLIC_KEY ?>',
+                        paymentToken: "<?php echo $paymentToken ?>",
+                        value: '<?php echo $amount ?>',
+                        currency: '<?php echo get_woocommerce_currency() ?>',
+                        customerEmail: '<?php echo $email ?>',
+                        customerName: '<?php echo $name?>',
+                        paymentMode: 'card',
+                        title: '<?php  ?>',
+                        subtitle: '<?php echo __('Please enter your credit card details') ?>',
+                        widgetContainerSelector: '.widget-container',
+                        ready: function (event) {
+                            var cssAdded = jQuery('.widget-container link');
+                            if (!cssAdded.hasClass('checkoutAPiCss')) {
+                                cssAdded.addClass('checkoutAPiCss');
+                            }
 
-                window.CKOConfig = {
-                    debugMode: false,
-                    renderMode: 2,
-                    namespace: 'CheckoutIntegration',
-                    publicKey: '<?php echo CHECKOUTAPI_PUBLIC_KEY ?>',
-                    paymentToken: "<?php echo $paymentToken ?>",
-                    value: '<?php echo $amount ?>',
-                    currency: '<?php echo get_woocommerce_currency() ?>',
-                    customerEmail: '<?php echo $email ?>',
-                    customerName: '<?php echo $name?>',
-                    paymentMode: 'card',
-                    title: '<?php  ?>',
-                    subtitle:'<?php echo __('Please enter your credit card details') ?>',
-                    widgetContainerSelector: '.widget-container',
-                    cardCharged: function(event){
-                        document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
-                        jQuery('.checkout.woocommerce-checkout')
-                            .removeClass('processing')
-                            .addClass('wasActived')
-                            .trigger('submit');
-                    }
+                            jQuery('head').append(cssAdded);
+                        },
+                        cardCharged: function (event) {
+                            document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
+                            jQuery('.checkout.woocommerce-checkout')
+                                .removeClass('processing')
+                                .addClass('wasActived')
+                                .trigger('submit');
+                        }
 
-                };
+                    };
+                }
 
                // Checkout.render(window.CKOConfig);
                 jQuery('.checkout.woocommerce-checkout')[0].onsubmit = function(){
@@ -95,7 +115,7 @@
 
 
             </script>
-            <script src="http://ckofe.com/js/checkout.js" async ></script>
+
         </div>
  	
 		
@@ -125,8 +145,12 @@
 
     }
 
-    private function setPaymentToken()
+    public function setPaymentToken()
     {
+
+        if(! WC()->cart) {
+            return false;
+        }
         $Api = CheckoutApi_Api::getApi(array('mode'=>CHECKOUTAPI_ENDPOINT));
 
         global $woocommerce;
@@ -151,6 +175,7 @@
         $config['postedParam'] = array(
             'email'       =>    $email,
             'value'       =>    $amount,
+
             'currency'    =>    get_woocommerce_currency()
         );
 
@@ -198,7 +223,6 @@
                 'addressline2'  =>    $customer->shipping_address_2 ,
                 'city'          =>    $customer->shipping_city ,
                 'country'       =>    $customer->shipping_country ,
-                'metadata'      =>    array('trackId'=> absint( WC()->session->order_awaiting_payment )),
                 'postcode'      =>    $customer->shipping_postcode ,
                 'state'         =>    $customer->shipping_state
             );
