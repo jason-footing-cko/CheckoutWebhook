@@ -13,7 +13,7 @@ class ControllerPaymentcheckoutapipayment extends Controller_Model
 
     public function webhook()
     {
-        $stringCharge     =    $this->_process();//file_get_contents("php://input");
+        $stringCharge     =    file_get_contents("php://input");
         $Api = CheckoutApi_Api::getApi(array('mode'=> $this->config->get('test_mode')));
 
         $objectCharge = $Api->chargeToObj($stringCharge);
