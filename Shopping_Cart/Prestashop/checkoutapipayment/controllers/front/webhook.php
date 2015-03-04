@@ -73,7 +73,7 @@ class CheckoutapipaymentWebhookModuleFrontController extends ModuleFrontControll
 			}
 		}
 		CheckoutApi_Utility_Utilities::dump($order->hasBeenPaid());
-		die('here');
+		
 	}
 
 

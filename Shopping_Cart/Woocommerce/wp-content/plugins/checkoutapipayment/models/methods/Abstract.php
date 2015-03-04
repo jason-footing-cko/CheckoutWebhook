@@ -24,18 +24,35 @@ abstract class models_methods_Abstract extends WC_Payment_Gateway implements mod
     protected function _validateChrage($order,$respondCharge)
     {	
 
-		if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
 
-			$order->payment_complete( $respondCharge->getId() );
+	    if($respondCharge->isValid()){
 
-			$order->add_order_note( sprintf(__('Checkout.com Credit Card Payment Approved - ChargeID: %s with Response Code: %s', 'woocommerce'), 
-				$respondCharge->getId(), $respondCharge->getResponseCode()));
+		    $Api = CheckoutApi_Api::getApi(array('mode'=>CHECKOUTAPI_ENDPOINT));
+		    $chargeUpdated = $Api->updateMetadata($respondCharge,
+			    array('trackId'=>$order->id));
+
+			if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
+
+				$order->payment_complete ( $respondCharge->getId () );
+
+				$order->add_order_note ( sprintf ( __ ( 'Checkout.com Credit Card Payment Approved - ChargeID: %s with Response Code: %s' , 'woocommerce' ) ,
+					$respondCharge->getId () , $respondCharge->getResponseCode () ) );
 
 
-			return array (
-				  'result'   =>    'success',
-				  'redirect' =>    $this->get_return_url( $order )
-			);
+				return array (
+					'result' => 'success' ,
+					'redirect' => $this->get_return_url ( $order )
+				);
+			}else {
+
+				$order->add_order_note( sprintf(__('Checkout.com Credit Card Payment Declined - Error Code: %s, Decline Reason: %s', 'woocommerce'),
+					$respondCharge->getId(), $respondCharge->getExceptionState()->getErrorMessage()));
+
+				$error_message = 'The transaction was declined. Please check your Payment Details';
+				wc_add_notice( __('Payment error: ', 'woothemes') . $error_message, 'error' );
+				return;
+			}
+
 		} else {
 			$order->add_order_note( sprintf(__('Checkout.com Credit Card Payment Declined - Error Code: %s, Decline Reason: %s', 'woocommerce'),
 				$respondCharge->getErrorCode(), $respondCharge->getMessage()));
