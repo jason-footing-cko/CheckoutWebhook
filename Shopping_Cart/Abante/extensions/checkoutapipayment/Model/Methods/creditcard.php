@@ -131,10 +131,10 @@ class Model_Methods_creditcard extends Model_Methods_Abstract implements Model_I
             'email' => $order_info['email'],
             'value' => $amountCents,
             'currency' => $this->currency->getCode(),
-            'description' => "Order number::$orderId",
+            'description' => 'Order number::'. $orderId,
             'shippingDetails' => $shippingAddressConfig,
             'products' => $products,
-            'metadata' => array("trackId" => $orderId),
+            'metadata' => array('trackId' => $orderId),
             'billingDetails' => $billingAddressConfig
         ));
 

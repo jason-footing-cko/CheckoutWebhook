@@ -27,7 +27,11 @@ abstract class models_methods_Abstract extends WC_Payment_Gateway implements mod
 
 	    if($respondCharge->isValid()){
 
-		    $Api = CheckoutApi_Api::getApi(array('mode'=>CHECKOUTAPI_ENDPOINT));
+		    $Api = CheckoutApi_Api::getApi(
+		    	array('mode' 		=> CHECKOUTAPI_ENDPOINT,
+		    		'authorization' => CHECKOUTAPI_SECRET_KEY)
+		    	);
+		    
 		    $chargeUpdated = $Api->updateMetadata($respondCharge,
 			    array('trackId'=>$order->id));
 

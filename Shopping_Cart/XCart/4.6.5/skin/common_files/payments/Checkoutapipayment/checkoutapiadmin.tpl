@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="../skin/common_files/CSS/checkoutapipayment/checkoutapi.css" />
+<link rel="stylesheet" type="text/css" href="../../../../css/checkoutapipayment/checkoutapi.css" />
 </br>
 {$lng.txt_cc_configure_top_text}
 <br /><br />
