@@ -1,2 +1,2 @@
 #Modman file for mapping checkoutapi 
-modules/checkoutapipayment/ modules/checkoutapipayment/
+/sites/all/modules/checkoutapipayment /sites/all/modules/checkoutapipayment
