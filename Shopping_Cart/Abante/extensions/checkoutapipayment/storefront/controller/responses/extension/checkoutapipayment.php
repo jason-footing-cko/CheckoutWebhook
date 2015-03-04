@@ -80,29 +80,36 @@ class ControllerResponsesExtensionCheckoutapipayment extends AController
 
         $this->loadLanguage('checkoutapipayment/checkoutapipayment');
 
-        $this->load->model('checkout/order');
+        $this->loadModel('checkout/order');
 
         $json = file_get_contents('php://input');
+
         if ($json) {
-            $data = json_decode($json, true);
+            
+            $Api = CheckoutApi_Api::getApi(array('mode' => $this->config->get('checkoutapipayment_mode')));
+            $objectCharge = $Api->chargeToObj($json);
+            
+            if ($objectCharge->getResponseCode() == '10000') {
+                
+                /*
+                 * Need to get track id
+                 */
+                $order_id = $objectCharge->getMetadata()->getTrackId();
 
-            if (!empty($data['metadata']['trackId'])) {
-                $orderiD = $data['metadata']['trackId'];
-
-                if ($data['captured'] == true && $data['refunded'] == true) {
-
-                    $message = 'Your payment has been refunded';
-                    $this->model_checkout_order->update($orderiD, 11, $message, FALSE);
+                if ($objectCharge->getCaptured() && !$objectCharge->getRefunded()) {
                     
-                } elseif ($data['captured'] == true && $data['refunded'] == false) {
-
                     $message = 'Your payment has been successfully completed';
+                    $this->model_checkout_order->update($order_id, 5, $message, FALSE);
                     
-                    $this->model_checkout_order->update($orderiD, 5, $message, FALSE);
-                } elseif ($data['captured'] == false && $data['refunded'] == true || $data['expired'] == true) {
-
+                } elseif ($objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+                    
+                    $message = 'Your payment has been refunded';
+                    $this->model_checkout_order->update($order_id, 11, $message, FALSE);
+                    
+                } elseif (!$objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+                    
                     $message = 'Your order has been cancelled';
-                    $this->model_checkout_order->update($orderiD, 7, $message, FALSE);
+                    $this->model_checkout_order->update($order_id, 7, $message, FALSE);
                 }
             }
         }
