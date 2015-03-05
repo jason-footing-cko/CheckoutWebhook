@@ -61,8 +61,8 @@ EOD;
     public function process_button()
     {
         global $order,$messageStack;
-        $amount = (int)$order->info['total'];
-        $amountCents = $amount *100;
+        $amount = $order->info['total'];
+        $amountCents = (int)($amount *100);
         $email = $order->customer['email_address'];
         $currency = $order->info['currency'];
         $publicKey = MODULE_PAYMENT_CHECKOUTAPIPAYMENT_PUBLISHABLE_KEY;

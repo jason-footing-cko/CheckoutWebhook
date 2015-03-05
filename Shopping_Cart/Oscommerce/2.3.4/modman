@@ -2,3 +2,4 @@
 catalog/includes/modules/payment/checkoutapipayment.php catalog/includes/modules/payment/checkoutapipayment.php
 catalog/includes/modules/payment/checkoutapipayment catalog/includes/modules/payment/checkoutapipayment
 catalog/includes/languages/english/modules/payment/checkoutapipayment.php catalog/includes/languages/english/modules/payment/checkoutapipayment.php
+catalog/checkoutapipayment_webhook.php catalog/checkoutapipayment_webhook.php

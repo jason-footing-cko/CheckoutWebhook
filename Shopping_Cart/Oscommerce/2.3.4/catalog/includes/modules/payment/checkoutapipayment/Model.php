@@ -81,10 +81,14 @@
 
      public function selection()
      {
-         return array_merge( array('id'     => $this->code,
-                                   'module' => $this->public_title),$this->getInstance()->selection()
-                           );
+
+         return array_merge_recursive( array( 'id'    => $this->code,
+                                             'module' => $this->public_title
+                                            ),
+                                            $this->getInstance()->selection()
+                                    );
      }
+
      public function pre_confirmation_check()
      {
          $this->getInstance()->pre_confirmation_check();

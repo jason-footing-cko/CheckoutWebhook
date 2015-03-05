@@ -38,7 +38,7 @@ abstract class model_methods_Abstract {
 
             $amountCents = (int)$this->format_raw($order->info['total']) ;
             $config['authorization'] = MODULE_PAYMENT_CHECKOUTAPIPAYMENT_SECRET_KEY;
-            $config['mode'] = MODULE_PAYMENT_CHECKOUAPIPAYMENT_TYPE;
+            $config['mode'] = MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_SERVER;
 
             $config['postedParam'] = array (
                 'email'=>$order->customer['email_address'] ,
@@ -86,25 +86,24 @@ abstract class model_methods_Abstract {
         }
 
     }
-    private function _createCharge($config)
+    protected function _createCharge($config)
     {
         $Api = CheckoutApi_Api::getApi(array('mode'=> MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_SERVER));
         return $Api->createCharge($config);
     }
-    private function _captureConfig()
+    protected function _captureConfig()
     {
         $to_return['postedParam'] = array (
-            'autoCapture' =>( MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD =='Authorize and Capture'),
+            'autoCapture' =>( CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE),
             'autoCapTime' => MODULE_PAYMENT_CHECKOUAPIPAYMENT_AUTOCAPTIME
         );
-
         return $to_return;
     }
 
-    private function _authorizeConfig()
+    protected function _authorizeConfig()
     {
         $to_return['postedParam'] = array(
-            'autoCapture' => ( MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD =='Authorize'),
+            'autoCapture' => ( CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH),
             'autoCapTime' => 0
         );
         return $to_return;
@@ -125,6 +124,14 @@ abstract class model_methods_Abstract {
 
             tep_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
         }
+
+        $Api = CheckoutApi_Api::getApi(
+            array( 'mode'          => MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_SERVER,
+                   'authorization' => MODULE_PAYMENT_CHECKOUTAPIPAYMENT_SECRET_KEY)
+        );
+
+        $chargeUpdated = $Api->updateMetadata($this->_currentCharge,array('trackId'=>$insert_id));
+
         $this->_currentCharge  = '';
 
     }
