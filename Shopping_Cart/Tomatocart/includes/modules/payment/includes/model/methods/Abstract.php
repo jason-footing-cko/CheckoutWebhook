@@ -22,60 +22,59 @@ abstract class model_methods_Abstract  {
         global $osC_Customer, $osC_Currencies, $osC_ShoppingCart;
         $config = array();
 
+        $amountCents = (int)$osC_Currencies->formatRaw($osC_ShoppingCart->getTotal(),$osC_Currencies->getCode())*100;
+        $config['authorization'] = MODULE_PAYMENT_CHECKOUTAPIPAYMENT_SECRET_KEY;
+        $config['mode'] = MODULE_PAYMENT_CHECKOUTAPIPAYMENT_GATEWAY_SERVER;
+        $shippingAddressConfig = array(
+            'addressLine1'       =>  $osC_ShoppingCart->getShippingAddress('street_address'),
+            'postcode'           =>  $osC_ShoppingCart->getShippingAddress('postcode'),
+            'country'            =>  $osC_ShoppingCart->getShippingAddress('country_title'),
+            'city'               =>  $osC_ShoppingCart->getShippingAddress('city'),
+            'phone'              =>  $osC_ShoppingCart->getShippingAddress('telephone_number'),
+            'recipientName'      =>  $osC_ShoppingCart->getShippingAddress('firstname'). ' '.$osC_ShoppingCart->getShippingAddress('lastname')
 
-            $amountCents = (int)$osC_Currencies->formatRaw($osC_ShoppingCart->getTotal(),$osC_Currencies->getCode())*100;
-            $config['authorization'] = MODULE_PAYMENT_CHECKOUTAPIPAYMENT_SECRET_KEY;
-            $config['mode'] = MODULE_PAYMENT_CHECKOUTAPIPAYMENT_GATEWAY_SERVER;
-            $shippingAddressConfig = array(
-                'addressLine1'       =>  $osC_ShoppingCart->getShippingAddress('street_address'),
-                'postcode'           =>  $osC_ShoppingCart->getShippingAddress('postcode'),
-                'country'            =>  $osC_ShoppingCart->getShippingAddress('country_title'),
-                'city'               =>  $osC_ShoppingCart->getShippingAddress('city'),
-                'phone'              =>  $osC_ShoppingCart->getShippingAddress('telephone_number'),
-                'recipientName'      =>  $osC_ShoppingCart->getShippingAddress('firstname'). ' '.$osC_ShoppingCart->getShippingAddress('lastname')
+        );
+        $products = array();
+        if ($osC_ShoppingCart->hasContents()) {
+            $i = 1;
+            foreach($osC_ShoppingCart->getProducts() as $product) {
 
-            );
-            $products = array();
-            if ($osC_ShoppingCart->hasContents()) {
-                $i = 1;
-                foreach($osC_ShoppingCart->getProducts() as $product) {
+                $products[] = array (
+                    'name'       =>    $product['name'],
+                    'sku'        =>    $product['sku'],
+                    'price'      =>    $product['final_price'],
+                    'quantity'   =>     $product['quantity'],
 
-                    $products[] = array (
-                        'name'       =>    $product['name'],
-                        'sku'        =>    $product['sku'],
-                        'price'      =>    $product['final_price'],
-                        'quantity'   =>     $product['quantity'],
-
-                    );
-                    $i++;
-                }
+                );
+                $i++;
             }
-            $this->_order_id     = osC_Order::insert();
-            $config['postedParam'] = array (
-                'email'             => $osC_Customer->getEmailAddress() ,
-                'value'             => $amountCents,
-                'shippingDetails'   => $shippingAddressConfig,
-                'currency'          => $osC_Currencies->getCode() ,
-                'products'         =>    $products,
-                'metadata'      =>    array("trackId" => $this->_order_id ),
-                'card'   => array(
-                            'billingDetails' => array (
-                                                'addressLine1'       =>  $osC_ShoppingCart->getBillingAddress('street_address'),
-                                                'addressPostcode'    =>  $osC_ShoppingCart->getBillingAddress('postcode'),
-                                                'addressCountry'     =>  $osC_ShoppingCart->getBillingAddress('country_title'),
-                                                'addressCity'        =>  $osC_ShoppingCart->getBillingAddress('city'),
-                                                'addressPhone'       =>  $osC_ShoppingCart->getBillingAddress('telephone_number')
+        }
+        $this->_order_id     = osC_Order::insert();
+        $config['postedParam'] = array (
+            'email'             => $osC_Customer->getEmailAddress() ,
+            'value'             => $amountCents,
+            'shippingDetails'   => $shippingAddressConfig,
+            'currency'          => $osC_Currencies->getCode() ,
+            'products'         =>    $products,
+            'metadata'      =>    array("trackId" => $this->_order_id ),
+            'card'   => array(
+                        'billingDetails' => array (
+                                            'addressLine1'       =>  $osC_ShoppingCart->getBillingAddress('street_address'),
+                                            'addressPostcode'    =>  $osC_ShoppingCart->getBillingAddress('postcode'),
+                                            'addressCountry'     =>  $osC_ShoppingCart->getBillingAddress('country_title'),
+                                            'addressCity'        =>  $osC_ShoppingCart->getBillingAddress('city'),
+                                            'addressPhone'       =>  $osC_ShoppingCart->getBillingAddress('telephone_number')
 
-                                             )
-                             )
+                                         )
+                         )
 
-            );
+        );
 
-            if (MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD == 'Authorize and Capture') {
-                $config = array_merge( $this->_captureConfig(),$config);
-            } else {
-                $config = array_merge( $this->_authorizeConfig(),$config);
-            }
+        if (MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD == 'Authorize and Capture') {
+            $config = array_merge( $this->_captureConfig(),$config);
+        } else {
+            $config = array_merge( $this->_authorizeConfig(),$config);
+        }
 
         return $config;
     }
@@ -135,7 +134,7 @@ abstract class model_methods_Abstract  {
         return $Api->createCharge($config);
     }
 
-    private function _captureConfig()
+    protected function _captureConfig()
     {
         $to_return['postedParam'] = array (
             'autoCapture' =>( MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD =='Authorize and Capture'),
@@ -145,7 +144,7 @@ abstract class model_methods_Abstract  {
         return $to_return;
     }
 
-    private function _authorizeConfig()
+    protected function _authorizeConfig()
     {
         $to_return['postedParam'] = array(
             'autoCapture' => ( MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD =='Authorize'),
