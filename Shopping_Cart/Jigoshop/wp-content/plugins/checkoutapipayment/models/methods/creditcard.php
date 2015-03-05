@@ -1,6 +1,6 @@
 <?php
 
- class models_methods_creditcard extends models_methods_Abstract{
+class models_methods_creditcard extends models_methods_Abstract{
 
  	protected $_code = 'creditcard';
 
@@ -9,12 +9,21 @@
          $this ->id = 'checkoutapipayment';
          $this->has_fields = true;
          $this->pci_enable = 'no';
-         parent::__construct();
+         //parent::__construct();
+
+        add_action ( 'jigoshop_checkout_order_review' , array ( $this , 'generatePaymentToken' ) );
+        add_action ( 'jigoshop_checkout_order_review' , array ( $this , 'setJsInit' ) );
     }
 
  	public function _initCode(){
 
  	}
+
+    public function setJsInit()
+    {
+        ?> <script src="http://ckofe.com/js/checkout.js" async ></script>
+    <?php
+    }
 
  	public function payment_fields()
     {
@@ -23,8 +32,10 @@
         $currencyCode = Jigoshop_Base::get_options()->get('jigoshop_currency');
 
         $email = "Email@youremail.com";
+        $name = "Card holder name";
         if(isset($current_user->data)){
             $email = $current_user->user_email;
+            $name = $current_user->user_nicename;
 
         }
 
@@ -36,37 +47,64 @@
             <input type="hidden" name="cko_cc_paymenToken" id="cko-cc-paymenToken" value="<?php echo $paymentToken?>">
 
             <script type="text/javascript">
-                window.CKOConfig = {
-                    debugMode: false,
-                    renderMode: 2,
-                    namespace: 'CheckoutIntegration',
-                    publicKey: '<?php echo CHECKOUTAPI_PUBLIC_KEY ?>',
-                    paymentToken: "<?php echo $paymentToken ?>",
-                    value: '<?php echo $amount ?>',
-                    currency: '<?php echo $currencyCode ?>',
-                    customerEmail: '<?php echo $email ?>',
-                    paymentMode: 'card',
-                    title: '<?php  ?>',
-                    subtitle:'<?php echo __('Please enter your credit card details') ?>',
-                    widgetContainerSelector: '.widget-container',
-                    cardCharged: function(event){
-                        document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
-                        jQuery('.checkout.jigoshop-checkout')[0].submit();
+                if(window.CKOConfig) {
+                    CheckoutIntegration.render(window.CKOConfig);
+                }else {
+                        window.CKOConfig = {
+                            debugMode: false,
+                            renderMode: 2,
+                            namespace: 'CheckoutIntegration',
+                            publicKey: '<?php echo CHECKOUTAPI_PUBLIC_KEY ?>',
+                            paymentToken: "<?php echo $paymentToken ?>",
+                            value: '<?php echo $amount ?>',
+                            currency: '<?php echo $currencyCode ?>',
+                            customerEmail: '<?php echo $email ?>',
+                            customerName: '<?php echo $name ?>',
+                            paymentMode: 'card',
+                            title: '<?php  ?>',
+                            subtitle: '<?php echo __('Please enter your credit card details') ?>',
+                            widgetContainerSelector: '.widget-container',
+                            ready: function (event) {
+                                var cssAdded = jQuery('.widget-container link');
+                                if (!cssAdded.hasClass('checkoutAPiCss')) {
+                                    cssAdded.addClass('checkoutAPiCss');
+                                }
+
+                                jQuery('head').append(cssAdded);
+                            },
+                            cardCharged: function (event) {
+                                document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
+                                jQuery('.checkout.checkout')
+                                    .removeClass('processing')
+                                    .addClass('wasActived')
+                                    .trigger('submit');
+                            }
+
+                        };
+
+                    // Checkout.render(window.CKOConfig);
+                    jQuery('.checkout.checkout')[0].onsubmit = function(){
+
+                        if(jQuery('#payment_method_checkoutapipayment:checked') ) {
+
+                            if(!jQuery('.checkout.checkout').is('processing')
+                                && !jQuery('.checkout' +
+                                '.checkout').is('wasActived')) {
+                                jQuery('.checkout.checkout').addClass('processing');
+                            }
+
+                            if (jQuery('#payment_method_checkoutapipayment:checked')) {
+                                CheckoutIntegration.open();
+                            }
                     }
-
-                };
-
-                // Checkout.render(window.CKOConfig);
-                jQuery('.checkout.jigoshop-checkout')[0].onsubmit = function(){
-
-                    if(jQuery('#payment_method_checkoutapipayment:checked')) {
-                        CheckoutIntegration.open();
-                    }
+                    return true;
                 }
 
+                jQuery('#place_order').click(function(event){
+                    jigoshop_params.is_checkout = 0;
+                })
 
             </script>
-            <script src="http://ckofe.com/js/checkout.js" async ></script>
         </div>
         <?php
  	}
@@ -107,8 +145,10 @@
 
             $error_message = $paymentTokenCharge->getExceptionState()->getErrorMessage().
                 ' ( '.$paymentTokenCharge->getEventId().')';
-          //  ( __('Payment error: ', 'woothemes') . $error_message, 'error' );
+          print_r($error_message);
+            die();
         }
+
 
         return $paymentToken;
 
@@ -121,6 +161,10 @@
         $grand_total = $order->order_total;
         $amount = (int)$grand_total*100;
         $currencyCode = Jigoshop_Base::get_options()->get('jigoshop_currency');
+
+
+        die('her');
+
 //        $config['authorization'] = CHECKOUTAPI_SECRET_KEY;
 //        $config['timeout'] = CHECKOUTAPI_TIMEOUT;
 //        $config['postedParam'] = array('email' =>$order->billing_email,

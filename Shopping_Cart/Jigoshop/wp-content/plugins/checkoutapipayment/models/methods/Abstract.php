@@ -30,7 +30,7 @@ abstract class models_methods_Abstract extends jigoshop_payment_gateway implemen
 
     protected function _validateChrage($order,$respondCharge)
     {
-        CheckoutApi_Utility_Utilities::dump($respondCharge); die();
+        //CheckoutApi_Utility_Utilities::dump($respondCharge); die();
 
 		if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())){
 
