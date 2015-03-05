@@ -8,7 +8,7 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 		$config['chargeId']    =    $this->getRequest()->getParam('chargeId');
 		$config['authorization']    =    $this->_requesttConfigData('privatekey');
 		$Api    =    CheckoutApi_Api::getApi(array('mode'=>$this->_requesttConfigData('mode')));
-		$respondBody    =    $Api->updateCharge($config);
+		$respondBody    =    $Api->getCharge($config);
 
 		$json = $respondBody->getRawOutput();
 		return $json;
