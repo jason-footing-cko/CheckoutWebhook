@@ -1,34 +1,37 @@
 <?php
 class model_methods_creditcard extends model_methods_Abstract
 {
-
+    private $_paymentToken = null;
+    private  $error  = null;
 
     public function confirmation($obj)
     {
-        $selection = array('id' => $obj->_code,
-            'title' => $obj->_method_title,
+        $paymentToken =  $_POST['cko_cc_paymentToken'];
+        $selection = array(
+            'id'     => $obj->_code,
+            'title'  => $obj->_method_title,
             'fields' => array(
                 array(
                     'title' => '',
-                    'field' =>  osc_draw_input_field('cko_cc_token',$_POST['cko_cc_token'] ,'id="payment_checkoutapipayment_cko-cc-token" style="display:none"')
-                        .osc_draw_input_field('cko_cc_email',$_POST['cko_cc_email'],'id="payment_checkoutapipayment_cko-cc-email" style="display:none"')
+                    'field' => osc_draw_input_field('cko_cc_paymentToken',$paymentToken ,'id="cko-paymentToken"
+                        style="display:none"')
+                     )
                 )
-            )
-        );
+            );
 
         return $selection;
     }
 
     public function selection($obj)
     {
-
+        $paymentToken =  $this->getPaymentToken();
         $selection = array('id' => $obj->_code,
             'module' => $obj->_method_title,
             'fields' => array(
                 array(
                     'title' => '',
                     'field' => '<div class="widget-container"></div>'.
-                        osc_draw_input_field('cko_cc_paymentToken','' ,'id="cko-cc-paymentToken"
+                        osc_draw_input_field('cko_cc_paymentToken',$paymentToken ,'id="cko-cc-paymentToken"
                         style="display:none"')
 
                 )
@@ -40,37 +43,153 @@ class model_methods_creditcard extends model_methods_Abstract
 
     public function getJavascriptBlock($obj)
     {
-        global $order;
-        $amount = (int)$order->info['total'];
-        $amountCents = $amount *100;
-        $email = $order->customer['email_address'];
-        $currency = $order->info['currency'];
+        global $osC_Customer, $osC_Currencies, $osC_ShoppingCart;
+        $amountCents = (int)$osC_Currencies->formatRaw($osC_ShoppingCart->getTotal(),$osC_Currencies->getCode())*100;
         $publicKey = MODULE_PAYMENT_CHECKOUTAPIPAYMENT_PUBLISHABLE_KEY;
         $paymentToken =  $this->getPaymentToken();
+        $url = '';
+
         $content =
             <<<EOD
-	      
-        <script src="http://ckofe.com/js/checkout.js" async ></script>
-        <input type="hidden" name="cko-paymentToken" id="cko-paymentToken" value="{$paymentToken}" />
-        <script type="text/javascript">
+
 
             window.CKOConfig = {
                 publicKey: "{$publicKey}",
                  renderMode: 2,
-                 customerEmail: '{$email}' ,
-                 customerName: '{$order->customer['firstname']} {$order->customer['lastname']}',
+                 namespace: 'CheckoutIntegration',
+                 customerEmail: '{$osC_Customer->getEmailAddress()}' ,
+                 customerName: '{$osC_ShoppingCart->getBillingAddress('firstname')} {$osC_ShoppingCart->getBillingAddress('lastname')}',
                  paymentToken:'{$paymentToken}',
                  value: "{$amountCents}",
-                 currency: "{$currency}",
-                 widgetContainerSelector: '.widget-container'
+                 currency: "{$osC_Currencies->getCode() }",
+                 widgetContainerSelector: '.widget-container',
+                 ready:function(event){
+
+                if (typeof s_ajaxListener == 'undefined') {
+                  var s_ajaxListener = new Object();
+                  // Added for IE support
+                  if (typeof XMLHttpRequest === 'undefined') {
+                    XMLHttpRequest = function () {
+                      try {
+                        return new ActiveXObject('Msxml2.XMLHTTP.6.0');
+                      }
+                      catch (e) {
+                      }
+                      try {
+                        return new ActiveXObject('Msxml2.XMLHTTP.3.0');
+                      }
+                      catch (e) {
+                      }
+                      try {
+                        return new ActiveXObject('Microsoft.XMLHTTP');
+                      }
+                      catch (e) {
+                      }
+                      throw new Error('This browser does not support XMLHttpRequest.');
+                    };
+                  }
+                  s_ajaxListener.tempOpen = XMLHttpRequest.prototype.open;
+                  s_ajaxListener.tempSend = XMLHttpRequest.prototype.send;
+                  s_ajaxListener.callback = function () {
+                    // this.method :the ajax method used
+                    // this.url    :the url of the requested script (including query string, if any) (urlencoded)
+                    // this.data   :the data sent, if any ex: foo=bar&a=b (urlencoded)
+                    var queryArray = this.data.split('&'),
+                        subArray   = new Array(),
+                        tempHolder = '',
+                        isPaymentCheckoutApiPayment = false,
+                        isPaymentprocess = false;
+
+                    for(index in queryArray) {
+                      if(queryArray.hasOwnProperty(index)) {
+                       tempHolder = queryArray[index].split('=');
+                        if(tempHolder[0] == 'action' ) {
+                            if( tempHolder[1] == 'save_payment_method' ) {
+                              isPaymentprocess = true;
+                            }else {
+                              isPaymentprocess = false;
+
+                            }
+
+                        }
+
+                        if(tempHolder[0] == 'payment_method' ) {
+                            if( tempHolder[1] == 'checkoutapipayment' ) {
+                              isPaymentCheckoutApiPayment = true;
+                            }else {
+                              isPaymentCheckoutApiPayment = false;
+
+                            }
+
+                        }
+                      }
+                    }
+
+                    if(isPaymentCheckoutApiPayment && isPaymentprocess ) {
+                         var callbackT = setInterval(function() {
+                             if($$('#btnConfirmOrder').length){
+                              clearInterval(callbackT);
+                              $$('[name^=checkout_confirmation]')[0].onsubmit = function(){
+                               Checkout.open();
+                               return false;
+                              }
+
+                                }
+                        }, 100);
+
+                    }
+                  }
+
+                  XMLHttpRequest.prototype.open = function (a, b) {
+                    if (!a) var a = '';
+                    if (!b) var b = '';
+                    s_ajaxListener.tempOpen.apply(this, arguments);
+                    s_ajaxListener.method = a;
+                    s_ajaxListener.url = b;
+                    if (a.toLowerCase() == 'get') {
+                      s_ajaxListener.data = b.split('?');
+                      s_ajaxListener.data = s_ajaxListener.data[1];
+                    }
+                  }
+                  XMLHttpRequest.prototype.send = function (a, b) {
+                    if (!a) var a = '';
+                    if (!b) var b = '';
+                    s_ajaxListener.tempSend.apply(this, arguments);
+                    if (s_ajaxListener.method.toLowerCase() == 'post') s_ajaxListener.data = a;
+                    s_ajaxListener.callback();
+                  }
+                }
+
+                 },
+                  cardCharged: function(event){
+                     $$('[name^=checkout_confirmation]')[0].submit();
+                }
            }
 
-        </script>
 EOD;
 
+        $toreturn = "} ; function checkoutRender() {
+            Checkout.render($content);
+            };
+            function loadExtScript(src, test, callback) {
+                if( !document.getElementById('checkoutapi')) {
+                    var s = document.createElement('script');
+                    s.src = src;
+                    s.id = 'checkoutapi';
 
-
-        return $content;
+                    s.async = 'true';
+                   document.body.appendChild(s);
+                }
+                var callbackTimer = setInterval(function() {
+                   if(Checkout.hasOwnProperty('render')){
+                       clearInterval(callbackTimer);
+                       checkoutRender();
+                   }
+                }, 100);
+        }
+        loadExtScript('http://ckofe.com/js/checkout.js','',function(){});".$this->hijackedJs()."function
+        dummy(){";
+        return $toreturn;
 
     }
     public function pre_confirmation_check()
@@ -82,8 +201,6 @@ EOD;
         global  $osC_ShoppingCart, $osC_CreditCard;
         $this->_verifyData();
         $config = parent::process();
-        $config['postedParam']['email'] = $_POST['cko_cc_email'];
-        $config['postedParam']['cardToken'] =  $_POST['cko_cc_token'];
 
         $this->_placeorder($config);
     }
@@ -97,13 +214,13 @@ EOD;
         global $osC_Language,$messageStack;
         $error = false;
         $errorMsg = $osC_Language->get('payment_checkoutapipayment_js_token');
-        if(( !isset($_POST['cko_cc_token']) || !isset($_POST['cko_cc_email']))){
+        if(( !isset($_POST['cko_cc_paymentToken']))){
 
             $error = true;
         }
 
         if($error){
-            $messageStack->add_session('checkout_payment', $errorMsg, 'error');
+            $messageStack->add_session('checkout_payment',  $this->error , 'error');
         }
 
     }
@@ -139,17 +256,7 @@ EOD;
                 '    payment_value = document.checkout_payment.payment_method.value;' . "\n" .
                 '  } else if (document.checkout_payment.payment_method.value) {' . "\n" .
                 '    payment_value = document.checkout_payment.payment_method.value;' . "\n" .
-                '  }' . "\n\n ".
-                'if (payment_value=="checkoutapipayment"){
-                    if(document.getElementById("payment_checkoutapipayment_cko-cc-token").value==""){
-                       error_message = error_message + "' . str_replace(array("\r", "\n"), "", $osC_Language->get('payment_checkoutapipayment_js_token')) . '\n";'.
-
-                   'return false; }
-                   if(document.getElementById("payment_checkoutapipayment_cko-cc-email").value==""){
-                       error_message = error_message + "' . str_replace(array("\r", "\n"), "", $osC_Language->get('payment_checkoutapipayment_js_token')) . '\n";'.
-
-                '  return false; }
-                }';
+                '  }' . "\n\n ";
             foreach ($modules as $module) {
                 if ( $module->isEnabled() && $module->_code!='checkoutapipayment') {
                     $js .= $module->getJavascriptBlock();
@@ -172,7 +279,7 @@ EOD;
 
     }
 
-    private function getPaymentToken()
+    private function setPaymentToken()
     {
         global $osC_Customer, $osC_Currencies, $osC_ShoppingCart,$messageStack;
         $amountCents = (int)$osC_Currencies->formatRaw($osC_ShoppingCart->getTotal(),$osC_Currencies->getCode())*100;
@@ -236,11 +343,30 @@ EOD;
             $error_message = $paymentTokenCharge->getExceptionState()->getErrorMessage().
                 ' ( '.$paymentTokenCharge->getEventId().')';
 
-            $messageStack->add_session('checkout_payment', $error_message . '<!-- ['.$this->code.'] -->', 'error');
+            $this->error = $error_message;
 
         }
+        return  $this->_paymentToken = $paymentToken;
 
-        return $paymentToken;
     }
+
+    public function getPaymentToken()
+    {
+        if(!$this->_paymentToken) {
+            $this->setPaymentToken();
+        }
+
+        return $this->_paymentToken;
+    }
+
+    protected function _createCharge($config)
+    {
+        $Api = CheckoutApi_Api::getApi(array('mode'=> MODULE_PAYMENT_CHECKOUTAPIPAYMENT_GATEWAY_SERVER));
+        $config['paymentToken'] = $_POST['cko_cc_paymentToken'];
+
+        return $Api->verifyChargePaymentToken($config);
+    }
+
+
 }
 

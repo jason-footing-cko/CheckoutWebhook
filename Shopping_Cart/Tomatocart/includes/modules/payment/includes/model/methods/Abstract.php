@@ -71,9 +71,9 @@ abstract class model_methods_Abstract  {
         );
 
         if (MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD == 'Authorize and Capture') {
-            $config = array_merge( $this->_captureConfig(),$config);
+            $config = array_merge_recursive( $this->_captureConfig(),$config);
         } else {
-            $config = array_merge( $this->_authorizeConfig(),$config);
+            $config = array_merge_recursive( $this->_authorizeConfig(),$config);
         }
 
         return $config;
@@ -88,24 +88,32 @@ abstract class model_methods_Abstract  {
         $this->_currentCharge = $respondCharge;
 
         if( $respondCharge->isValid()) {
+
+            $Api = CheckoutApi_Api::getApi( array( 'mode'          => MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_SERVER,
+                                                   'authorization' => MODULE_PAYMENT_CHECKOUTAPIPAYMENT_SECRET_KEY
+                                                 )
+                                          );
+
+            $chargeUpdated = $Api->updateMetadata($this->_currentCharge,array('trackId' => $order_id));
+
             if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
                 osC_Order::process($this->_order_id, MODULE_PAYMENT_CHECKOUTAPIPAYMENT_PROCESSING_ORDER_STATUS_ID);
 
                 $Qtransaction = $osC_Database->query('insert into '.TABLE_ORDERS_TRANSACTIONS_HISTORY.'
                                   (orders_id, transaction_code, transaction_return_value, transaction_return_status, date_added)
                                   values (:orders_id, :transaction_code, :transaction_return_value, :transaction_return_status, now())');
-             //   $Qtransaction->bindTable(':table_orders_transactions_history', TABLE_ORDERS_TRANSACTIONS_HISTORY);
+
                 $Qtransaction->bindInt(':orders_id', $order_id);
                 $Qtransaction->bindInt(':transaction_code', $respondCharge->getRespondCode());
                 $Qtransaction->bindValue(':transaction_return_value', $respondCharge->getId());
                 $Qtransaction->bindInt(':transaction_return_status', 1);
                 $Qtransaction->execute();
 
-
                 if (osc_not_null(MODULE_PAYMENT_CHECKOUTAPIPAYMENT_PROCESSING_ORDER_STATUS_ID)) {
                     osC_Order::process($_POST['invoice'], MODULE_PAYMENT_CHECKOUTAPIPAYMENT_PROCESSING_ORDER_STATUS_ID, 'Checkout.com Processing Transaction');
                 }
-            }else {
+
+            } else {
                 osC_Order::remove($this->_order_id);
 
                 $messageStack->add_session('checkout_payment', $error, 'error');
@@ -127,7 +135,7 @@ abstract class model_methods_Abstract  {
         }
 
     }
-    private function _createCharge($config)
+    protected function _createCharge($config)
     {
         $Api = CheckoutApi_Api::getApi(array('mode'=> MODULE_PAYMENT_CHECKOUTAPIPAYMENT_GATEWAY_SERVER));
 
@@ -137,7 +145,7 @@ abstract class model_methods_Abstract  {
     protected function _captureConfig()
     {
         $to_return['postedParam'] = array (
-            'autoCapture' =>( MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD =='Authorize and Capture'),
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE,
             'autoCapTime' => MODULE_PAYMENT_CHECKOUAPIPAYMENT_AUTOCAPTIME
         );
 
@@ -147,7 +155,7 @@ abstract class model_methods_Abstract  {
     protected function _authorizeConfig()
     {
         $to_return['postedParam'] = array(
-            'autoCapture' => ( MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD =='Authorize'),
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH,
             'autoCapTime' => 0
         );
         return $to_return;
