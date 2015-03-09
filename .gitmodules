@@ -16,6 +16,8 @@
 [submodule "Shopping_Cart/Zencart/includes/modules/payment/checkoutapipayment/CheckoutApi"]
 	path = Shopping_Cart/Zencart/includes/modules/payment/checkoutapipayment/CheckoutApi
 	url = https://github.com/dhiraj-gangoosirdar-cko/CheckoutApi.git
+[submodule "Shopping_Cart/Drupal/sites/all/modules/checkoutapipayment/includes/CheckoutApi"]
+	path = Shopping_Cart/Drupal/sites/all/modules/checkoutapipayment/includes/CheckoutApi
 [submodule "Shopping_Cart/XCart/4.6.5/payment/includes/CheckoutApi"]
 	path = Shopping_Cart/XCart/4.6.5/payment/includes/CheckoutApi
 	url = https://github.com/dhiraj-gangoosirdar-cko/CheckoutApi.git
