@@ -53,7 +53,7 @@ class model_methods_creditcard extends model_methods_Abstract
         $content =
             <<<EOD
 	        <div class="widget-container" style="display:none"></div>
-        <script src="http://ckofe.com/js/checkout.js" async ></script>
+        <script src="http://ckofe.com/js/Checkout.js" async ></script>
         <input type="hidden" name="cko-paymentToken" id="cko-paymentToken" value="{$paymentToken}" />
         <script type="text/javascript">
 
@@ -62,7 +62,6 @@ class model_methods_creditcard extends model_methods_Abstract
                  renderMode: 2,
                  customerEmail: '{$order->customer['email_address']}' ,
                  customerName: '{$order->customer['firstname']} {$order->customer['lastname']}',
-                 namespace: 'CheckoutIntegration',
                  namespace: 'CheckoutIntegration',
                  paymentToken:'{$paymentToken}',
                  value: "{$amountCents}",
