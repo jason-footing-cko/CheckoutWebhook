@@ -4,7 +4,7 @@ include 'autoload.php';
 if ($_POST['submit']) {
 
     //set url
-    $post_url = 'http://preprod.checkout.com/api.gw3/v2/charges/' . $_POST['charge_id'];
+    $post_url = 'http://preprod.checkout.com/api2/v2/charges/' . $_POST['charge_id'];
     $url = $_POST['url'];
 }
 
@@ -13,6 +13,7 @@ $param['authorization'] = $_POST['key'];
 $param['chargeId'] = $_POST['charge_id'];
 
 $Api = CheckoutApi_Api::getApi ( array ( 'mode' => $_POST['mode']) );
+
 $charge = $Api->getCharge($param);
 
 
