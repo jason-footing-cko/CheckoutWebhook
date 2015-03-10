@@ -58,3 +58,7 @@
 	path = Shopping_Cart/Zencart/includes/modules/payment/checkoutapipayment/CheckoutApi
 	url = https://github.com/CKOTech/checkout_web_common.git
 	branch = CheckoutApi
+[submodule "Shopping_Cart/CsCart/app/payments/CheckoutApi/CheckoutApi"]
+	path = Shopping_Cart/CsCart/app/payments/CheckoutApi/CheckoutApi
+	url = https://github.com/CKOTech/checkout_web_common.git
+	branch = CheckoutApi
