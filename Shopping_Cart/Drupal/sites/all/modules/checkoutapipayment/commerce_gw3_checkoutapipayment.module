@@ -10,14 +10,14 @@ function commerce_gw3_checkoutapipayment_commerce_payment_method_info()
     $payment_methods = array();
 
     $payment_methods['commerce_gw3_checkoutapipayment'] = array(
-        'base' => 'commerce_gw3_checkoutapipayment',
-        'title' => t('Credit / Debit cards (Checkout.com)'),
-        'short_title' => t('Credit / Debit cards (Checkout.com)'),
-        'description' => t('Payment method for Checkout.com'),
-        'terminal' => FALSE,
-        'offsite' => FALSE,
+        'base'                 => 'commerce_gw3_checkoutapipayment',
+        'title'                => t('Credit / Debit cards (Checkout.com)'),
+        'short_title'          => t('Credit / Debit cards (Checkout.com)'),
+        'description'          => t('Payment method for Checkout.com'),
+        'terminal'             => FALSE,
+        'offsite'              => FALSE,
         'offsite_autoredirect' => FALSE,
-        'callbacks' => array(
+        'callbacks'            => array(
 
             'submit_form_submit' => 'submitFormCharge'
         ),
@@ -49,13 +49,13 @@ function commerce_gw3_checkoutapipayment_commerce_payment_method_info()
 function commerce_gw3_checkoutapipayment_settings_default(){
 
     return array(
-        'mode'          =>  'live',
-        'type'          =>  'pci',
-        'localpayment'  =>   'false',
-        'timeout'       =>   60,
-        'card_types'    => array(),
+        'mode'           =>  'live',
+        'type'           =>  'pci',
+        'localpayment'   =>   'false',
+        'timeout'        =>   60,
+        'card_types'     => array(),
         'payment_action' => COMMERCE_CREDIT_AUTH_ONLY,
-        'autocaptime' => 0
+        'autocaptime'    => 0
 
     );
 }
@@ -70,7 +70,7 @@ function commerce_gw3_checkoutapipayment_settings_form($settings= array()){
         '#type'             => 'textfield',
         '#title'            => t('Private Key'),
         '#description'      => t('The Checkout.com account secret API key to use .'),
-        '#default_value' => $settings['private_key'],
+        '#default_value'    => $settings['private_key'],
 
     );
 
@@ -106,42 +106,42 @@ function commerce_gw3_checkoutapipayment_settings_form($settings= array()){
     );
 
     $form['card_types'] = array(
-        '#type' => 'checkboxes',
-        '#title' => t('Limit accepted credit cards to the following types'),
-        '#description' => t('If you want to limit acceptable card types, you should only select those supported by your merchant account.') . '<br />' . t('If none are checked, any credit card type will be accepted.'),
-        '#options' => commerce_payment_credit_card_types(),
+        '#type'          => 'checkboxes',
+        '#title'         => t('Limit accepted credit cards to the following types'),
+        '#description'   => t('If you want to limit acceptable card types, you should only select those supported by your merchant account.') . '<br />' . t('If none are checked, any credit card type will be accepted.'),
+        '#options'       => commerce_payment_credit_card_types(),
         '#default_value' => $settings['card_types'],
     );
     $form['localpayment'] = array(
-        '#type' => 'select',
-        '#title' => t('Enable LocalPayment'),
-        '#options' => array(
-            'true' => t('Yes'),
-            'false' => t('No'),
-        ),
+        '#type'          => 'select',
+        '#title'         => t('Enable LocalPayment'),
+        '#options'       => array(
+                            'true' => t('Yes'),
+                            'false' => t('No'),
+                        ),
         '#default_value' => $settings['localpayment'],
     );
 
     $form['type'] = array(
-        '#type' => 'select',
-        '#title' => t('Method Type (pci?)'),
-        '#description'   => t('Verify gateway server SSL certificate on connection?'),
-        '#options'   => array(
-            'pci'    => t('Yes'),
-            'nonpci' => t('No'),
-        ),
+        '#type'        => 'select',
+        '#title'       => t('Method Type (pci?)'),
+        '#description' => t('Verify gateway server SSL certificate on connection?'),
+        '#options'     => array(
+                        'pci'    => t('Yes'),
+                        'nonpci' => t('No'),
+                        ),
         '#default_value' => $settings['type'],
     );
     $form['autocaptime'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Set Gateway auto capture tume.'),
+        '#type'          => 'textfield',
+        '#title'         => t('Set Gateway auto capture tume.'),
         '#description'   => t('Set how long will the payment be capture.'),
         '#default_value' => $settings['autocaptime'],
     );
 
     $form['timeout'] = array(
-        '#type' => 'textfield',
-        '#title' => t('Set Gateway timeout.'),
+        '#type'          => 'textfield',
+        '#title'         => t('Set Gateway timeout.'),
         '#description'   => t('Set how long request timeout on server.'),
         '#default_value' => $settings['timeout'],
     );
@@ -187,10 +187,10 @@ function commerce_gw3_checkoutapipayment_menu ()
 {
     
     $items['checkoutapi/process'] = array(
-        'title' => 'Ipn checkout',
-        'page callback' => 'checkoutapipayment_process',
+        'title'           => 'Ipn checkout',
+        'page callback'   => 'checkoutapipayment_process',
         'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
+        'type'            => MENU_CALLBACK,
     );
     
     return $items;
@@ -228,15 +228,15 @@ function checkoutapipayment_process()
                 $transaction->message = 'Your transaction has been successfully captured';
                 commerce_payment_transaction_save($transaction);
                 commerce_order_status_update($order, 'completed', $skip_save = FALSE, TRUE, $log = 'Your payment has been successfully completed');
-            }
-            elseif ($objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+                
+            } elseif ($objectCharge->getCaptured() && $objectCharge->getRefunded()) {
 
                 $transaction->message = 'Your payment has been refunded';
                 $transaction->status = COMMERCE_PAYMENT_STATUS_FAILURE;
                 commerce_payment_transaction_save($transaction);
                 commerce_order_status_update($order, 'canceled', $skip_save = FALSE, TRUE, $log = 'Your payment has been refunded');
-            }
-            elseif (!$objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+                
+            } elseif (!$objectCharge->getCaptured() && $objectCharge->getRefunded()) {
 
                 $transaction->message = 'Your payment has been canceled';
                 $transaction->status = COMMERCE_PAYMENT_STATUS_FAILURE;
