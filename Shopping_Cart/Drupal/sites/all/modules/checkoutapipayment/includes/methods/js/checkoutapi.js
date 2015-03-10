@@ -1,18 +1,17 @@
-(function($) {
-  Drupal.behaviors.CKOConfig = {
-    attach: function (context, settings) {
-               settings.CKOConfig.debug,
-                       
-                settings.CKOConfig.renderMode,
-                settings.CKOConfig.publicKey,
-                settings.CKOConfig.email,
-//                'namespace': 'CheckoutIntegration',
-//                settings.CKOConfig.name,
-//                settings.CKOConfig.amount,
-//                settings.CKOConfig.currency,
-//                settings.CKOConfig.paymentToken,
-//                'paymentMode': 'card',              
-               settings.CKOConfig.widgetSelector
-    }
-  };
+(function ($) {
+    Drupal.behaviors.checkoutapijs = {
+        attach: function (context, settings) {
+            $('#edit-commerce-payment-payment-method-commerce-gw3-checkoutapipaymentcommerce-payment-commerce-gw3-checkoutapipayment').click(function () {
+                var elm = $(this),
+                        parent = elm.parent();
+                parent.append($('#cko-widget'));
+                $('#cko-widget').show();
+            });
+
+            $('input.checkout-continue').click(function(event){
+                event.preventDefault();    
+                CheckoutIntegration.open();
+            });
+        }
+    };
 })(jQuery);
