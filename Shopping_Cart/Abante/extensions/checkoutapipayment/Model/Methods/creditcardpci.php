@@ -17,6 +17,7 @@ class Model_Methods_creditcardpci extends Model_Methods_Abstract implements Mode
 
     public function getData()
     {
+         $this->load->model('checkout/order');
 
         $this->language->load('checkoutapipayment/checkoutapipayment');
 

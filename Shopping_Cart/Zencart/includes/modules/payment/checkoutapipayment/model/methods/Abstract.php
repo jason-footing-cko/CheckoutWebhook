@@ -1,5 +1,5 @@
 <?php
-abstract class model_methods_Abstract {
+abstract class model_methods_Abstract extends base {
 
     public $code;
     public $title;
@@ -27,7 +27,7 @@ abstract class model_methods_Abstract {
 
     public function before_process()
     {
-        global $customer_id, $order, $currency, $_POST;
+        global  $order,  $_POST;
         $config = array();
 
 
@@ -35,19 +35,31 @@ abstract class model_methods_Abstract {
             $amountCents = $amount *100;
             $config['authorization'] = MODULE_PAYMENT_CHECKOUTAPIPAYMENT_SECRET_KEY;
             $config['mode'] = MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_SERVER;
+            $products = array();
+            $i = 1;
+            foreach($order->products as $product) {
 
+                $products[] = array (
+                    'name'       =>    $product['name'],
+                    'sku'        =>    $product['sku'],
+                    'price'      =>    $product['final_price'],
+                    'quantity'   =>     $product['quantity'],
+                );
+                $i++;
+            }
             $config['postedParam'] = array (
-                'email'=>$order->customer['email_address'] ,
-                'value'=>$amountCents,
-                'currency'=> $order->info['currency'] ,
+                'email'           => $order->customer['email_address'] ,
+                'value'           => $amountCents,
+                'currency'        => $order->info['currency'] ,
+                'products'        => $products,
                 'shippingDetails' => array (
-                    'addressLine1' =>  $order->delivery['street_address'],
-                    'addressLine2' => $order->delivery['address_line_2'],
-                    'Postcode'    =>  $order->delivery['postcode'],
-                    'Country'     =>  $order->delivery['country']['title'],
-                    'City'        =>  $order->delivery['city'],
-                    'Phone'       =>  $order->customer['telephone'],
-                    'recipientname'      =>  $order->delivery['firstname'].' '.$order->delivery['lastname']
+                    'addressLine1'  =>  $order->delivery['street_address'],
+                    'addressLine2'  => $order->delivery['address_line_2'],
+                    'Postcode'      =>  $order->delivery['postcode'],
+                    'Country'       =>  $order->delivery['country']['title'],
+                    'City'          =>  $order->delivery['city'],
+                    'Phone'         =>  $order->customer['telephone'],
+                    'recipientname' =>  $order->delivery['firstname'].' '.$order->delivery['lastname']
                  )
 
             );
@@ -65,13 +77,15 @@ abstract class model_methods_Abstract {
         global $messageStack,$order;
 
         //building charge
-        //CheckoutApi_Utility_Utilities::dump($config);
+
         $respondCharge = $this->_createCharge($config);
-        //die(CheckoutApi_Utility_Utilities::dump($respondCharge));
+
 
         $this->_currentCharge = $respondCharge;
 
         if( $respondCharge->isValid()) {
+
+
             if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
                 $order->info['order_status'] = MODULE_PAYMENT_CHECKOUAPIPAYMENT_REVIEW_ORDER_STATUS_ID;
             }
@@ -93,26 +107,26 @@ abstract class model_methods_Abstract {
         }
 
     }
-    private function _createCharge($config)
+    protected function _createCharge($config)
     {
         $Api = CheckoutApi_Api::getApi(array('mode'=> MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_SERVER));
 
         return $Api->createCharge($config);
     }
-    private function _captureConfig()
+    protected function _captureConfig()
     {
         $to_return['postedParam'] = array (
-            'autoCapture' =>( MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD =='Authorize and Capture'),
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE,
             'autoCapTime' => MODULE_PAYMENT_CHECKOUAPIPAYMENT_AUTOCAPTIME
         );
 
         return $to_return;
     }
 
-    private function _authorizeConfig()
+    protected function _authorizeConfig()
     {
         $to_return['postedParam'] = array(
-            'autoCapture' => ( MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_METHOD =='Authorize'),
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH,
             'autoCapTime' => 0
         );
         return $to_return;
@@ -131,6 +145,14 @@ abstract class model_methods_Abstract {
                 'date_added' => 'now()',
                 'customer_notified' => '0',
                 'comments' => implode("\n", $status_comment));
+
+
+            $Api = CheckoutApi_Api::getApi(
+                    array( 'mode'          => MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_SERVER,
+                           'authorization' => MODULE_PAYMENT_CHECKOUTAPIPAYMENT_SECRET_KEY)
+            );
+
+            $chargeUpdated = $Api->updateMetadata($this->_currentCharge,array('trackId'=>$insert_id));
 
             zen_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
         }

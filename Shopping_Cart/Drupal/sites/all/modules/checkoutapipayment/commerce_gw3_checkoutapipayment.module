@@ -1,4 +1,5 @@
 <?php
+
 include 'includes/autoload.php';
 /**
  * Getting payment meta information
@@ -34,6 +35,7 @@ function commerce_gw3_checkoutapipayment_commerce_payment_method_info()
     
         if ($js && isset($js['script'])) {
             drupal_add_js($js['script'], array('type' => 'inline', 'scope' => 'footer'));
+            drupal_add_js(drupal_get_path('module','commerce_gw3_checkoutapipayment') . '/includes/methods/js/checkoutapi.js');
         }
 
         if ($js && isset($js['script_external']) && $_GET['q'] != 'system/ajax') {
@@ -181,3 +183,66 @@ function submitFormCharge($payment_method, $pane_form, $pane_values, $order, $ch
     return $instance->submitFormCharge($payment_method, $pane_form, $pane_values, $order, $charge);
 }
 
+function commerce_gw3_checkoutapipayment_menu ()
+{
+    
+    $items['checkoutapi/process'] = array(
+        'title' => 'Ipn checkout',
+        'page callback' => 'checkoutapipayment_process',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    
+    return $items;
+    
+}
+
+function checkoutapipayment_process()
+{
+    $payment_method = commerce_payment_method_instance_load('commerce_gw3_checkoutapipayment|commerce_payment_commerce_gw3_checkoutapipayment');
+    $post_data = file_get_contents('php://input');
+
+    if ($post_data) {
+
+        $Api = CheckoutApi_Api::getApi(array('mode' => $payment_method['settings']['mode']));
+        $objectCharge = $Api->chargeToObj($post_data);
+
+        if ($objectCharge->getResponseCode() == '10000') {
+
+            /*
+             * Need to get track id
+             */
+            $order_id = $objectCharge->getMetadata()->getTrackid();
+
+            $order = commerce_order_load($order_id);
+            $charge = $order->commerce_order_total[LANGUAGE_NONE][0];
+
+            $transaction = commerce_payment_transaction_new('commerce_gw3_checkoutapipayment', $order->order_id);
+            $transaction->instance_id = $payment_method['instance_id'];
+            $transaction->amount = $charge['amount'];
+            $transaction->currency_code = $charge['currency_code'];
+
+            if ($objectCharge->getCaptured() && !$objectCharge->getRefunded()) {
+
+                $transaction->status = COMMERCE_PAYMENT_STATUS_SUCCESS;
+                $transaction->message = 'Your transaction has been successfully captured';
+                commerce_payment_transaction_save($transaction);
+                commerce_order_status_update($order, 'completed', $skip_save = FALSE, TRUE, $log = 'Your payment has been successfully completed');
+            }
+            elseif ($objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+
+                $transaction->message = 'Your payment has been refunded';
+                $transaction->status = COMMERCE_PAYMENT_STATUS_FAILURE;
+                commerce_payment_transaction_save($transaction);
+                commerce_order_status_update($order, 'canceled', $skip_save = FALSE, TRUE, $log = 'Your payment has been refunded');
+            }
+            elseif (!$objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+
+                $transaction->message = 'Your payment has been canceled';
+                $transaction->status = COMMERCE_PAYMENT_STATUS_FAILURE;
+                commerce_payment_transaction_save($transaction);
+                commerce_order_status_update($order, 'canceled', $skip_save = FALSE, TRUE, $log = 'Your payment has been canceled');
+            }
+        }
+    }
+}

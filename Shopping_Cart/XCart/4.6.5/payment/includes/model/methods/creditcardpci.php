@@ -1,4 +1,5 @@
 <?php
+
 class model_methods_creditcardpci extends model_methods_Abstract
 {
     public function handleRequest()

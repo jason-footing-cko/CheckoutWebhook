@@ -30,4 +30,3 @@
 [submodule "Shopping_Cart/Tomatocart/includes/modules/payment/includes/CheckoutApi"]
 	path = Shopping_Cart/Tomatocart/includes/modules/payment/includes/CheckoutApi
 	url = https://github.com/dhiraj-gangoosirdar-cko/CheckoutApi.git
-
