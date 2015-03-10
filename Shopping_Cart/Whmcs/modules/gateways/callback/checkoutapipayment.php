@@ -31,4 +31,4 @@ if ($status=="1") {
     logTransaction($GATEWAY["name"],$_POST,"Unsuccessful"); # Save to Gateway Log: name, data array, status
 }
 
-?>
+
