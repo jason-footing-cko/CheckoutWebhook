@@ -7,12 +7,10 @@ abstract class model_methods_Abstract {
     {
         global $customer_id, $order, $currency, $HTTP_POST_VARS;
         $config = array();
-
-
-            $amountCents = (int)$params['amount']*100 ;
-            $config['authorization'] = $params['secretkey'];
-            $config['mode'] = $params['modetype'];
-            $products = array();
+        $amountCents = (int)$params['amount']*100 ;
+        $config['authorization'] = $params['secretkey'];
+        $config['mode'] = $params['modetype'];
+        $products = array();
 //            foreach ($orderedItems as $item ) {
 //                $product = Mage::getModel('catalog/product')->load($item->getProductId());
 //                $products[] = array (
@@ -24,35 +22,33 @@ abstract class model_methods_Abstract {
 //                );
 //            }
 
-            $config['postedParam'] = array (
-                'email'=> $params['clientdetails']['email'] ,
-                'value'=>$amountCents,
-                'currency'=> $params['currency'],
-                'products'=> $products,
-                'metadata' => array('trackid'=>$params['invoiceid']),
-                'card' => array(
-                            'billingDetails' => array (
-                                                'addressLine1'  =>  $params['clientdetails']['address1'],
-                                                'addressLine2'  =>  $params['clientdetails']['address2'],
-                                                'postcode'      => $params['clientdetails']['postcode'],
-                                                'country'       =>  $params['clientdetails']['country'],
-                                                'city'          => $params['clientdetails']['city'],
-                                                'state'         =>  $params['clientdetails']['state'],
-                                                'phone'         =>  $params['clientdetails']['phonenumber']
+        $config['postedParam'] = array (
+            'email'=> $params['clientdetails']['email'] ,
+            'value'=>$amountCents,
+            'currency'=> $params['currency'],
+            'products'=> $products,
+            'metadata' => array('trackid'=>$params['invoiceid']),
+            'card' => array(
+                        'billingDetails' => array (
+                                            'addressLine1' => $params['clientdetails']['address1'],
+                                            'addressLine2' => $params['clientdetails']['address2'],
+                                            'postcode'     => $params['clientdetails']['postcode'],
+                                            'country'      => $params['clientdetails']['country'],
+                                            'city'         => $params['clientdetails']['city'],
+                                            'state'        => $params['clientdetails']['state'],
+                                            'phone'        => $params['clientdetails']['phonenumber']
+                                         )
+                         )
+        );
 
-                                             )
-                             )
-
-            );
-
-            if ($params['transmethod']== 'Capture') {
-                $config = array_merge( $this->_captureConfig($params),$config);
-            } else {
-                $config = array_merge( $this->_authorizeConfig($params),$config);
-            }
-
+        if ($params['transmethod']== 'Capture') {
+            $config = array_merge( $this->_captureConfig($params),$config);
+        } else {
+            $config = array_merge( $this->_authorizeConfig($params),$config);
+        }
         return $config;
     }
+
     protected function _placeorder($config)
     {
         global $messageStack,$order;
@@ -62,14 +58,10 @@ abstract class model_methods_Abstract {
         $GATEWAY = getGatewayVariables('checkoutapipayment');
 
         if( $respondCharge->isValid()) {
-
             if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
                 logTransaction($GATEWAY["name"],$respondCharge->toArray(),"Successful");
-
-
                 $command = "addtransaction";
                 $adminuser = "admin";
-
                 $values["transid"] = $respondCharge->getId();
                 $values["date"] = date('d/m/Y',$respondCharge->getCreated());
 
