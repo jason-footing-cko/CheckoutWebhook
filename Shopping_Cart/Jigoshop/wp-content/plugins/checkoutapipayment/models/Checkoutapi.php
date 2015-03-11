@@ -4,8 +4,6 @@ if ( ! class_exists( 'jigoshop_payment_gateway' ) ) {
     return;
 };
 
-
-
 abstract class models_Checkoutapi extends jigoshop_payment_gateway implements models_InterfacePayment
 {
     protected $_code;
@@ -14,9 +12,23 @@ abstract class models_Checkoutapi extends jigoshop_payment_gateway implements mo
 
     public function __construct()
     {
-
         parent::__construct();
 
+        $this->_init();
+        $this->_setInstanceMethod();
+
+        define("CHECKOUTAPI_SECRET_KEY", $this->secret_key);
+        define("CHECKOUTAPI_PUBLIC_KEY", $this->public_key);
+        define("CHECKOUTAPI_PAYMENTACTION", $this ->payment_action);
+        define("CHECKOUTAPI_AUTOCAPTIME", $this->auto_capture );
+        define("CHECKOUTAPI_TIMEOUT", $this->gateway_timeout);
+        define("CHECKOUTAPI_ISPCI", $this->pci_enable);
+        define("CHECKOUTAPI_MODE", $this->mode);
+
+    }
+
+    private function _init()
+    {
         $options = Jigoshop_Base::get_options();
         $this->id = 'checkoutapipayment';
         $this->has_fields = false;
@@ -31,9 +43,6 @@ abstract class models_Checkoutapi extends jigoshop_payment_gateway implements mo
         $this->payment_action = $options->get('jigoshop_checkoutapipayment_payment_action');
         $this->auto_capture = $options->get('jigoshop_checkoutapipayment_auto_capture');
         $this->gateway_timeout = $options->get('jigoshop_checkoutapipayment_gateway_timeout');
-
-        $this->_setInstanceMethod();
-
     }
 
     public function get_default_options()
@@ -187,10 +196,9 @@ abstract class models_Checkoutapi extends jigoshop_payment_gateway implements mo
 
     protected function _setInstanceMethod()
     {
-
         $configType =  $this->pci_enable;
 
-
+       // print_r($configType); die();
 
         if($configType) {
             switch ($configType) {

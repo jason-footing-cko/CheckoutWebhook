@@ -34,4 +34,5 @@ class methods_creditcardpci extends methods_Abstract
 
         return $this->_placeorder($config,$charge,$order,$payment_method);
     }
+    
 }
