@@ -38,10 +38,6 @@
 	path = Shopping_Cart/Tomatocart/includes/modules/payment/includes/CheckoutApi
 	url = https://github.com/CKOTech/checkout_web_common.git
 	branch = CheckoutApi
-[submodule "Shopping_Cart/UC_DRUPAL/Ubercart/v7/checkoutapipayment/includes/CheckoutApi"]
-	path = Shopping_Cart/UC_DRUPAL/Ubercart/v7/checkoutapipayment/includes/CheckoutApi
-	url = https://github.com/CKOTech/checkout_web_common.git
-	branch = CheckoutApi
 [submodule "Shopping_Cart/VirtueMart/plugins/vmpayment/checkoutapipayment/CheckoutApi"]
 	path = Shopping_Cart/VirtueMart/plugins/vmpayment/checkoutapipayment/CheckoutApi
 	url = https://github.com/CKOTech/checkout_web_common.git
