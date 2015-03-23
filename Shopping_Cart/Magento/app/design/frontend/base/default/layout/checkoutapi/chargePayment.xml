@@ -15,7 +15,7 @@
 
                 <action method="setText" ifconfig="payment/creditcard/active">
                     <content>
-                        <![CDATA[<script src="http://ckofe.com/js/checkout.js" async ></script>]]>
+                        <![CDATA[<script src="https://www.checkout.com/cdn/js/checkout.js" async ></script>]]>
                     </content>
                 </action>
             </block>

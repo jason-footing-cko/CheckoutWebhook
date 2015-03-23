@@ -20,7 +20,7 @@ class CheckoutApi_ChargePayment_Model_Observer
                 $rawrespond = $payment->getAdditionalInformation('rawrespond');
 
 
-                if(!$rawrespond['captured']&& $order->getStatus()!= 'canceled') {
+                if(!$rawrespond['status'] != 'Captured' && $order->getStatus()!= 'canceled') {
                     $message = Mage::helper('checkoutapi_chargePayment')->__('Are you sure you want to do caputre this transaction?');
                     $block->addButton('checkoutapi_capture', array(
                         'label'     => Mage::helper('checkoutapi_chargePayment')->__('Capture payment'),
