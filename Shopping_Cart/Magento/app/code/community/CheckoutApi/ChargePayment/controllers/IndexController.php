@@ -8,8 +8,7 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 		$config['chargeId']    =    $this->getRequest()->getParam('chargeId');
 		$config['authorization']    =    $this->_requesttConfigData('privatekey');
 		$Api    =    CheckoutApi_Api::getApi(array('mode'=>$this->_requesttConfigData('mode')));
-		$respondBody    =    $Api->getCharge($config);
-
+		$respondBody =    $Api->getCharge($config);
 		$json = $respondBody->getRawOutput();
 		return $json;
 	}
@@ -17,7 +16,12 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 
 	public function processAction()
 	{
-		$stringCharge = file_get_contents("php://input");
+		if($this->getRequest()->getParam('chargeId')) {
+			$stringCharge = $this->_process();
+		}else {
+			$stringCharge = file_get_contents("php://input");
+		}
+
 
 
 		if($stringCharge) {
@@ -41,7 +45,7 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 
 					if($chargeIdPayment == $chargeId) {
 
-						if($objectCharge->getCaptured() && !$objectCharge->getRefunded() && $_order->getStatus()!=
+						if($objectCharge->getCaptured() && $_order->getStatus()!=
 							'canceled') {
 							$transactionCapture = Mage::getModel('sales/order_payment_transaction')
 								->load($chargeId.'-'.Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE,'txn_id');
@@ -65,7 +69,7 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
                                 with Transaction ID '.$objectCharge->getId());
 							}
 
-						} elseif($objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+						} elseif($objectCharge->getRefunded()) {
 
 							$transactionVoid = Mage::getModel('sales/order_payment_transaction')
 								->load($chargeId.'-'.Mage_Sales_Model_Order_Payment_Transaction::TYPE_VOID,'txn_id');
@@ -98,7 +102,7 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 								$this->getResponse()->setBody('Payment already void
                                 with Transaction ID '.$objectCharge->getId());
 							}
-						}elseif(!$objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+						}elseif($objectCharge->getVoided() ) {
 //cancel order
 						}
 
