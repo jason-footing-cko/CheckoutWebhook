@@ -17,10 +17,10 @@
     <value><![CDATA[Test]]></value>
   </definition>
   <definition>
-    <key>checkoutapipayment_live</key>
+    <key>checkoutapipayment_mode_live</key>
     <value><![CDATA[Live]]></value>
   </definition>  <definition>
-    <key>checkoutapipayment_preprod</key>
+    <key>checkoutapipayment_mode_preprod</key>
     <value><![CDATA[Preprod]]></value>
   </definition>
   <definition>
@@ -29,7 +29,7 @@
   </definition>
   <definition>
     <key>checkoutapipayment_method_authorization_capture</key>
-    <value><![CDATA[Capture]]></value>
+    <value><![CDATA[Authorization and Capture]]></value>
   </definition>
   <definition>
     <key>checkoutapipayment_secret_key</key>
