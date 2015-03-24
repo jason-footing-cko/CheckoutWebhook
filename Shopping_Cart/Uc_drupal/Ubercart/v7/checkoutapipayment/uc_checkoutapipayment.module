@@ -353,7 +353,7 @@ function checkoutapipayment_callback()
             $order_id = $objectCharge->getMetadata()->getTrackId();
             if ($order_id) {
                 $order = uc_order_load($order_id);
-                if ($objectCharge->getCaptured() && !$objectCharge->getRefunded()) {
+                if ($objectCharge->getCaptured()) {
 
                     if (uc_order_status_data($order->order_status, 'state') != 'completed') {
                         uc_order_update_status($order->order_id, uc_order_state_default('completed'));
@@ -361,7 +361,7 @@ function checkoutapipayment_callback()
                         
                     }
 
-                } elseif ($objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+                } elseif ($objectCharge->getRefunded()) {
 
                     uc_order_update_status($order->order_id, uc_order_state_default('canceled'));
                     uc_order_comment_save($order_id, 0, t('Your payment has been refunded'));

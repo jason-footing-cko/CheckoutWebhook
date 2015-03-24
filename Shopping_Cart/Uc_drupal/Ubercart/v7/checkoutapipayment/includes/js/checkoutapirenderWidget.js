@@ -6,7 +6,7 @@
         if (!scriptJs) {
             scriptJs = document.createElement('script');
 
-            scriptJs.src = 'http://ckofe.com/js/checkout.js';
+            scriptJs.src = 'https://www.checkout.com/cdn/js/checkout.js';
             scriptJs.id = 'checkoutApijs';
             scriptJs.type = 'text/javascript';
             var interVal = setInterval(function () {
