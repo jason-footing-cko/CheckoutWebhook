@@ -73,7 +73,7 @@ class methods_creditcard extends methods_Abstract
 
             $jsConfig = $this->getJsConfig($config);
             $array['script'] = $jsConfig . '';
-            $array['script_external'] = 'http://ckofe.com/js/checkout.js';
+            $array['script_external'] = 'https://www.checkout.com/cdn/js/checkout.js';
         }
 
         return $array;
@@ -190,6 +190,7 @@ class methods_creditcard extends methods_Abstract
             $config['postedParam'] = array_merge($config['postedParam'], array(
                 'email' => $order->mail,
                 'value' => $amountCents,
+                'trackId' => $orderId,
                 'currency' => $order->commerce_order_total[LANGUAGE_NONE][0]['currency_code'],
                 'description' => 'Order number::' . $orderId,
                 'shippingDetails' => $shippingAddressConfig,

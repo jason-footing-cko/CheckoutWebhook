@@ -24,6 +24,7 @@ abstract class methods_Abstract
             'email' => $order->mail,
             'value' => $amountCents,
             'currency' => $order_array['currency_code'],
+            'trackid' => $order->order_id,
             'metadata' => array('trackid' => $order->order_id),
             'card' => array(
                 'name' => "{$billing_address['first_name']} {$billing_address['last_name']}",
