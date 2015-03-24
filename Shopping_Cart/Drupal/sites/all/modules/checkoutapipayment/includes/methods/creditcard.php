@@ -16,10 +16,10 @@ class methods_creditcard extends methods_Abstract
     {
 
         $form['credit_card']['cko-cc-paymenToken'] = array(
-            '#type' => 'textfield',
-            '#title' => '',
+            '#type'          => 'textfield',
+            '#title'         => '',
             '#default_value' => '',
-            '#attributes' => array(
+            '#attributes'    => array(
                 'style' => array(
                     'display:none'
                 )
@@ -144,8 +144,7 @@ class methods_creditcard extends methods_Abstract
             if ($payment_method['settings']['payment_action'] == 'authorize') {
 
                 $config = array_merge($config, $this->_authorizeConfig());
-            }
-            else {
+            } else {
 
                 $config = array_merge($config, $this->_captureConfig($payment_method));
             }
@@ -158,20 +157,20 @@ class methods_creditcard extends methods_Abstract
                     $line_item[$key] = commerce_line_item_load($item['line_item_id']);
 
                     $products[$key] = array(
-                        'name' => commerce_line_item_title($line_item[$key]),
-                        'sku' => $line_item[$key]->line_item_label,
-                        'price' => $line_item[$key]->commerce_unit_price[LANGUAGE_NONE][0]['amount'],
+                        'name'     => commerce_line_item_title($line_item[$key]),
+                        'sku'      => $line_item[$key]->line_item_label,
+                        'price'    => $line_item[$key]->commerce_unit_price[LANGUAGE_NONE][0]['amount'],
                         'quantity' => (int) $line_item[$key]->quantity,
                     );
                 }
             }
 
             $billingAddressConfig = array(
-                'addressLine1' => $billing_address['thoroughfare'],
-                'addressLine2' => $billing_address['premise'],
+                'addressLine1'    => $billing_address['thoroughfare'],
+                'addressLine2'    => $billing_address['premise'],
                 'addressPostcode' => $billing_address['postal_code'],
-                'addressCountry' => $billing_address['country'],
-                'addressCity' => $billing_address['locality'],
+                'addressCountry'  => $billing_address['country'],
+                'addressCity'     => $billing_address['locality'],
             );
 
             if (module_exists('commerce_shipping') && !empty($order_wrapper->commerce_customer_shipping->commerce_customer_address)) {
@@ -179,24 +178,24 @@ class methods_creditcard extends methods_Abstract
 
                 // Add the shipping address parameters to the request.
                 $shippingAddressConfig = array(
-                    'addressLine1' => $shipping_address['thoroughfare'],
-                    'addressLine2' => $shipping_address['premise'],
+                    'addressLine1'    => $shipping_address['thoroughfare'],
+                    'addressLine2'    => $shipping_address['premise'],
                     'addressPostcode' => $shipping_address['postal_code'],
-                    'addressCountry' => $shipping_address['country'],
-                    'addressCity' => $shipping_address['locality'],
+                    'addressCountry'  => $shipping_address['country'],
+                    'addressCity'     => $shipping_address['locality'],
                 );
             }
 
             $config['postedParam'] = array_merge($config['postedParam'], array(
-                'email' => $order->mail,
-                'value' => $amountCents,
-                'trackId' => $orderId,
-                'currency' => $order->commerce_order_total[LANGUAGE_NONE][0]['currency_code'],
-                'description' => 'Order number::' . $orderId,
+                'email'           => $order->mail,
+                'value'           => $amountCents,
+                'trackId'         => $orderId,
+                'currency'        => $order->commerce_order_total[LANGUAGE_NONE][0]['currency_code'],
+                'description'     => 'Order number::' . $orderId,
                 'shippingDetails' => $shippingAddressConfig,
-                'products' => $products,
-                'metadata' => array('trackId' => $orderId),
-                'billingDetails' => $billingAddressConfig
+                'products'        => $products,
+                'metadata'        => array('trackId' => $orderId),
+                'billingDetails'  => $billingAddressConfig
             ));
 
             $Api = CheckoutApi_Api::getApi(array('mode' => $mode));
@@ -213,8 +212,7 @@ class methods_creditcard extends methods_Abstract
             if ($paymentTokenCharge->isValid()) {
                 $paymentTokenArray['token'] = $paymentTokenCharge->getId();
                 $paymentTokenArray['success'] = true;
-            }
-            else {
+            } else {
 
                 $paymentTokenArray['message'] = $paymentTokenCharge->getExceptionState()->getErrorMessage();
                 $paymentTokenArray['success'] = false;
