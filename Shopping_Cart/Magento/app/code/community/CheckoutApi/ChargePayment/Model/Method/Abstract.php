@@ -25,12 +25,15 @@ abstract class CheckoutApi_ChargePayment_Model_Method_Abstract extends Mage_Paym
 				$rawInfo = $respondCharge->toArray ();
 				$payment->setAdditionalInformation ( 'rawrespond' , $rawInfo );
 				$payment->setTransactionAdditionalInfo ( Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS , $rawInfo );
-				$orderStatus = $this->getConfigData ( 'order_status_capture' );
+				$orderStatus = $this->getConfigData ( 'order_status' );
 				$order->setStatus ( $orderStatus , false );
 
 				$order->addStatusToHistory ( $orderStatus , $messageSuccess . $respondCharge->getId ()
 					. ' and respond code ' . $respondCharge->getResponseCode () , false );
 				$order->save ();
+				if($respondCharge->getCaptured()){
+					$payment->capture ( null );
+				}
 				$payment->save ();
 
 				return $respondCharge;
