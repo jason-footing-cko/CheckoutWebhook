@@ -115,19 +115,20 @@ class Controller_Methods_creditcard extends Controller_Methods_Abstract implemen
             'country'            =>  $order_info['shipping_iso_code_3'],
             'city'               =>  $order_info['shipping_city'],
             'phone'              =>  $order_info['telephone'],
-            'recipientName'		 =>   $order_info['firstname']. ' '. $order_info['lastname']
+            'recipientName'	 =>   $order_info['firstname']. ' '. $order_info['lastname']
 
         );
 
         $config['postedParam'] = array_merge($config['postedParam'],array (
             'email'              =>  $order_info['email'],
             'value'              =>  $amountCents,
+            'trackId'            =>  $orderId
             'currency'           =>  $this->currency->getCode(),
             'description'        =>  "Order number::$orderId",
-            'shippingDetails'    =>    $shippingAddressConfig,
-            'products'           =>    $products,
+            'shippingDetails'    =>  $shippingAddressConfig,
+            'products'           =>  $products,
             'metadata'           =>  array("trackId" => $orderId),
-            'billingDetails'     =>    $billingAddressConfig
+            'billingDetails'     =>  $billingAddressConfig
 
         ));
 

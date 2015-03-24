@@ -144,10 +144,11 @@ abstract class Controller_Methods_Abstract extends Controller
         $config['postedParam'] = array_merge($config['postedParam'],array (
             'email'              =>  $order_info['email'],
             'value'              =>  $amountCents,
+            'trackId'            => $orderId
             'currency'           =>  $this->currency->getCode(),
             'description'        =>  "Order number::$orderId",
             'shippingDetails'    =>    $shippingAddressConfig,
-            'products'         =>    $products,
+            'products'           =>    $products,
             'metadata'           =>  array("trackId" => $orderId),
             'card'               =>   array (
                                      'billingDetails'   =>    $billingAddressConfig
