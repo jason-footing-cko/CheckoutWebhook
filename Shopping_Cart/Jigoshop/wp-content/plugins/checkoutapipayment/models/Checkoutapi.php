@@ -12,7 +12,7 @@ abstract class models_Checkoutapi extends jigoshop_payment_gateway implements mo
 
     public function __construct()
     {
-        parent::__construct();
+        //parent::__construct();
 
         $this->_init();
         $this->_setInstanceMethod();
