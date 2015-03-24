@@ -117,40 +117,40 @@ class methods_creditcard extends methods_Abstract
             foreach ($order->products as $item) {
 
                 $products[] = array(
-                    'name' => $item->title,
-                    'sku' => $item->model,
-                    'price' => uc_currency_format($item->price, $sign = FALSE, $thou = FALSE, $dec = '.'),
+                    'name'     => $item->title,
+                    'sku'      => $item->model,
+                    'price'    => uc_currency_format($item->price, $sign = FALSE, $thou = FALSE, $dec = '.'),
                     'quantity' => $item->qty,
                 );
             }
 
             // Add the shipping address parameters to the request.
             $shipping_array = array(
-                'addressLine1' => $order->delivery_street1,
-                'addressLine2' => $order->delivery_street2,
+                'addressLine1'    => $order->delivery_street1,
+                'addressLine2'    => $order->delivery_street2,
                 'addressPostcode' => $order->delivery_postal_code,
-                'addressCountry' => $order->delivery_country,
-                'addressCity' => $order->delivery_city,
-                'recipientName' => $order->delivery_first_name . ' ' . $order->delivery_last_name,
-                'phone' => $order->delivery_phone
+                'addressCountry'  => $order->delivery_country,
+                'addressCity'     => $order->delivery_city,
+                'recipientName'   => $order->delivery_first_name . ' ' . $order->delivery_last_name,
+                'phone'           => $order->delivery_phone
             );
 
             $config['postedParam'] = array_merge_recursive($config['postedParam'], array(
-                'email' => $order->primary_email,
-                'value' => $amountCents,
-                'trackId' => $order->order_id,
-                'currency' => $currency_code,
+                'email'           => $order->primary_email,
+                'value'           => $amountCents,
+                'trackId'         => $order->order_id,
+                'currency'        => $currency_code,
                 'shippingDetails' => $shipping_array,
-                'products' => $products,
-                'metadata' => array('trackId' => $order->order_id),
-                'card' => array(
+                'products'        => $products,
+                'metadata'        => array('trackId' => $order->order_id),
+                'card'            => array(
                     'name' => $order->billing_first_name . ' ' . $order->billing_last_name,
                     'billingDetails' => array(
-                        'addressLine1' => $order->billing_street1,
-                        'addressLine2' => $order->billing_street2,
+                        'addressLine1'    => $order->billing_street1,
+                        'addressLine2'    => $order->billing_street2,
                         'addressPostcode' => $order->billing_postal_code,
-                        'addressCountry' => $order->billing_country,
-                        'addressCity' => $order->billing_city,
+                        'addressCountry'  => $order->billing_country,
+                        'addressCity'     => $order->billing_city,
                     )
                 )
                     )
