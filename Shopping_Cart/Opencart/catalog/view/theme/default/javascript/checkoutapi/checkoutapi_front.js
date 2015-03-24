@@ -6,7 +6,7 @@ $('#button-confirm').bind('click', function() {
         dataType: 'json',
         beforeSend: function() {
             $('#button-confirm').attr('disabled', true);
-            $('#payment').before('<div class="attention"><img src="catalog/view/theme/default/image/loading.gif" alt="" /> <?php echo 'test' ?></div>');
+            $('#payment').before('<div class="attention"><img src="catalog/view/theme/default/image/loading.gif" alt="" /></div>');
         },
         complete: function() {
             $('#button-confirm').attr('disabled', false);
