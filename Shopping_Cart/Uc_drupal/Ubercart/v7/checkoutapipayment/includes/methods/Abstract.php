@@ -41,10 +41,11 @@ abstract class methods_Abstract
         $config['postedParam'] = array(
             'email' => $order->primary_email,
             'value' => $amountCents,
+            'trackId' => $order->order_id,
             'currency' => $currency_code,
             'shippingDetails' => $shipping_array,
             'products' => $products,
-            'metadata' => array('trackid' => $order->order_id),
+            'metadata' => array('trackId' => $order->order_id),
             'card' => array(
                 'name' => $order->billing_first_name . ' ' . $order->billing_last_name,
                 'billingDetails' => array(
@@ -69,7 +70,6 @@ abstract class methods_Abstract
     protected function _placeorder($config, $order)
     {
         global $user;
-
         //building charge
         $respondCharge = $this->_createCharge($config);
         $responsemessage = '';
@@ -95,7 +95,7 @@ abstract class methods_Abstract
                 );
             }
 
-            $comment = t('Gateway Message: @msg', array('@msg' => $responsemessage));
+            $comment = t('Gateway Message: @msg', array('@msg' => $responsemessage . ' with chargeId ' . $respondCharge->getId()));
               
         }
         else {
@@ -114,13 +114,13 @@ abstract class methods_Abstract
         return $result;
     }
 
-    private function _createCharge($config)
+    protected function _createCharge($config)
     {
         $Api = CheckoutApi_Api::getApi(array('mode' => variable_get('mode')));
         return $Api->createCharge($config);
     }
 
-    private function _captureConfig()
+    protected function _captureConfig()
     {
         $to_return['postedParam'] = array(
             'autoCapture' => 'y',
@@ -130,7 +130,7 @@ abstract class methods_Abstract
         return $to_return;
     }
 
-    private function _authorizeConfig()
+    protected function _authorizeConfig()
     {
         $to_return['postedParam'] = array(
             'autoCapture' => 'n',
