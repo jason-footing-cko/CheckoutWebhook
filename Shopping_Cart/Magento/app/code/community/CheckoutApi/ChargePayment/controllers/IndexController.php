@@ -49,20 +49,30 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 							'canceled') {
 							$transactionCapture = Mage::getModel('sales/order_payment_transaction')
 								->load($chargeId.'-'.Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE,'txn_id');
+
+
 							if(!$transactionCapture->getOrderId()) {
+								/** @var Mage_Sales_Model_Order_Payment $_payment  */
+
+								$_payment->setParentTransactionId($chargeId);
 								$_payment->capture ( null );
 								$orderStatus = $this->_requesttConfigData ( 'order_status_capture' );
 								$_rawInfo = $objectCharge->toArray ();
 
-								$_payment->setAdditionalInformation ( 'rawrespond' , $_rawInfo );
-								$_payment->setTransactionAdditionalInfo ( Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS , $_rawInfo );
-								$_payment->save ();
+								$_payment->setAdditionalInformation ( 'rawrespond' , $_rawInfo )
+										->setShouldCloseParentTransaction('Completed' === $orderStatus)
+										->setIsTransactionClosed(0)
+											->setTransactionAdditionalInfo ( Mage_Sales_Model_Order_Payment_Transaction
+											::RAW_DETAILS , $_rawInfo );
+									$_payment->save();
+
 								$_order->setStatus ( $orderStatus , false );
 								$_order->addStatusToHistory ( $orderStatus , 'Payment Sucessfully captured
                                 with Transaction ID ' . $objectCharge->getId () );
 								$_order->save ();
 								$this->getResponse()->setBody('Payment Sucessfully captured
                                 with Transaction ID '.$objectCharge->getId());
+
 							}else {
 
 								$this->getResponse()->setBody('Payment was already captured
