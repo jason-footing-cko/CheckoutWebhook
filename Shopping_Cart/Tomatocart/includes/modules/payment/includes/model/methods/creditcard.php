@@ -187,7 +187,7 @@ EOD;
                    }
                 }, 100);
         }
-        loadExtScript('http://ckofe.com/js/checkout.js','',function(){});".$this->hijackedJs()."function
+        loadExtScript('https://www.checkout.com/cdn/js/checkout.js','',function(){});".$this->hijackedJs()."function
         dummy(){";
         return $toreturn;
 
@@ -313,6 +313,7 @@ EOD;
         $config['postedParam'] = array (
             'email'            => $osC_Customer->getEmailAddress() ,
             'value'            => $amountCents,
+            'trackId'          => $this->_order_id,
             'shippingDetails'  => $shippingAddressConfig,
             'currency'         => $osC_Currencies->getCode() ,
             'products'         => $products,
