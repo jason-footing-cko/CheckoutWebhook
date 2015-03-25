@@ -50,9 +50,9 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
                 $order_state =( Configuration::get('CHECKOUTAPI_PAYMENT_ACTION') == 'authorize_capture' &&
                 $respondCharge->getCaptured())
                     ? Configuration::get('PS_OS_PAYMENT'):Configuration::get('PS_OS_CHECKOUT');
-
+                $message = 'Your payment was sucessfull with Checkout.com with transaction Id '.$respondCharge->getId();
                 $this->module->validateOrder((int)$cart->id, $order_state,
-                    $total, $this->module->displayName, 'Your payment was sucessfull with Checkout.com ', array
+                    $total, $this->module->displayName, $message, array
                     ('transaction_id'=>$respondCharge->getId()),
                     (int)
                     $currency->id,
@@ -162,7 +162,7 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
 
     private function _captureConfig()
     {
-        $to_return['postedParam'] = array (
+        $to_return = array (
             'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE,
             'autoCapTime' => Configuration::get('CHECKOUTAPI_AUTOCAPTURE_DELAY')
         );
@@ -172,7 +172,7 @@ class CheckoutapipaymentValidationModuleFrontController extends ModuleFrontContr
 
     private function _authorizeConfig()
     {
-        $to_return['postedParam'] = array (
+        $to_return = array (
             'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH,
             'autoCapTime' => 0
         );
