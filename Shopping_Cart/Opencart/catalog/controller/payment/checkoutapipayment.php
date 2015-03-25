@@ -13,7 +13,11 @@ class ControllerPaymentcheckoutapipayment extends Controller_Model
 
     public function webhook()
     {
-        $stringCharge     =    file_get_contents("php://input");
+        if(isset($_GET['chargeId'])) {
+            $stringCharge = $this->_process();
+        }else {
+            $stringCharge = file_get_contents ( "php://input" );
+        }
         $Api = CheckoutApi_Api::getApi(array('mode'=> $this->config->get('test_mode')));
 
         $objectCharge = $Api->chargeToObj($stringCharge);
@@ -53,7 +57,7 @@ class ControllerPaymentcheckoutapipayment extends Controller_Model
                 );
                 echo "Order has been refunded";
 
-            } else {
+            } elseif(!$objectCharge->getAuthorised()) {
                 $this->model_checkout_order->update(
                     $order_id,
                     $this->config->get('checkout_failed_order'),
