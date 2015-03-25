@@ -53,11 +53,12 @@ abstract class model_methods_Abstract  {
         $config['postedParam'] = array (
             'email'             => $osC_Customer->getEmailAddress() ,
             'value'             => $amountCents,
+            'trackId'           => $this->_order_id,
             'shippingDetails'   => $shippingAddressConfig,
             'currency'          => $osC_Currencies->getCode() ,
-            'products'         =>    $products,
-            'metadata'      =>    array("trackId" => $this->_order_id ),
-            'card'   => array(
+            'products'          =>    $products,
+            'metadata'          =>    array("trackId" => $this->_order_id ),
+            'card'              => array(
                         'billingDetails' => array (
                                             'addressLine1'       =>  $osC_ShoppingCart->getBillingAddress('street_address'),
                                             'addressPostcode'    =>  $osC_ShoppingCart->getBillingAddress('postcode'),

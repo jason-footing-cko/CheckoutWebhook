@@ -10,7 +10,7 @@
     <script type="text/javascript">
 
         $.ajax({
-            url: '//ckofe.com/js/checkout.js',
+            url: 'https://www.checkout.com/cdn/js/checkout.js',
             dataType: 'script',
             cache: true,
             beforeSend: function(){

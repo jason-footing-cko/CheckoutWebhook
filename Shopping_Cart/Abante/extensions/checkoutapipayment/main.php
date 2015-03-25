@@ -20,21 +20,18 @@
 
 $controllers = array(
     'storefront' => array('responses/extension/checkoutapipayment'),
-    'admin' => array( ),
+    'admin'      => array( ),
 );
 
 $models = array(
     'storefront' => array( 'extension/checkoutapipayment' ),
-    'admin' => array( ),
+    'admin'      => array( ),
 );
 
 $languages = array(
-    'storefront' => array(
-	    'checkoutapipayment/checkoutapipayment'),
-    'admin' => array(
-        'checkoutapipayment/checkoutapipayment'));
+    'storefront' => array('checkoutapipayment/checkoutapipayment'),
+    'admin'      => array('checkoutapipayment/checkoutapipayment'));
 
 $templates = array(
-    'storefront' => array(
-	    'responses/creditcard.tpl','responses/creditcardpci.tpl' ),
-    'admin' => array());
+    'storefront' => array('responses/creditcard.tpl','responses/creditcardpci.tpl' ),
+    'admin'      => array());

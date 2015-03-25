@@ -30,16 +30,15 @@ class ModelExtensionCheckoutapipayment extends Model
         $this->load->language('checkoutapipayment/checkoutapipayment');
         if ($this->config->get('checkoutapipayment_status')) {
             $status = TRUE;
-        }
-        else {
+        } else {
             $status = FALSE;
         }
         $method_data = array();
 
         if ($status) {
             $method_data = array(
-                'id' => 'checkoutapipayment',
-                'title' => $this->language->get('text_title'),
+                'id'         => 'checkoutapipayment',
+                'title'      => $this->language->get('text_title'),
                 'sort_order' => $this->config->get('checkoutapipayment_sort_order')
             );
         }

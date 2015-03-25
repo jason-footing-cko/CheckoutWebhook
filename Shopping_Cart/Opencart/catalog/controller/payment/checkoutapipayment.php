@@ -18,7 +18,7 @@ class ControllerPaymentcheckoutapipayment extends Controller_Model
 
         $objectCharge = $Api->chargeToObj($stringCharge);
 
-        if($objectCharge->getResponseCode() == '10000') {
+        if($objectCharge->isValid()) {
           //  $this->load->model('sale/order');
            /*
             * Need to get track id
@@ -35,7 +35,7 @@ class ControllerPaymentcheckoutapipayment extends Controller_Model
             }
 
 
-            if ( $objectCharge->getCaptured () && !$objectCharge->getRefunded () ) {
+            if ( $objectCharge->getCaptured ()) {
                 $this->model_checkout_order->update(
                     $order_id,
                     $status_mapped['Complete'],
@@ -44,7 +44,7 @@ class ControllerPaymentcheckoutapipayment extends Controller_Model
                 );
                 echo "Order has been captured";
 
-            } elseif ( $objectCharge->getCaptured () && $objectCharge->getRefunded () ) {
+            } elseif ( $objectCharge->getRefunded () ) {
                 $this->model_checkout_order->update(
                     $order_id,
                     $status_mapped['Refunded'],
@@ -53,7 +53,7 @@ class ControllerPaymentcheckoutapipayment extends Controller_Model
                 );
                 echo "Order has been refunded";
 
-            } elseif ( !$objectCharge->getCaptured () && $objectCharge->getRefunded () ) {
+            } else {
                 $this->model_checkout_order->update(
                     $order_id,
                     $this->config->get('checkout_failed_order'),

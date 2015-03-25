@@ -2,7 +2,7 @@
 <definitions>
   <definition>
     <key>text_title</key>
-    <value><![CDATA[Credit Card / Debit Card (Authorize.Net)]]></value>
+    <value><![CDATA[Credit Card / Debit Card (Checkout.Com)]]></value>
   </definition>
   <definition>
     <key>text_credit_card</key>

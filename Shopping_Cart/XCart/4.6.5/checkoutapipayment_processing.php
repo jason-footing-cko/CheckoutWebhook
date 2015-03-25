@@ -20,27 +20,28 @@ if (empty($posted_data)) {
     $Api = CheckoutApi_Api::getApi(array('mode' => $payment_cc_data['param01']));
     $objectCharge = $Api->chargeToObj($posted_data);
 
-    if ($objectCharge->getResponseCode() == '10000') {
+    if ($objectCharge->isValid()) {
 
         /*
          * Need to get track id
          */
+        //TODO change getMetadata() to getTrackId()
         $order_id = $objectCharge->getMetadata()->getTrackId();
 
-        if ($objectCharge->getCaptured() && !$objectCharge->getRefunded()) {
+        if ($objectCharge->getCaptured()) {
 
             $advinfo = 'Your payment has been successfully completed';
             func_change_order_status($order_id, 'C', $advinfo); // completed status?
-        }
-        elseif ($objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+        } elseif ($objectCharge->getRefunded()) {
 
             $advinfo = 'Your payment has been refunded';
             func_change_order_status($order_id, 'D', $advinfo); // declined status?
-        }
-        elseif (!$objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+            
+        } else {
 
             $advinfo[] = 'Your order has been cancelled';
             func_change_order_status($order_id, 'D', $advinfo); // cancelled status?
         }
     }
 }
+

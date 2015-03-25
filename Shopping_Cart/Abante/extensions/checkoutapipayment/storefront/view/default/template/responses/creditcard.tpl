@@ -17,7 +17,6 @@
     </div>
 </form>
 
-<script src="http://ckofe.com/js/checkout.js" async ></script>
 <script type="text/javascript">
     window.CKOConfig = {
         debugMode: false,
@@ -71,6 +70,7 @@
         },
     };
 </script>
+<script src="https://www.checkout.com/cdn/js/checkout.js" async ></script>
 <script>
     $('form#checkoutapipayment').submit(function (event) {
         event.preventDefault();
