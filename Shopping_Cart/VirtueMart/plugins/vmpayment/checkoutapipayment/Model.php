@@ -401,14 +401,8 @@ class Model extends vmPSPlugin
     function plgVmOnPaymentNotification()
     {
 
-        if (!class_exists('VirtueMartModelOrders')) {
-            require(VMPATH_ADMIN . DS . 'models' . DS . 'orders.php');
-        }
-        if (!class_exists('VirtueMartCart')) {
-            require(VMPATH_SITE . DS . 'helpers' . DS . 'cart.php');
-        }
-
         $pm = vRequest::getString('pm');
+        
         $this->_currentMethod = $this->getVmPluginMethod($pm);
 
         $json = file_get_contents('php://input');
