@@ -54,10 +54,6 @@ class model_methods_creditcard extends model_methods_Abstract
         }
         $paymentId = $currentMethod->virtuemart_paymentmethod_id;
         
-        if(!empty($this->cko_paymentToken)){
-            $_SESSION['paymenTokenData'] = $this->cko_paymentToken;
-        }
-
         $Api = CheckoutApi_Api::getApi(array('mode' => $obj->getCurrentMethod()->sandbox));
 
         $amountCents = ceil((float) ($cart->pricesUnformatted['billTotal']) * 100.00);
