@@ -26,8 +26,6 @@ class model_methods_creditcard extends model_methods_Abstract
 
         $config = parent::before_process();
 
-        $config['postedParam']['email'] = $HTTP_POST_VARS['cko_cc_email'];
-        $config['postedParam']['cardToken'] = $HTTP_POST_VARS['cko_cc_token'];
         $this->_placeorder($config);
     }
 
@@ -53,7 +51,7 @@ class model_methods_creditcard extends model_methods_Abstract
         $content =
             <<<EOD
 	        <div class="widget-container" style="display:none"></div>
-        <script src="http://ckofe.com/js/Checkout.js" async ></script>
+        <script src="https://www.checkout.com/cdn/js/checkout.js" async ></script>
         <input type="hidden" name="cko-paymentToken" id="cko-paymentToken" value="{$paymentToken}" />
         <script type="text/javascript">
 
@@ -185,7 +183,7 @@ EOD;
         $content =
             <<<EOD
 	        <div class="widget-container"></div>
-        <script src="http://ckofe.com/js/checkout.js" async ></script>
+        <script src="https://www.checkout.com/cdn/js/checkout.js" async ></script>
         <input type="hidden" name="cko-paymentToken" id="cko-paymentToken" value="{$paymentToken}" />
         <script type="text/javascript">
 

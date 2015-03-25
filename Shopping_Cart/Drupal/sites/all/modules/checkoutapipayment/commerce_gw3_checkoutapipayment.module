@@ -207,7 +207,7 @@ function checkoutapipayment_process()
         $Api = CheckoutApi_Api::getApi(array('mode' => $payment_method['settings']['mode']));
         $objectCharge = $Api->chargeToObj($post_data);
 
-        if ($objectCharge->getResponseCode() == '10000') {
+        if ($objectCharge->isValid()) {
 
             /*
              * Need to get track id
@@ -222,21 +222,21 @@ function checkoutapipayment_process()
             $transaction->amount = $charge['amount'];
             $transaction->currency_code = $charge['currency_code'];
 
-            if ($objectCharge->getCaptured() && !$objectCharge->getRefunded()) {
+            if ($objectCharge->getCaptured()) {
 
                 $transaction->status = COMMERCE_PAYMENT_STATUS_SUCCESS;
                 $transaction->message = 'Your transaction has been successfully captured';
                 commerce_payment_transaction_save($transaction);
                 commerce_order_status_update($order, 'completed', $skip_save = FALSE, TRUE, $log = 'Your payment has been successfully completed');
                 
-            } elseif ($objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+            } elseif ($objectCharge->getRefunded()) {
 
                 $transaction->message = 'Your payment has been refunded';
                 $transaction->status = COMMERCE_PAYMENT_STATUS_FAILURE;
                 commerce_payment_transaction_save($transaction);
                 commerce_order_status_update($order, 'canceled', $skip_save = FALSE, TRUE, $log = 'Your payment has been refunded');
                 
-            } elseif (!$objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+            } else {
 
                 $transaction->message = 'Your payment has been canceled';
                 $transaction->status = COMMERCE_PAYMENT_STATUS_FAILURE;

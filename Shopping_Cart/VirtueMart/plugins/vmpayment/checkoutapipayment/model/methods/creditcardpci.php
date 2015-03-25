@@ -19,9 +19,15 @@ class model_methods_creditcardpci extends model_methods_Abstract
 
         $currentMethod =  $obj->getCurrentMethod();
         $method_name = $obj->getPsType() . '_name';
-        $methodSalesPrice = $obj->setCartPrices($cart, $cart->cartPrices, $currentMethod);
+        
+        $cart_prices = array();
+        $cart_prices['withTax'] = '';
+        $cart_prices['salesPrice'] = '';
+        
+        $methodSalesPrice = $obj->setCartPrices($cart, $cart_prices, $currentMethod);
+
         $html = array();
-        $obj->getInstance()->getC->$method_name = $obj->getRenderPluginName($currentMethod);
+        $currentMethod->$method_name = $obj->getRenderPluginName($currentMethod);
         $html[] = $obj->pluginHtml($currentMethod, $selected, $methodSalesPrice);
 
         if ($selected == $currentMethod->virtuemart_paymentmethod_id) {

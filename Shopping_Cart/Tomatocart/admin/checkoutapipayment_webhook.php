@@ -126,7 +126,7 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 
 			$osC_Order = new osC_Order($orderId);
 
-			if($objectCharge->getCaptured() && !$objectCharge->getRefunded()) {
+			if($objectCharge->getCaptured()) {
 				if($osC_Order->info['orders_status_id'] != ORDERS_STATUS_PAID) {
 					echo "Order has #$orderId was  set complete";
 
@@ -142,7 +142,7 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 					echo  "Order has #$orderId was already set complete";
 				}
 
-			} elseif($objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+			} elseif($objectCharge->getRefunded()) {
 
 				foreach($osC_Order->_contents as $product) {
 					$toRQty[] = $product['orders_products_id'].':'.$product['qty'];
@@ -162,7 +162,7 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 					echo "Order has #$orderId was already set void ";
 				}
 
-			} elseif(!$objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+			} else {
 				if($orders_status_id->info['orders_status_id'] != ORDERS_STATUS_PAID) {
 					$data = array (
 						'status_id' => ORDERS_STATUS_CANCELLED ,

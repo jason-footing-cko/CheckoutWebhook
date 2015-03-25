@@ -45,10 +45,10 @@ abstract class model_methods_Abstract
                 foreach($items as $product) {
 
                     $products[] = array (
-                        'name'       =>    $product->order_item_name,
-                        'sku'        =>    $product->order_item_sku,
-                        'price'      =>    $currency->roundForDisplay($product->product_final_price),
-                        'quantity'   =>    $product->product_quantity,
+                        'name'     =>    $product->order_item_name,
+                        'sku'      =>    $product->order_item_sku,
+                        'price'    =>    $currency->roundForDisplay($product->product_final_price),
+                        'quantity' =>    $product->product_quantity,
 
                     );
 
@@ -56,23 +56,24 @@ abstract class model_methods_Abstract
             }
 
             $config['postedParam'] = array (
-                'email'             => $order['details']['BT']->email,
-                'value'             => $amountCents,
-                'shippingDetails'   => $shippingAddressConfig,
-                'currency'          =>$cart_currency_code ,
-                'products'         =>    $products,
-                'metadata'      =>    array("trackId" => $order['details']['BT']->virtuemart_order_id ),
-                'card'   => array(
-                            'billingDetails' => array (
-                                            'addressLine1'       =>  $order['details']['BT']->address_1,
-                                            'addressLine2'       =>  $order['details']['BT']->address_2,
-                                            'postcode'           =>  $order['details']['BT']->zip,
-                                            'country'            =>  ShopFunctions::getCountryByID($order['details']['BT']->virtuemart_country_id,'country_3_code'),
-                                            'city'               =>  $order['details']['BT']->city,
-                                            'phone'              =>  $order['details']['BT']->phone_1,
+                'email'           => $order['details']['BT']->email,
+                'value'           => $amountCents,
+                'trackId' => $order['details']['BT']->virtuemart_order_id,
+                'shippingDetails' => $shippingAddressConfig,
+                'currency'        => $cart_currency_code ,
+                'products'        => $products,
+                'metadata'        => array("trackId" => $order['details']['BT']->virtuemart_order_id ),
+                'card'            => array(
+                    'billingDetails' => array (
+                        'addressLine1'  =>  $order['details']['BT']->address_1,
+                        'addressLine2'  =>  $order['details']['BT']->address_2,
+                        'postcode'      =>  $order['details']['BT']->zip,
+                        'country'       =>  ShopFunctions::getCountryByID($order['details']['BT']->virtuemart_country_id,'country_3_code'),
+                        'city'          =>  $order['details']['BT']->city,
+                        'phone'         =>  $order['details']['BT']->phone_1,
 
-                                             )
-                             )
+                    )
+                )
 
             );
 
@@ -90,10 +91,15 @@ abstract class model_methods_Abstract
 
 
         $respondCharge = $this->_createCharge($config,$obj);
+
         $response_fields = array();
 
         if( $respondCharge->isValid()) {
             if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
+
+                // update charge metadata
+                $Api = CheckoutApi_Api::getApi(array('mode' => $obj->_currentMethod->mode_type));
+                $chargeUpdated = $Api->updateMetadata($respondCharge, array('trackId' => $order['details']['BT']->virtuemart_order_id));
 
                 $response_fields['virtuemart_order_id'] = $config['postedParam']['metadata']['trackId'];
                 $response_fields['transaction_id'] = $respondCharge->getId();
@@ -132,45 +138,50 @@ abstract class model_methods_Abstract
         return $response_fields;
 
     }
-    private function _createCharge($config,$obj)
+    protected function _createCharge($config,$obj)
     {
-        $currentMethod = $obj->getCurrentMethod()->sandbox;
 
-        $Api = CheckoutApi_Api::getApi(array('mode'=>  $obj->getCurrentMethod()->sandbox));
+        $currentMethod = $obj->getCurrentMethod()->sandbox;
+        $Api = CheckoutApi_Api::getApi(array('mode'=>  $obj->_currentMethod->sandbox));
 
         return $Api->createCharge($config);
     }
 
-    private function _captureConfig($obj)
+    protected function _captureConfig($obj)
     {
         $to_return['postedParam'] = array (
-            'autoCapture' =>( $obj->_currentMethod->order_type == 'AUTH_CAPTURE'),
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE,
             'autoCapTime' => $obj->_currentMethod->autocaptime
         );
 
         return $to_return;
     }
 
-    private function _authorizeConfig($obj)
+    protected function _authorizeConfig($obj)
     {
         $to_return['postedParam'] = array(
-            'autoCapture' => ( $obj->_currentMethod->order_type == 'AUTH_ONLY'),
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH,
             'autoCapTime' => 0
         );
+        
         return $to_return;
     }
 
     protected function _getSessionData()
     {
         $toReturn = null;
+        
         if (!class_exists('vmCrypt')) {
             require(JPATH_VM_ADMINISTRATOR . DS . 'helpers' . DS . 'vmcrypt.php');
         }
+        
         $session = JFactory::getSession();
         $_session = $session->get('checkoutapipayment', 0, 'vm');
+        
         if (!empty($_session)) {
             $toReturn = (object)json_decode($_session,true);
         }
+        
         return $toReturn;
     }
 
@@ -208,7 +219,6 @@ abstract class model_methods_Abstract
 
     public function plgVmConfirmedOrder(VirtueMartCart $cart, $order,$obj)
     {
-
 
         $usrBT = $order['details']['BT'];
         $usrST = ((isset($order['details']['ST'])) ? $order['details']['ST'] : '');

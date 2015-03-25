@@ -20,39 +20,40 @@ abstract class methods_Abstract
             // Add the line item to the return array.
             $products[] = array(
                 'productName' => $product->title,
-                'price' => uc_currency_format($product->price, $sign = FALSE, $thou = FALSE, $dec = '.'),
-                'quantity' => $product->qty,
-                'sku' => $product->model
+                'price'       => uc_currency_format($product->price, $sign = FALSE, $thou = FALSE, $dec = '.'),
+                'quantity'    => $product->qty,
+                'sku'         => $product->model
             );
             
         }
 
         // Add the shipping address parameters to the request.
         $shipping_array = array(
-            'addressLine1' => $order->delivery_street1,
-            'addressLine2' => $order->delivery_street2,
+            'addressLine1'    => $order->delivery_street1,
+            'addressLine2'    => $order->delivery_street2,
             'addressPostcode' => $order->delivery_postal_code,
-            'addressCountry' => $order->delivery_country,
-            'addressCity' => $order->delivery_city,
-            'recipientName' => $order->delivery_first_name . ' ' . $order->delivery_last_name,
-            'phone' => $order->delivery_phone
+            'addressCountry'  => $order->delivery_country,
+            'addressCity'     => $order->delivery_city,
+            'recipientName'   => $order->delivery_first_name . ' ' . $order->delivery_last_name,
+            'phone'           => $order->delivery_phone
         );
 
         $config['postedParam'] = array(
-            'email' => $order->primary_email,
-            'value' => $amountCents,
-            'currency' => $currency_code,
+            'email'           => $order->primary_email,
+            'value'           => $amountCents,
+            'trackId'         => $order->order_id,
+            'currency'        => $currency_code,
             'shippingDetails' => $shipping_array,
-            'products' => $products,
-            'metadata' => array('trackid' => $order->order_id),
-            'card' => array(
-                'name' => $order->billing_first_name . ' ' . $order->billing_last_name,
+            'products'        => $products,
+            'metadata'        => array('trackId' => $order->order_id),
+            'card'            => array(
+                'name'           => $order->billing_first_name . ' ' . $order->billing_last_name,
                 'billingDetails' => array(
-                    'addressLine1' => $order->billing_street1,
-                    'addressLine2' => $order->billing_street2,
+                    'addressLine1'    => $order->billing_street1,
+                    'addressLine2'    => $order->billing_street2,
                     'addressPostcode' => $order->billing_postal_code,
-                    'addressCountry' => $order->billing_country,
-                    'addressCity' => $order->billing_city,
+                    'addressCountry'  => $order->billing_country,
+                    'addressCity'     => $order->billing_city,
                 )
             )
         );
@@ -69,7 +70,6 @@ abstract class methods_Abstract
     protected function _placeorder($config, $order)
     {
         global $user;
-
         //building charge
         $respondCharge = $this->_createCharge($config);
         $responsemessage = '';
@@ -82,28 +82,26 @@ abstract class methods_Abstract
                     'success' => TRUE,
                     'comment' => $responsemessage,
                     'message' => $responsemessage,
-                    'uid' => $user->uid,
+                    'uid'     => $user->uid,
                 );
-            }
-            else {
+            } else {
 
                 $result = array(
                     'success' => false,
                     'comment' => $responsemessage,
                     'message' => $responsemessage,
-                    'uid' => $user->uid,
+                    'uid'     => $user->uid,
                 );
             }
 
-            $comment = t('Gateway Message: @msg', array('@msg' => $responsemessage));
+            $comment = t('Gateway Message: @msg', array('@msg' => $responsemessage . ' with chargeId ' . $respondCharge->getId()));
               
-        }
-        else {
+        } else {
             $result = array(
                 'success' => false,
                 'comment' => $respondCharge->getEventId(),
                 'message' => 'Please try again , and error has occured. ('.$respondCharge->getMessage().')',
-                'uid' => $user->uid,
+                'uid'     => $user->uid,
             );
             $comment = t('Gateway Message: @msg', array('@msg' => $respondCharge->getMessage()));
         }
@@ -114,13 +112,13 @@ abstract class methods_Abstract
         return $result;
     }
 
-    private function _createCharge($config)
+    protected function _createCharge($config)
     {
         $Api = CheckoutApi_Api::getApi(array('mode' => variable_get('mode')));
         return $Api->createCharge($config);
     }
 
-    private function _captureConfig()
+    protected function _captureConfig()
     {
         $to_return['postedParam'] = array(
             'autoCapture' => 'y',
@@ -130,7 +128,7 @@ abstract class methods_Abstract
         return $to_return;
     }
 
-    private function _authorizeConfig()
+    protected function _authorizeConfig()
     {
         $to_return['postedParam'] = array(
             'autoCapture' => 'n',
