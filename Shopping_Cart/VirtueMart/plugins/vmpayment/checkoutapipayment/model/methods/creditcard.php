@@ -81,7 +81,7 @@ class model_methods_creditcard extends model_methods_Abstract
         
         $config['widgetSelector'] = '.widget-container';
         $config['cardChargedEvent'] = "
-                        document.getElementById('cko_paymentToken').value = event.data.paymentToken;
+                        document.getElementById('checkoutForm').submit();
                       ";
         $config['widgetRenderedEvent'] = "";
 
