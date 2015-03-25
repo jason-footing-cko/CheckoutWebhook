@@ -79,7 +79,9 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
                                 with Transaction ID '.$objectCharge->getId());
 							}
 
-						} elseif($objectCharge->getRefunded()) {
+						} elseif($objectCharge->getRefunded() ) {
+//cancel order
+						}elseif($objectCharge->getVoided() || $objectCharge->getExpired()) {
 
 							$transactionVoid = Mage::getModel('sales/order_payment_transaction')
 								->load($chargeId.'-'.Mage_Sales_Model_Order_Payment_Transaction::TYPE_VOID,'txn_id');
@@ -112,8 +114,6 @@ class CheckoutApi_ChargePayment_IndexController extends Mage_Core_Controller_Fro
 								$this->getResponse()->setBody('Payment already void
                                 with Transaction ID '.$objectCharge->getId());
 							}
-						}elseif($objectCharge->getVoided() ) {
-//cancel order
 						}
 
 

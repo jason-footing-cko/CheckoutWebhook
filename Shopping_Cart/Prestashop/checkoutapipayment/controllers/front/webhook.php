@@ -9,7 +9,12 @@ class CheckoutapipaymentWebhookModuleFrontController extends ModuleFrontControll
 	{
 		$this->display_column_left = false;
 		parent::initContent();
-		$stringCharge     =    file_get_contents("php://input");
+		if(isset($_GET['chargeId'])) {
+			$stringCharge     =   $this->_process();
+		}else {
+			$stringCharge     =    file_get_contents("php://input");
+		}
+
 		$Api    =    CheckoutApi_Api::getApi(array('mode' => Configuration::get('CHECKOUTAPI_TEST_MODE')));
 		$objectCharge = $Api->chargeToObj($stringCharge);
 		$dbLog = models_FactoryInstance::getInstance( 'models_DataLayer' );
@@ -21,7 +26,7 @@ class CheckoutapipaymentWebhookModuleFrontController extends ModuleFrontControll
 		$history->id_order = $id_order;
 		$current_order_state = $order->getCurrentOrderState();
 
-		if($objectCharge->getCaptured() && !$objectCharge->getRefunded()  ) {
+		if($objectCharge->getCaptured()  ) {
 			if(!$order->hasBeenPaid()) {
 				$order_state = new OrderState(Configuration::get('PS_OS_PAYMENT'));
 				if (!Validate::isLoadedObject($order_state)) {
@@ -46,7 +51,7 @@ class CheckoutapipaymentWebhookModuleFrontController extends ModuleFrontControll
 				echo 'Payment was already captured
                                 for Transaction ID '.$objectCharge->getId();
 			}
-		} elseif($objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+		} elseif($objectCharge->getRefunded()) {
 			$order_state = new OrderState(Configuration::get('PS_OS_REFUND'));
 			if ($current_order_state->id == $order_state->id ) {
 				echo  sprintf ( Tools::displayError ( 'Order #%d has already been refunded.' ) ,
@@ -59,20 +64,20 @@ class CheckoutapipaymentWebhookModuleFrontController extends ModuleFrontControll
 				echo  sprintf ( Tools::displayError ( 'Order #%d has  been refunded.' ) ,
 					$id_order );
 			}
-		}elseif(!$objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+		}else {
 			$order_state = new OrderState(Configuration::get('PS_OS_CANCELED'));
 			if ($current_order_state->id == $order_state->id ) {
-				echo  sprintf ( Tools::displayError ( 'Order #%d has already been cancel.' ) ,
+				echo  sprintf ( Tools::displayError ( 'Order #%d has already been '.$objectCharge->getStatus() ) ,
 					$id_order );
-			}else {
+			}elseif(!$objectCharge->getAuthorised ()) {
 
 				$history->changeIdOrderState ( Configuration::get ( 'PS_OS_CANCELED' ) , (int)$id_order );
 				$history->addWithemail ();
-				echo  sprintf ( Tools::displayError ( 'Order #%d has  been cancel.' ) ,
+				echo  sprintf ( Tools::displayError ( 'Order #%d has  been '.$objectCharge->getStatus() ) ,
 					$id_order );
 			}
 		}
-		CheckoutApi_Utility_Utilities::dump($order->hasBeenPaid());
+die();
 		
 	}
 

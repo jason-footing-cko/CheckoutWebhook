@@ -53,7 +53,7 @@ class models_methods_creditcardpci extends models_methods_Abstract
     {
         $invoiceAddress = new Address((int)$cart->id_address_invoice);
 
-        $config['postedParam']['card'] = array_merge( $config['postedParam']['card'], array(
+        $config['postedParam']['card'] = array_merge_recursive( $config['postedParam']['card'], array(
 
                                             'phoneNumber'   =>   $invoiceAddress->phone ,
                                             'name'          =>   Tools::getValue('cc_owner'),
@@ -66,11 +66,11 @@ class models_methods_creditcardpci extends models_methods_Abstract
                                 );
 
         if(Configuration::get('CHECKOUTAPI_PAYMENT_ACTION') =='authorize_capture') {
-            $config['postedParam'] = array_merge($config['postedParam'],$this->_captureConfig());
+            $config['postedParam'] = array_merge_recursive($config['postedParam'],$this->_captureConfig());
 
         }else {
 
-            $config['postedParam'] = array_merge($config['postedParam'],$this->_authorizeConfig());
+            $config['postedParam'] = array_merge_recursive($config['postedParam'],$this->_authorizeConfig());
         }
 
        return parent::_createCharge($config);
