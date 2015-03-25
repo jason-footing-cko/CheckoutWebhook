@@ -63,7 +63,7 @@
                 widgetContainerSelector: '.widget-container',
                 cardCharged: function (event) {ldelim}
                             document.getElementById('cko-cc-paymenToken').value = event.data.paymentToken;
-                            $('button.place-order-button').trigger('submit');
+                            jQuery('button.place-order-button').trigger('submit');
 
     {rdelim},
     {rdelim};
