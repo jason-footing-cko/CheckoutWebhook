@@ -20,7 +20,7 @@
 
     public function setJsInit()
     {
-        ?> <script src="http://ckofe.com/js/checkout.js" async ></script>
+        ?> <script src="https://www.checkout.com/cdn/js/checkout.js" async ></script>
         <?php
     }
 

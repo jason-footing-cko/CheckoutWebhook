@@ -67,12 +67,16 @@ function checkoutapipayment_init()
 
 		public function valid_webhook ()
 		{
-			$stringCharge = file_get_contents("php://input");
+			if(isset($_GET['chargeId'])) {
+				$stringCharge = $this->_process();
+			}else {
+				$stringCharge = file_get_contents ( "php://input" );
+			}
 			$Api = CheckoutApi_Api::getApi ( array ( 'mode' => $this->checkoutapipayment_endpoint ) );
 
 			$objectCharge = $Api->chargeToObj ( $stringCharge );
 
-			if ( $objectCharge->getResponseCode () == '10000' ) {
+			if (preg_match('/^1[0-9]+$/', $objectCharge->getResponseCode())) {
 				//  $this->load->model('sale/order');
 				/*
 					* Need to get track id
@@ -81,7 +85,7 @@ function checkoutapipayment_init()
 
 				$modelOrder = wc_get_order ( $order_id );
 
-				if ( $objectCharge->getCaptured () && !$objectCharge->getRefunded () ) {
+				if ( $objectCharge->getCaptured ()  ) {
 					if($modelOrder->get_status() !='completed' && $modelOrder->get_status() !='cancel') {
 
 					$modelOrder->update_status ( 'wc-completed' , __ ( 'Order status changed by webhook' , 'woocommerce'
@@ -91,7 +95,7 @@ function checkoutapipayment_init()
 						echo "Order has already been captured";
 					}
 
-				} elseif ( $objectCharge->getCaptured () && $objectCharge->getRefunded () ) {
+				} elseif (  $objectCharge->getRefunded () ) {
 					if( $modelOrder->get_status() !='cancel') {
 						$modelOrder->update_status ( 'wc-refunded' , __ ( 'Order status changed by webhook' , 'woocommerce' ) );
 						echo "Order has been refunded";
@@ -101,7 +105,7 @@ function checkoutapipayment_init()
 						echo "Order has already been refunded";
 					}
 
-				} elseif ( !$objectCharge->getCaptured () && $objectCharge->getRefunded () ) {
+				} elseif ( !$objectCharge->getAuthorised() ) {
 
 					if( $modelOrder->get_status() !='cancel') {
 						$modelOrder->update_status ( 'wc-cancelled' , __ ( 'Order status changed by webhook:' , 'woocommerce' ) );
