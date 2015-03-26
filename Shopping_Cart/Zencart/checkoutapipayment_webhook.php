@@ -35,7 +35,12 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 	$checkoutapipayment_module = 'checkoutapipayment';
 
 	$payment_modules = new payment( $checkoutapipayment_module );
-	$stringCharge = file_get_contents("php://input");
+	if(isset($_GET['chargeId'])){
+		$stringCharge = $this->_process();
+	}else {
+		$stringCharge = file_get_contents("php://input");
+	}
+
 
 	if($stringCharge) {
 		$Api    =    CheckoutApi_Api::getApi(array('mode'=>MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_SERVER));
@@ -47,7 +52,7 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 			$order = new order($orderId);
 			$orderStatuses = order_statuses();
 			if($order) {
-				if($objectCharge->getCaptured() && !$objectCharge->getRefunded()) {
+				if($objectCharge->getCaptured() ) {
 					if($order->info['orders_status'] !=2) {
 						echo "Order has #$orderId was  set complete";
 
@@ -70,7 +75,7 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 						echo  "Order has #$orderId was already set complete";
 					}
 
-				} elseif($objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+				} elseif($objectCharge->getRefunded()) {
 
 					$sql = "UPDATE " . TABLE_ORDERS  . "
 		                  SET orders_status = " . (int)1 . "
@@ -86,7 +91,7 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 
 					zen_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 					echo "Order has #$orderId was  set cancel (pending)";
-				} elseif(!$objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+				} elseif(!$objectCharge->getAuthorised()) {
 					$sql = "UPDATE " . TABLE_ORDERS  . "
 		                  SET orders_status = " . (int)1 . "
 		                  WHERE orders_id = '" . (int)$orderId . "'";
