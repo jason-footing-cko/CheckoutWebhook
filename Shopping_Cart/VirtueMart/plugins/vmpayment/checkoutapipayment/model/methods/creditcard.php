@@ -34,20 +34,16 @@ class model_methods_creditcard extends model_methods_Abstract
             
             if ($cart->getDataValidated()){
                 vmJsApi::addJScript('vm.checkoutApiFormSubmit','
-                //<![CDATA[
-                        jQuery(document).ready(function($) {
+                    jQuery(document).ready(function($) {
+                        jQuery(this).vm2front("stopVmLoading");
+                        jQuery("#checkoutFormSubmit").bind("click dblclick",function(e){
+                            jQuery("#checkoutForm").one("submit",function(e){
                                 jQuery(this).vm2front("stopVmLoading");
-                                jQuery("#checkoutFormSubmit").bind("click dblclick", function(e){
-                                    jQuery("#checkoutForm").submit(function(e){
-                                        jQuery(this).vm2front("stopVmLoading");
-                                        e.preventDefault();
-                                        CheckoutIntegration.open();
-                                        
-                                    });
-                                        
-                                });
+                                e.preventDefault();
+                                CheckoutIntegration.open(); 
+                            });
                         });
-                //]]>
+                    });
                 ');
             }
             
@@ -82,12 +78,12 @@ class model_methods_creditcard extends model_methods_Abstract
         $config['widgetRenderedEvent'] = "";
 
         $config['readyEvent'] = '';
+        $config['lightboxDeactivated'] = 'jQuery("#checkoutFormSubmit")
+                                            .removeClass("vm-button")
+                                            .addClass("vm-button-correct")
+                                            .prop("disabled", false);
+                                         ';
         
-//        if ($obj->getCurrentMethod()->sandbox == 'preprod') {
-//            $config['url'] = 'http://preprod.checkout.com/api2/v2/';
-//        }
-
-
         $jsConfig = $this->getJsConfig($config);
 
         $html[] = '<br/>';
@@ -184,9 +180,13 @@ class model_methods_creditcard extends model_methods_Abstract
                 },
 
                 ready: function() {
-                     {$config['readyEvent']};
+                    {$config['readyEvent']};
 
+                },
+                lightboxDeactivated: function() {
+                    {$config['lightboxDeactivated']};
                 }
+                
             } ";
         return $script;
     }
