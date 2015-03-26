@@ -36,7 +36,7 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 
 	$payment_modules = new payment( $checkoutapipayment_module );
 	if(isset($_GET['chargeId'])){
-		$stringCharge = $this->_process();
+		$stringCharge = _process();
 	}else {
 		$stringCharge = file_get_contents("php://input");
 	}
