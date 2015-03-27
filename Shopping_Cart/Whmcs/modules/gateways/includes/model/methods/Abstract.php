@@ -6,6 +6,7 @@ abstract class model_methods_Abstract {
     public function before_capture($params)
     {
         global $customer_id, $order, $currency, $HTTP_POST_VARS;
+
         $config = array();
         $amountCents = (int)$params['amount']*100 ;
         $config['authorization'] = $params['secretkey'];
@@ -23,12 +24,12 @@ abstract class model_methods_Abstract {
 //            }
 
         $config['postedParam'] = array (
-            'email'=> $params['clientdetails']['email'] ,
-            'value'=>$amountCents,
-            'currency'=> $params['currency'],
-            'products'=> $products,
-            'metadata' => array('trackid'=>$params['invoiceid']),
-            'card' => array(
+            'email'     => $params['clientdetails']['email'] ,
+            'value'     =>$amountCents,
+            'currency'  => $params['currency'],
+            'products'  => $products,
+            'metadata'  => array('trackid'=>$params['invoiceid']),
+            'card'      => array(
                         'billingDetails' => array (
                                             'addressLine1' => $params['clientdetails']['address1'],
                                             'addressLine2' => $params['clientdetails']['address2'],
@@ -69,10 +70,10 @@ abstract class model_methods_Abstract {
                 return  array("status"=>"success","gatewayid"=>$respondCharge->getId(),"transid"=>$config['metadata']['trackid'] ,"rawdata"=>$respondCharge->getRawOutput());
                 //return array("status"=>"success","transid"=>$config['metadata']['trackid'],"rawdata"=>$respondCharge);
             }
-            return array("status"=>"failed","rawdata"=>$respondCharge->getRawOutput());
+            return array("status"=>"declined","rawdata"=>$respondCharge->getRawOutput());
         } else  {
 
-            return array("status"=>"failed","rawdata"=>$respondCharge->getRawOutput());
+            return array("status"=>"error","rawdata"=>$respondCharge->getRawOutput());
         }
         logTransaction($GATEWAY["name"],$respondCharge->toArray(),"fail");
     }
@@ -81,20 +82,20 @@ abstract class model_methods_Abstract {
         $Api = CheckoutApi_Api::getApi(array('mode'=> $config['mode']));
         return $Api->createCharge($config);
     }
-    private function _captureConfig($params)
+    protected function _captureConfig($params)
     {
         $to_return['postedParam'] = array (
-            'autoCapture' => ($params['transmethod'] =='Capture'),
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE,
             'autoCapTime' => $params['capturetime']
         );
 
         return $to_return;
     }
 
-    private function _authorizeConfig($params)
+    protected function _authorizeConfig($params)
     {
         $to_return['postedParam'] = array(
-            'autoCapture' => ( $params['transmethod'] =='Authorize'),
+            'autoCapture' => ( CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH),
             'autoCapTime' => 0
         );
         return $to_return;
