@@ -84,7 +84,7 @@ class Model_Methods_creditcard extends Model_Methods_Abstract implements Model_I
         $productsLoad = $this->cart->getProducts();
         $scretKey = $this->config->get('checkoutapipayment_secret_key');
         $orderId = $this->session->data['order_id'];
-        $amountCents = (int) $order_info['total'] * 100;
+        $amountCents = (int) ($order_info['total'] * 100);
         $config['authorization'] = $scretKey;
         $config['mode'] = $this->config->get('checkoutapipayment_mode');
         $config['timeout'] = $this->config->get('checkoutapipayment_timeout');
