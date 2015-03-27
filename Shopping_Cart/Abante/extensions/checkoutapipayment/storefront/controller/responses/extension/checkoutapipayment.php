@@ -89,24 +89,25 @@ class ControllerResponsesExtensionCheckoutapipayment extends AController
             $Api = CheckoutApi_Api::getApi(array('mode' => $this->config->get('checkoutapipayment_mode')));
             $objectCharge = $Api->chargeToObj($json);
             
-            if ($objectCharge->getResponseCode() == '10000') {
+            if ($objectCharge->isValid()) {
                 
                 /*
                  * Need to get track id
                  */
+                //TODo change method getMetadata() to getTrackId()
                 $order_id = $objectCharge->getMetadata()->getTrackId();
 
-                if ($objectCharge->getCaptured() && !$objectCharge->getRefunded()) {
+                if ($objectCharge->getCaptured()) {
                     
                     $message = 'Your payment has been successfully completed';
                     $this->model_checkout_order->update($order_id, 5, $message, FALSE);
                     
-                } elseif ($objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+                } elseif ($objectCharge->getRefunded()) {
                     
                     $message = 'Your payment has been refunded';
                     $this->model_checkout_order->update($order_id, 11, $message, FALSE);
                     
-                } elseif (!$objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+                } else {
                     
                     $message = 'Your order has been cancelled';
                     $this->model_checkout_order->update($order_id, 7, $message, FALSE);

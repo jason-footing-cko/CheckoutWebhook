@@ -32,7 +32,7 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 			$check_status = tep_db_fetch_array($check_status_query);
 
 			if($check_status) {
-				if($objectCharge->getCaptured() && !$objectCharge->getRefunded()) {
+				if($objectCharge->getCaptured()) {
 					if($check_status['orders_status'] !=2) {
 						echo "Order has #$orderId was  set complete";
 
@@ -56,7 +56,7 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 						echo  "Order has #$orderId was already set complete";
 					}
 
-				} elseif($objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+				} elseif($objectCharge->getRefunded()) {
 
 					$sql = "UPDATE " . TABLE_ORDERS  . "
 		                  SET orders_status = " . (int)1 . "
@@ -71,7 +71,7 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 					tep_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 					echo "Order has #$orderId was  set void (pending)";
 
-				} elseif(!$objectCharge->getCaptured() && $objectCharge->getRefunded()) {
+				} else {
 					$sql = "UPDATE " . TABLE_ORDERS  . "
 		                  SET orders_status = " . (int)1 . "
 		                  WHERE orders_id = '" . (int)$orderId . "'";

@@ -30,7 +30,7 @@ abstract class models_methods_Abstract extends jigoshop_payment_gateway implemen
 
     protected function _validateChrage($order,$respondCharge)
     {
-       // CheckoutApi_Utility_Utilities::dump($respondCharge->printError()); die();
+        //CheckoutApi_Utility_Utilities::dump($respondCharge->printError()); die();
 
 		if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())){
 
@@ -47,10 +47,12 @@ abstract class models_methods_Abstract extends jigoshop_payment_gateway implemen
 		}
 		else {
 
-			$order->add_order_note( sprintf(__('Checkout.com Credit Card Payment Declined - Error Code: %s, Decline Reason: %s', 'woocommerce'), 
+			$order->add_order_note( sprintf(__('Checkout.com Credit Card Payment Declined - Error Code: %s, Decline Reason: %s', 'jigoshop'),
 				$respondCharge->getErrorCode(), $respondCharge->getMessage()));
 
-            echo '<p>'.__('The transaction was declined. Please check your Payment Details / Card info', 'jigoshop').'</p>';
+            $error_message = 'The transaction was declined. Please check your Payment Details / Card info';
+            echo '<div class="jigoshop_error">'.$error_message.'</div>';
+
 			return;
 		}
 

@@ -132,8 +132,8 @@ function checkoutapipayment_init()
             'checkoutapi_payment_Listener'
         ) {
 
-            die('here');
-            //jigoshop_payment_gateways::payment_gateways();
+            //die('here');
+            jigoshop_payment_gateways::payment_gateways();
 
             do_action ( 'valid-checkoutapipayment-webhook' );
         }

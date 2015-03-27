@@ -45,7 +45,6 @@
             return true;
     {rdelim}
 </script>
-<script src="http://ckofe.com/js/checkout.js" async ></script>
 <script type="text/javascript">
 
         window.CKOConfig = {ldelim}
@@ -69,3 +68,4 @@
     {rdelim},
     {rdelim};
 </script>
+<script src="https://www.checkout.com/cdn/js/checkout.js" async ></script>

@@ -21,18 +21,19 @@ abstract class methods_Abstract
         $i = 0;
 
         $config['postedParam'] = array(
-            'email' => $order->mail,
-            'value' => $amountCents,
+            'email'    => $order->mail,
+            'value'    => $amountCents,
             'currency' => $order_array['currency_code'],
+            'trackid'  => $order->order_id,
             'metadata' => array('trackid' => $order->order_id),
-            'card' => array(
+            'card'     => array(
                 'name' => "{$billing_address['first_name']} {$billing_address['last_name']}",
                 'billingDetails' => array(
-                    'addressLine1' => $billing_address['thoroughfare'],
-                    'addressLine2' => $billing_address['premise'],
+                    'addressLine1'    => $billing_address['thoroughfare'],
+                    'addressLine2'    => $billing_address['premise'],
                     'addressPostcode' => $billing_address['postal_code'],
-                    'addressCountry' => $billing_address['country'],
-                    'addressCity' => $billing_address['locality'],
+                    'addressCountry'  => $billing_address['country'],
+                    'addressCity'     => $billing_address['locality'],
                 //'paymentMethod'      =>  $pane_values['credit_card']['type']
                 )
             )
@@ -69,11 +70,11 @@ abstract class methods_Abstract
 
             // Add the shipping address parameters to the request.
             $shipping_array = array(
-                'addressLine1' => $shipping_address['thoroughfare'],
-                'addressLine2' => $shipping_address['premise'],
+                'addressLine1'    => $shipping_address['thoroughfare'],
+                'addressLine2'    => $shipping_address['premise'],
                 'addressPostcode' => $shipping_address['postal_code'],
-                'addressCountry' => $shipping_address['country'],
-                'addressCity' => $shipping_address['locality'],
+                'addressCountry'  => $shipping_address['country'],
+                'addressCity'     => $shipping_address['locality'],
             );
 
             $config['postedParam']['shippingDetails'] = $shipping_array;
@@ -106,8 +107,7 @@ abstract class methods_Abstract
                 if ($respondCharge->getCaptured()) {
                     $transaction->status = COMMERCE_PAYMENT_STATUS_SUCCESS;
                     $transaction->message = 'Your transaction has been successfully captured with transaction id : ' . $respondCharge->getId();
-                }
-                else {
+                } else {
                     $transaction->status = COMMERCE_PAYMENT_STATUS_PENDING;
                     $transaction->message = 'Your transaction has been successfully authorized with transaction id : ' . $respondCharge->getId();
                 }
@@ -122,8 +122,8 @@ abstract class methods_Abstract
             $transaction->message = $respondCharge->getRawRespond();
             commerce_payment_transaction_save($transaction);
             return false;
-        }
-        else {
+            
+        } else {
             $transaction->status = COMMERCE_PAYMENT_STATUS_FAILURE;
             $transaction->message = $respondCharge->getRawRespond();
 

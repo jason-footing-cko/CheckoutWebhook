@@ -12,7 +12,7 @@ abstract class models_Checkoutapi extends jigoshop_payment_gateway implements mo
 
     public function __construct()
     {
-        //parent::__construct();
+        parent::__construct();
 
         $this->_init();
         $this->_setInstanceMethod();
@@ -24,6 +24,7 @@ abstract class models_Checkoutapi extends jigoshop_payment_gateway implements mo
         define("CHECKOUTAPI_TIMEOUT", $this->gateway_timeout);
         define("CHECKOUTAPI_ISPCI", $this->pci_enable);
         define("CHECKOUTAPI_MODE", $this->mode);
+        add_action ( 'valid-checkoutapipayment-webhook' , array ( $this , 'valid_webhook' ) );
 
     }
 

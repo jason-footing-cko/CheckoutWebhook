@@ -27,13 +27,13 @@ class Model_Methods_creditcardpci extends Model_Methods_Abstract implements Mode
 
         $data['entry_cc_owner'] = $this->language->get('entry_cc_owner');
         $data['cc_owner'] = HtmlElementFactory::create(array('type' => 'input',
-                    'name' => 'cc_owner',
+                    'name'  => 'cc_owner',
                     'value' => ''));
 
         $data['entry_cc_number'] = $this->language->get('entry_cc_number');
         $data['cc_number'] = HtmlElementFactory::create(array('type' => 'input',
-                    'name' => 'cc_number',
-                    'attr' => 'autocomplete="off"',
+                    'name'  => 'cc_number',
+                    'attr'  => 'autocomplete="off"',
                     'value' => ''));
 
         $data['entry_cc_expire_date'] = $this->language->get('entry_cc_expire_date');
@@ -43,10 +43,10 @@ class Model_Methods_creditcardpci extends Model_Methods_Abstract implements Mode
         $data['cc_cvv2_help_url'] = $this->html->getURL('r/extension/checkoutapipayment/cvv2_help');
 
         $data['cc_cvv2'] = HtmlElementFactory::create(array('type' => 'input',
-                    'name' => 'cc_cvv2',
+                    'name'  => 'cc_cvv2',
                     'value' => '',
                     'style' => 'short input-mini',
-                    'attr' => ' size="3" autocomplete="off"'
+                    'attr'  => ' size="3" autocomplete="off"'
         ));
 
         $data['button_confirm'] = $this->language->get('button_confirm');
@@ -58,11 +58,11 @@ class Model_Methods_creditcardpci extends Model_Methods_Abstract implements Mode
             $months[sprintf('%02d', $i)] = strftime('%B', mktime(0, 0, 0, $i, 1, 2000));
         }
         $data['cc_expire_date_month'] = HtmlElementFactory::create(
-                        array('type' => 'selectbox',
-                            'name' => 'cc_expire_date_month',
-                            'value' => sprintf('%02d', date('m')),
+                        array('type'  => 'selectbox',
+                            'name'    => 'cc_expire_date_month',
+                            'value'   => sprintf('%02d', date('m')),
                             'options' => $months,
-                            'style' => 'short input-small'
+                            'style'   => 'short input-small'
         ));
 
         $today = getdate();
@@ -71,23 +71,23 @@ class Model_Methods_creditcardpci extends Model_Methods_Abstract implements Mode
             $years[strftime('%Y', mktime(0, 0, 0, 1, 1, $i))] = strftime('%Y', mktime(0, 0, 0, 1, 1, $i));
         }
         $data['cc_expire_date_year'] = HtmlElementFactory::create(
-                        array('type' => 'selectbox',
-                            'name' => 'cc_expire_date_year',
-                            'value' => sprintf('%02d', date('Y') + 1),
+                        array('type'  => 'selectbox',
+                            'name'    => 'cc_expire_date_year',
+                            'value'   => sprintf('%02d', date('Y') + 1),
                             'options' => $years,
-                            'style' => 'short input-small'
+                            'style'   => 'short input-small'
         ));
 
         $back = $this->request->get['rt'] != 'checkout/guest_step_3' ? $this->html->getSecureURL('checkout/payment') : $this->html->getSecureURL('checkout/guest_step_2');
         $data['back'] = HtmlElementFactory::create(array('type' => 'button',
-                    'name' => 'back',
-                    'text' => $this->language->get('button_back'),
+                    'name'  => 'back',
+                    'text'  => $this->language->get('button_back'),
                     'style' => 'button',
-                    'href' => $back
+                    'href'  => $back
         ));
         $data['submit'] = HtmlElementFactory::create(array('type' => 'button',
-                    'name' => 'checkoutapipayment_button',
-                    'text' => $this->language->get('button_confirm'),
+                    'name'  => 'checkoutapipayment_button',
+                    'text'  => $this->language->get('button_confirm'),
                     'style' => 'button'
         ));
 
@@ -101,11 +101,11 @@ class Model_Methods_creditcardpci extends Model_Methods_Abstract implements Mode
 
         $config['postedParam']['card'] = array_merge($config['postedParam']['card'], array(
             'phoneNumber' => $order_info['telephone'],
-            'name' => str_replace(' ', '', $this->request->post['cc_owner']),
-            'number' => str_replace(' ', '', $this->request->post['cc_number']),
+            'name'        => str_replace(' ', '', $this->request->post['cc_owner']),
+            'number'      => str_replace(' ', '', $this->request->post['cc_number']),
             'expiryMonth' => str_replace(' ', '', $this->request->post['cc_expire_date_month']),
-            'expiryYear' => str_replace(' ', '', $this->request->post['cc_expire_date_year']),
-            'cvv' => str_replace(' ', '', $this->request->post['cc_cvv2']),
+            'expiryYear'  => str_replace(' ', '', $this->request->post['cc_expire_date_year']),
+            'cvv'         => str_replace(' ', '', $this->request->post['cc_cvv2']),
                 )
         );
         return $this->_getCharge($config);

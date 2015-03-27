@@ -53,27 +53,6 @@ class models_methods_creditcard extends models_methods_Abstract
     }
 
 
-    public function simulateChargeToken()
-    {
-        $cardTokenConfig = array();
-        $cardTokenConfig['authorization'] = Configuration::get('CHECKOUTAPI_PUBLIC_KEY');
-        $cardTokenConfig['postedParam'] = array (
-            'email' =>'dhiraj@checkout.com',
-            'card' => array(
-                'phoneNumber'=>'0123465789',
-                'name'=>'test name',
-                'number' => '4543474002249996',
-                'expiryMonth' => 06,
-                'expiryYear' => 2017,
-                'cvv' => 956,
-            )
-        );
-        $Api = CheckoutApi_Api::getApi();
-
-        return $Api->getCardToken( $cardTokenConfig );
-    }
-
-
     private function generatePaymentToken()
     {
         $config = array();
@@ -94,14 +73,6 @@ class models_methods_creditcard extends models_methods_Abstract
 
         $config['mode'] = Configuration::get('CHECKOUTAPI_TEST_MODE');
         $config['timeout'] =  Configuration::get('CHECKOUTAPI_GATEWAY_TIMEOUT');
-
-        if(Configuration::get('CHECKOUTAPI_PAYMENT_ACTION') =='authorize_capture') {
-            $config = array_merge($config, $this->_captureConfig());
-
-        }else {
-
-            $config = array_merge($config,$this->_authorizeConfig());
-        }
 
         $billingAddressConfig = array(
             'addressLine1'       =>  $billingAddress->address1,
@@ -135,9 +106,8 @@ class models_methods_creditcard extends models_methods_Abstract
 
             );
         }
-        //  print_r($products); die();
-        $config['postedParam']  = array_merge($config['postedParam'],
-            array (
+
+        $config['postedParam']  = array (
                 'email'             =>  $customer->email ,
                 'value'             =>  $amountCents,
                 'currency'          =>  $currency->iso_code,
@@ -146,16 +116,14 @@ class models_methods_creditcard extends models_methods_Abstract
                 'products'          =>  $products,
                 'metadata'          =>  array('trackId' => $orderId),
                 'billingDetails'   =>    $billingAddressConfig
-
-            )
         );
 
         if(Configuration::get('CHECKOUTAPI_PAYMENT_ACTION') =='authorize_capture') {
-            $config['postedParam'] = array_merge($config['postedParam'],$this->_captureConfig());
+            $config['postedParam'] = array_merge_recursive($config['postedParam'],$this->_captureConfig());
 
         }else {
 
-            $config['postedParam'] = array_merge($config['postedParam'],$this->_authorizeConfig());
+            $config['postedParam'] = array_merge_recursive($config['postedParam'],$this->_authorizeConfig());
         }
 
         $Api = CheckoutApi_Api::getApi(array('mode'=> Configuration::get('CHECKOUTAPI_TEST_MODE')));

@@ -13,12 +13,16 @@ class ControllerPaymentcheckoutapipayment extends Controller_Model
 
     public function webhook()
     {
-        $stringCharge     =    file_get_contents("php://input");
+        if(isset($_GET['chargeId'])) {
+            $stringCharge = $this->_process();
+        }else {
+            $stringCharge = file_get_contents ( "php://input" );
+        }
         $Api = CheckoutApi_Api::getApi(array('mode'=> $this->config->get('test_mode')));
 
         $objectCharge = $Api->chargeToObj($stringCharge);
 
-        if($objectCharge->getResponseCode() == '10000') {
+        if($objectCharge->isValid()) {
           //  $this->load->model('sale/order');
            /*
             * Need to get track id
@@ -35,7 +39,7 @@ class ControllerPaymentcheckoutapipayment extends Controller_Model
             }
 
 
-            if ( $objectCharge->getCaptured () && !$objectCharge->getRefunded () ) {
+            if ( $objectCharge->getCaptured ()) {
                 $this->model_checkout_order->update(
                     $order_id,
                     $status_mapped['Complete'],
@@ -44,7 +48,7 @@ class ControllerPaymentcheckoutapipayment extends Controller_Model
                 );
                 echo "Order has been captured";
 
-            } elseif ( $objectCharge->getCaptured () && $objectCharge->getRefunded () ) {
+            } elseif ( $objectCharge->getRefunded () ) {
                 $this->model_checkout_order->update(
                     $order_id,
                     $status_mapped['Refunded'],
@@ -53,7 +57,7 @@ class ControllerPaymentcheckoutapipayment extends Controller_Model
                 );
                 echo "Order has been refunded";
 
-            } elseif ( !$objectCharge->getCaptured () && $objectCharge->getRefunded () ) {
+            } elseif(!$objectCharge->getAuthorised()) {
                 $this->model_checkout_order->update(
                     $order_id,
                     $this->config->get('checkout_failed_order'),
