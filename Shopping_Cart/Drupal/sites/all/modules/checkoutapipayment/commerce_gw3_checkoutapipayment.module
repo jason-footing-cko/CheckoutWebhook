@@ -236,7 +236,7 @@ function checkoutapipayment_process()
                 commerce_payment_transaction_save($transaction);
                 commerce_order_status_update($order, 'canceled', $skip_save = FALSE, TRUE, $log = 'Your payment has been refunded');
                 
-            } else {
+            } elseif (!$objectCharge->setAuthorised()) { 
 
                 $transaction->message = 'Your payment has been canceled';
                 $transaction->status = COMMERCE_PAYMENT_STATUS_FAILURE;

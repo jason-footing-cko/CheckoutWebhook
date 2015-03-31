@@ -18,7 +18,11 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 	$checkoutapipayment_module = 'checkoutapipayment';
 
 	$payment_modules = new payment( $checkoutapipayment_module );
-	$stringCharge = _process();// file_get_contents("php://input");
+	if(isset($_GET['chargeId'])) {
+		$stringCharge = _process();
+	}else {
+		$stringCharge = file_get_contents ( "php://input" );
+	}
 
 	if($stringCharge) {
 		$Api    =    CheckoutApi_Api::getApi(array('mode'=>MODULE_PAYMENT_CHECKOUTAPIPAYMENT_TRANSACTION_SERVER));
@@ -71,7 +75,7 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 					tep_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 					echo "Order has #$orderId was  set void (pending)";
 
-				} else {
+				} elseif(!$objectCharge->getAuthorised()) {
 					$sql = "UPDATE " . TABLE_ORDERS  . "
 		                  SET orders_status = " . (int)1 . "
 		                  WHERE orders_id = '" . (int)$orderId . "'";
