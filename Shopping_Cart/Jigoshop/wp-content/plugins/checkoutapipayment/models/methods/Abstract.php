@@ -32,9 +32,18 @@ abstract class models_methods_Abstract extends jigoshop_payment_gateway implemen
     {
         //CheckoutApi_Utility_Utilities::dump($respondCharge->printError()); die();
 
+
 		if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())){
 
-			$order->payment_complete( $respondCharge->getId() );
+            $Api = CheckoutApi_Api::getApi(
+                array('mode' 		=> CHECKOUTAPI_MODE,
+                    'authorization' => CHECKOUTAPI_SECRET_KEY)
+            );
+
+            $chargeUpdated = $Api->updateMetadata($respondCharge,
+                array('trackId'=>$order->id));
+
+            $order->payment_complete( $respondCharge->getId() );
 
 			$order->add_order_note( sprintf(__('Checkout.com Credit Card Payment Approved - ChargeID: %s with Response Code: %s', 'woocommerce'), 
 				$respondCharge->getId(), $respondCharge->getResponseCode()));

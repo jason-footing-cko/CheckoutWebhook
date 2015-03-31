@@ -53,52 +53,50 @@ function checkoutapipayment_init()
         public function valid_webhook()
         {
 
-            die('here');
-
             $stringCharge = file_get_contents("php://input");
-            $Api = CheckoutApi_Api::getApi ( array ( 'mode' => $this->checkoutapipayment_endpoint ) );
-
+            $Api = CheckoutApi_Api::getApi ( array ( 'mode' =>CHECKOUTAPI_MODE ) );
             $objectCharge = $Api->chargeToObj ( $stringCharge );
 
-            if ( $objectCharge->getResponseCode () == '10000' ) {
-                //  $this->load->model('sale/order');
+            if ( $objectCharge->isValid() ) {
                 /*
                     * Need to get track id
-                    */
+                */
+
                 $order_id = $objectCharge->getMetadata ()->getTrackId ();
+                $modelOrder = new jigoshop_order($order_id);
 
-               // $modelOrder = wc_get_order ( $order_id );
-                $modelOrder = get_jigoshop_view_order($order_id);
+                if ( $objectCharge == true ) {
 
-//                echo '<pre>';
-//                print_r($modelOrder);
-//                die();
+                    if($modelOrder->status !='completed' && $modelOrder->status !='cancelled') {
 
-                if ( $objectCharge->getCaptured () && !$objectCharge->getRefunded () ) {
-                    if($modelOrder->get_status() !='completed' && $modelOrder->get_status() !='cancel') {
+                        $modelOrder->update_status('completed', __('Order status changed by webhook.', 'jigoshop'));
 
-                        $modelOrder->update_status ( 'wc-completed' , __ ( 'Order status changed by webhook' , 'woocommerce'
-                        ) );
                         echo "Order has been captured";
+
                     }else {
                         echo "Order has already been captured";
                     }
 
-                } elseif ( $objectCharge->getCaptured () && $objectCharge->getRefunded () ) {
-                    if( $modelOrder->get_status() !='cancel') {
-                        $modelOrder->update_status ( 'wc-refunded' , __ ( 'Order status changed by webhook' , 'woocommerce' ) );
-                        echo "Order has been refunded";
+                } elseif (  $objectCharge->getRefunded () ) {
 
+                    if( $modelOrder->status !='cancelled') {
+
+                        $modelOrder->update_status ('completed', __('Order status changed by webhook' , 'jigoshop'));
+
+                        echo "Order has been refunded";
 
                     }else {
                         echo "Order has already been refunded";
                     }
 
-                } elseif ( !$objectCharge->getCaptured () && $objectCharge->getRefunded () ) {
+                } elseif ( !$objectCharge->Authorise () ) {
 
-                    if( $modelOrder->get_status() !='cancel') {
-                        $modelOrder->update_status ( 'wc-cancelled' , __ ( 'Order status changed by webhook:' , 'woocommerce' ) );
+                    if( $modelOrder->status !='cancelled') {
+
+                        $modelOrder->update_status ('cancelled', __('Order status changed by webhook' , 'jigoshop'));
+
                         $modelOrder->cancel_order();
+
                         echo "Order has been cancel";
                     }
 
@@ -125,20 +123,16 @@ function checkoutapipayment_init()
 
     function jigoshop_checkoutapipayment_webhook()
     {
-        //http://localhost:8080/wordpress-4.1/?checkoutapipaymentListener=valid-checkoutapipayment-webhook
-        //$notify_url = add_query_arg( 'js-api', 'valid_webhook', home_url( '/' ) );
+        // Webhoot URL : http://localhost:8080/wordpress-4.1/?checkoutapipaymentListener=checkoutapi_payment_Listener
 
         if ( !empty( $_GET[ 'checkoutapipaymentListener' ] ) && $_GET[ 'checkoutapipaymentListener' ] ==
             'checkoutapi_payment_Listener'
         ) {
 
-            //die('here');
             jigoshop_payment_gateways::payment_gateways();
 
             do_action ( 'valid-checkoutapipayment-webhook' );
         }
     }
-
     add_action ( 'init' , 'jigoshop_checkoutapipayment_webhook' );
-
 }
