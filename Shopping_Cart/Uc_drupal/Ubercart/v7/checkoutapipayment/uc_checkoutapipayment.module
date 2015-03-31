@@ -366,7 +366,7 @@ function checkoutapipayment_callback()
                     uc_order_update_status($order->order_id, uc_order_state_default('canceled'));
                     uc_order_comment_save($order_id, 0, t('Your payment has been refunded'));
 
-                } else {
+                } elseif(!$objectCharge->getAuthorised()) {
 
                     uc_order_update_status($order->order_id, uc_order_state_default('abandoned'));
                     uc_order_comment_save($order_id, 0, t('Your payment has been canceled'));

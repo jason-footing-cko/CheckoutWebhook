@@ -25,7 +25,7 @@ function checkoutapipayment_config() {
         "modetype"     => array(
                        "FriendlyName" => "Transaction Server",
                        "Type"         => "dropdown",
-                       "Options"      => "Test,Prerpod,live",
+                       "Options"      => "Test,Preprod,live",
                        ),
         "transmethod"  => array(
                        "FriendlyName" => "Transaction Method",

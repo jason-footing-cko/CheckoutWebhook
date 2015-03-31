@@ -1,6 +1,7 @@
 <?php
 
- class models_methods_creditcardpci extends models_methods_Abstract{
+ class models_methods_creditcardpci extends models_methods_Abstract
+ {
 
  	protected $_code = 'creditcardpci';
 
@@ -10,7 +11,7 @@
  		$this->has_fields = true;
  		$this->checkoutapipayment_ispci = 'yes';
  		$this->supports[] = 'default_credit_card_form';
- 		parent::__construct();
+ 		//parent::__construct();
  	}
 
  	public function _initCode(){}
@@ -83,7 +84,6 @@
 			'addressline2'    =>    $order->shipping_address_2,
 			'city'            =>    $order->shipping_city,
 			'country'         =>    $order->shipping_country,
-			'phone'           =>    $order->shipping_phone,
 			'postcode'        =>    $order->shipping_postcode,
 			'state'           =>    $order->shipping_state
 		);
