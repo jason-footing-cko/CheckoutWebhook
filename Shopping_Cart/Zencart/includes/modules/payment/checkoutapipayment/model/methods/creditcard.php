@@ -97,18 +97,39 @@ EOD;
                  currency: "{$order->info['currency']}",
                  widgetContainerSelector: '.widget-container',
                  cardCharged: function(event){
-                    jQuery('#checkout_confirmation').trigger('submit');
+                    fireEvent(document.getElementById('checkout_confirmation'),'submit');
                 }
            };
-            (function($){
-             $(function(){
-                $('#btn_submit').click(function(event){
-                 event.preventDefault();
-                 CheckoutIntegration.open();
-                });
-             });
+//            (function($){
+//             $(function(){
+//                $('#btn_submit').click(function(event){
+//                 event.preventDefault();
+//                 CheckoutIntegration.open();
+//                });
+//             });
+//
+//            })(jQuery);
 
-            })(jQuery);
+            window.addEventListener("load", function(event){
+                document.getElementById('btn_submit').addEventListener('click',function(event){
+                     event.preventDefault();
+                     CheckoutIntegration.open();
+                },false);
+
+            }, false);
+
+            function fireEvent(element, event) {
+                if (document.createEvent) {
+                    // dispatch for all browsers except IE before version 9
+                    var evt = document.createEvent("HTMLEvents");
+                    evt.initEvent(event, true, true ); // event type, bubbling, cancelable
+                    return element.dispatchEvent(evt);
+                } else {
+                    // dispatch for IE before version 9
+                    var evt = document.createEventObject();
+                    return element.fireEvent('on' + event, evt)
+                }
+            }
         </script>
 EOD;
 
