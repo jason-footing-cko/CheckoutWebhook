@@ -100,7 +100,6 @@ class Model_Methods_creditcardpci extends Model_Methods_Abstract implements Mode
        
 
         $config['postedParam']['card'] = array_merge($config['postedParam']['card'], array(
-            'phoneNumber' => $order_info['telephone'],
             'name'        => str_replace(' ', '', $this->request->post['cc_owner']),
             'number'      => str_replace(' ', '', $this->request->post['cc_number']),
             'expiryMonth' => str_replace(' ', '', $this->request->post['cc_expire_date_month']),

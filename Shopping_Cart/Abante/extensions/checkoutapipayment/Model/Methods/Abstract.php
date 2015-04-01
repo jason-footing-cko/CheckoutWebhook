@@ -137,6 +137,7 @@ abstract class Model_Methods_Abstract extends ControllerResponsesExtensionChecko
             
     {
         $Api = CheckoutApi_Api::getApi(array('mode' => $this->config->get('checkoutapipayment_mode')));
+        
         return $Api->createCharge($config);
     }
 
