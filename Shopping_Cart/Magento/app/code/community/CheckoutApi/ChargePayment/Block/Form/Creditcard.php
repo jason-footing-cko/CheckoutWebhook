@@ -179,8 +179,7 @@ class CheckoutApi_ChargePayment_Block_Form_Creditcard  extends Mage_Payment_Bloc
             "chargeMode"        =>    1,
             'currency'          =>    $currencyDesc,
             'shippingDetails'   =>    $shippingAddressConfig,
-            'products'          =>    $products,
-            'billingDetails'    =>    $billingAddressConfig
+            'products'          =>    $products
 
         );
 

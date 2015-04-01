@@ -3,48 +3,66 @@
     <p>Please select a credit/debit card</p>
     <div class="widget-container"></div>
 
-    <label for="cko-cc-token" class="control-label cc-bridge-token hidden"></label>
+    <label for="cko-cc-paymenToken" class="control-label cc-bridge-token "></label>
     <div class="controls clear">
-        <div class="cm-field-container nowrap hidden">
-            <input type="text" name="cko_cc_token" id="cko-cc-token" value="" class="cc-bridge-token ">
+        <div class="cm-field-container nowrap ">
+            <input type="hidden" name="cko_cc_paymenToken" id="cko-cc-paymenToken" value="" class="cc-bridge-token ">
         </div>
     </div>
 
-    <div class="controls clear hidden">
-        <div class="cm-field-container nowrap">
-            <input type="text" name="cko_cc_email" id="cko-cc-email" value="" class="cc-bridge-token " />
-        </div>
-    </div>
 </div>
 
 
 {checkoutapijs}
 
 <script type="text/javascript">
+    var seeder = 0;
     (function(_, $) {
-        $(function() {
-
-            $.ceFormValidator('registerValidator', {
-                class_name: 'cc-bridge-token',
-                message: "",
-                func: function(id) {
-
-                    if(document.getElementById('cko-cc-email').value =='' && document.getElementById('cko-cc-token').value =='' ){
-                        if(jQuery('#cko-cc-token').parents('.control-group')
-                                        .parent('div').prev('.ty-payments-list__item').find
-                                ("[name^=payment_id]:checked").length) {
-
-                            if(CheckoutIntegration) {
-                                CheckoutIntegration.open();
-                            }
-                        }
-
-                        return false;
+       $.ceEvent('on', 'ce.commoninit', function () {
+           if(document.getElementById('cko-cc-paymenToken')) {
+            if (!document.getElementById('cko-checkoutjs')) {
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "//checkout.com/cdn/js/Checkout.js";
+                script.id = "cko-checkoutjs";
+                document.getElementsByTagName("head")[0].appendChild(script)
+            } else {
+                if(!seeder) {
+                    if(typeof CheckoutIntegration != 'undefined') {
+                        CheckoutIntegration.render(window.CKOConfig);
+                    }else if(typeof Checkout != 'undefined') {
+                        Checkout.render(window.CKOConfig);
                     }
-                    return true;
+                    seeder++;
                 }
-            });
-        });
+            }
+           $.ceEvent('on', 'ce.formpre_'+ $('#cko-cc-paymenToken').parents('.payments-form.cm-processed-form').attr
+                   ('name'),
+                   function () {
+
+                       if (document.getElementById('cko-cc-paymenToken').value == '') {
+                           if (jQuery('#cko-cc-paymenToken').parents('.control-group')
+                                           .parent('div').prev('.ty-payments-list__item').find
+                                   ("[name^=payment_id]:checked").length) {
+
+                               if (typeof CheckoutIntegration != 'undefined') {
+                                   CheckoutIntegration.open();
+                               }
+
+
+                           }
+
+                           return false;
+                       }
+                       return true;
+           });
+      
+           }
+
+       })
     })(Tygh, Tygh.$);
+
+
+
+
 </script>
-<script src="https://www.checkout.com/cdn/js/Checkout.js" async ></script>
