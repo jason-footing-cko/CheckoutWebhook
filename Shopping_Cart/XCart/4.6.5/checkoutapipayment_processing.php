@@ -37,7 +37,7 @@ if (empty($posted_data)) {
             $advinfo = 'Your payment has been refunded';
             func_change_order_status($order_id, 'D', $advinfo); // declined status?
             
-        } else {
+        } elseif(!$objectCharge->getAuthorised()) { {
 
             $advinfo[] = 'Your order has been cancelled';
             func_change_order_status($order_id, 'D', $advinfo); // cancelled status?

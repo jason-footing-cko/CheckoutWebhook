@@ -2,10 +2,10 @@
 	
 abstract class models_methods_Abstract extends jigoshop_payment_gateway implements models_InterfacePayment
 {
-//	public function __construct(){
-//
-//
-//	}
+	public function __construct(){
+
+
+	}
 
 	public function getCode(){
         return $this->_code;
@@ -30,11 +30,20 @@ abstract class models_methods_Abstract extends jigoshop_payment_gateway implemen
 
     protected function _validateChrage($order,$respondCharge)
     {
-        //CheckoutApi_Utility_Utilities::dump($respondCharge); die();
+        //CheckoutApi_Utility_Utilities::dump($respondCharge->printError()); die();
+
 
 		if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())){
 
-			$order->payment_complete( $respondCharge->getId() );
+            $Api = CheckoutApi_Api::getApi(
+                array('mode' 		=> CHECKOUTAPI_MODE,
+                    'authorization' => CHECKOUTAPI_SECRET_KEY)
+            );
+
+            $chargeUpdated = $Api->updateMetadata($respondCharge,
+                array('trackId'=>$order->id));
+
+            $order->payment_complete( $respondCharge->getId() );
 
 			$order->add_order_note( sprintf(__('Checkout.com Credit Card Payment Approved - ChargeID: %s with Response Code: %s', 'woocommerce'), 
 				$respondCharge->getId(), $respondCharge->getResponseCode()));
@@ -47,10 +56,12 @@ abstract class models_methods_Abstract extends jigoshop_payment_gateway implemen
 		}
 		else {
 
-			$order->add_order_note( sprintf(__('Checkout.com Credit Card Payment Declined - Error Code: %s, Decline Reason: %s', 'woocommerce'), 
+			$order->add_order_note( sprintf(__('Checkout.com Credit Card Payment Declined - Error Code: %s, Decline Reason: %s', 'jigoshop'),
 				$respondCharge->getErrorCode(), $respondCharge->getMessage()));
 
-            echo '<p>'.__('The transaction was declined. Please check your Payment Details / Card info', 'jigoshop').'</p>';
+            $error_message = 'The transaction was declined. Please check your Payment Details / Card info';
+            echo '<div class="jigoshop_error">'.$error_message.'</div>';
+
 			return;
 		}
 

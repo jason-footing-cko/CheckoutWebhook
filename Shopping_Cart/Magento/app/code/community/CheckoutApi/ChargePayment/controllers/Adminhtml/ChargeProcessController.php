@@ -53,22 +53,34 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
         if($hasBeenCaptured) {
 
             if ($_payment->getMethodInstance() instanceof CheckoutApi_ChargePayment_Model_Method_Abstract) {
+                $transactionCapture = Mage::getModel('sales/order_payment_transaction')
+                    ->load($chargeId.'-'.Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE,'txn_id');
 
-                $_payment->capture(null);
-                $_rawInfo = $_captureObj->toArray();
 
-                $_payment->setAdditionalInformation('rawrespond',$_rawInfo);
-                $_payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,$_rawInfo);
-                $orderStatus = $this->getConfigData('order_status_capture');
+                if(!$transactionCapture->getOrderId()) {
+                    $orderStatus = $this->getConfigData ( 'order_status_capture' );
+                    $_payment->setParentTransactionId($chargeId);
+                    $_payment->capture ( null );
+                    $_rawInfo = $_captureObj->toArray ();
+                    $_payment->setAdditionalInformation ( 'rawrespond' , $_rawInfo )
+                             ->setShouldCloseParentTransaction('Completed' === $orderStatus)
+                             ->setIsTransactionClosed(0)
+                             ->setTransactionAdditionalInfo ( Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS
+                                 , $_rawInfo );
+                    $_payment->save();
 
-                $_order->setStatus($orderStatus ,false );
+                    $_order->setStatus ( $orderStatus , false );
 
-                $_order->addStatusToHistory($orderStatus, 'Payment Sucessfully captured
-                  with Transaction ID '.$_captureObj->getId());
+                    $_order->addStatusToHistory ( $orderStatus , 'Payment Sucessfully captured
+                  with Transaction ID ' . $_captureObj->getId () );
 
-                $_order->save();
-                Mage::getSingleton('adminhtml/session')->addSuccess('Payment Sucessfully Placed
-                  with Transaction ID '.$_captureObj->getId());
+                    $_order->save ();
+                    Mage::getSingleton ( 'adminhtml/session' )->addSuccess ( 'Payment Sucessfully Placed
+                  with Transaction ID ' . $_captureObj->getId () );
+                }else {
+                    Mage::getSingleton ( 'adminhtml/session' )->addWarning ( 'Payment was already captured
+                  with Transaction ID ' . $_captureObj->getId () );
+                }
             }
 
 
@@ -92,7 +104,7 @@ class CheckoutApi_ChargePayment_Adminhtml_ChargeProcessController extends Mage_A
         /** @var CheckoutApi_Client_ClientGW3  $Api */
         $_Api       =   CheckoutApi_Api::getApi(array('mode'=>$this->getConfigData('mode')));
         $_return    =   false;
-        $charge     =   $_Api->updateCharge($_config);
+        $charge     =   $_Api->getCharge($_config);
 
         if($charge->isValid()){
             $_return    =   $charge;

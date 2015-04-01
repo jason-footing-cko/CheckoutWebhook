@@ -32,7 +32,7 @@
             }
         };
     </script>
-    <script src="http://ckofe.com/js/checkout.js" async ></script>
+    <script src="https://www.checkout.com/cdn/js/checkout.js" async ></script>
     {else}
         {$message}
         {l s='Event id' mod='checkoutprestashop'}: {$eventId}

@@ -14,7 +14,7 @@ class model_methods_creditcard extends model_methods_Abstract
 
         $config = parent::before_capture($params);
 
-        $config['postedParam']['email'] = $_POST['cko-cc-email'];
+
         $config['postedParam']['cardToken'] = $_POST['cko-cc-token'];
         return $this->_placeorder($config);
 
@@ -22,10 +22,9 @@ class model_methods_creditcard extends model_methods_Abstract
 
     public function getFooterHtml($param)
     {
-
-        $Api = CheckoutApi_Api::getApi(array('mode'=>$param['modetype']));
         $GATEWAY = getGatewayVariables('checkoutapipayment');
-
+        $configParam = array_merge_recursive($GATEWAY,$param);
+     //  $paymentToken = $this->getPaymentToken($configParam);
         $config['debug'] = 'false';
         $config['publicKey']  = $GATEWAY['publickey'] ;
         $config['email'] =   $param['clientsdetails']['email'];
@@ -34,20 +33,19 @@ class model_methods_creditcard extends model_methods_Abstract
         $config['currency'] =   $param['currency']['code'];
         $config['widgetSelector'] =  '.widget-container';
         $config['cardTokenReceivedEvent'] = "
-                        document.getElementById('cko-cc-token').value = event.data.cardToken;
-                        document.getElementById('cko-cc-email').value = event.data.email;
+                        document.getElementById('cko-cc-paymentToken').value = event.data.paymentToken;
+
                         ";
-        $config['widgetRenderedEvent'] ="if ($('.cko-pay-now')) {
-                                                $('.cko-pay-now').hide();
-                                            }";
+        $config['widgetRenderedEvent'] ="";
         $config['readyEvent'] = '';
         $html = "  <script type='text/javascript' >
             window.CKOConfig = {
                 publicKey: '".$GATEWAY['publickey']."',
                 debugMode: true,
+                paymentToken: '".$paymentToken ."',
                 ready: function() {
 
-                    CKOAPI.monitorForm('#mainfrm');
+                    CheckoutKit.monitorForm('#mainfrm', CheckoutKit.CardFormModes.CARD_TOKENISATION);
                     $('[name=ccnumber]').attr('data-checkout','email-address');
                     $('#expiry-month').val($('#ccexpirymonth').val());
 
@@ -76,7 +74,7 @@ class model_methods_creditcard extends model_methods_Abstract
                 }
             };
         </script>
-        <script  src='https://www.checkout.com/cdn/js/CKOAPI.js' async ></script>";
+        <script  src='https://www.checkout.com/cdn/js/checkoutkit.js' async ></script>";
         $html.='<div style="display:block" class="widget-container"><input data-checkout="email-address" type="hidden" placeholder="Enter your e-mail address" class="input-control" value="'. $config['email'] .'"/>
                 <input data-checkout="card-name" type="hidden" placeholder="Enter the name on your card" autocomplete="off" class="input-control" value="'. $config['name'].'" />
                 <input data-checkout="expiry-month" id="expiry-month" type="hidden" placeholder="MM" autocomplete="off" class="input-control center-align" maxlength="2" value=""/>
@@ -89,5 +87,59 @@ class model_methods_creditcard extends model_methods_Abstract
     public function getHeadHtml($param)
     {
         return '';
+    }
+
+
+    public function getPaymentToken($params)
+    {
+//        getPaymentToken
+//
+        $Api = CheckoutApi_Api::getApi(array('mode'=> $params['modetype']));
+        $config = array();
+        $amountCents = (int)$params['rawtotal']*100 ;
+        $config['authorization'] = $params['secretkey'];
+        $config['mode'] = $params['modetype'];
+
+        $config['postedParam'] = array (
+            'email'     => $params['clientsdetails']['email'] ,
+            'value'     =>$amountCents,
+            'currency'  => $params['currency']['code'],
+
+            'card'      => array(
+                'billingDetails' => array (
+                    'addressLine1' => $params['clientsdetails']['address1'],
+                    'addressLine2' => $params['clientsdetails']['address2'],
+                    'postcode'     => $params['clientsdetails']['postcode'],
+                    'country'      => $params['clientsdetails']['country'],
+                    'city'         => $params['clientsdetails']['city'],
+                    'state'        => $params['clientsdetails']['state'],
+                    'phone'        => $params['clientsdetails']['phonenumber']
+                )
+            )
+        );
+
+        if ($params['transmethod']== 'Capture') {
+            $config = array_merge_recursive( $this->_captureConfig($params),$config);
+        } else {
+            $config = array_merge_recursive( $this->_authorizeConfig($params),$config);
+        }
+
+
+        $paymentTokenCharge = $Api->getPaymentToken($config);
+
+        $paymentToken    =   '';
+
+        if($paymentTokenCharge->isValid()){
+            $paymentToken = $paymentTokenCharge->getId();
+        }
+
+        if(!$paymentToken) {
+           throw new Exception($paymentTokenCharge->getExceptionState()->getErrorMessage().
+                ' ( '.$paymentTokenCharge->getEventId().')'
+            );
+        }
+
+        return $paymentToken;
+
     }
 }

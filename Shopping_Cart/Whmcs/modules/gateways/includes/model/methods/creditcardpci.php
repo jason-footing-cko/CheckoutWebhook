@@ -11,7 +11,7 @@ class model_methods_creditcardpci extends model_methods_Abstract
         $config['postedParam']['card']['number'] = $params['cardnum'];
         $config['postedParam']['card']['expiryMonth'] = substr ($params['cardexp'],0,2);
         $config['postedParam']['card']['expiryYear'] = substr($params['cardexp'],2,4);
-        $config['postedParam']['card']['cvv'] = $params['cccvv'];
+        $config['postedParam']['card']['cvv'] = $_POST['cccvv'];
 
         return $this->_placeorder($config);
     }
