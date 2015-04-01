@@ -162,7 +162,7 @@ if (defined('MODULE_PAYMENT_CHECKOUTAPIPAYMENT_STATUS') && MODULE_PAYMENT_CHECKO
 					echo "Order has #$orderId was already set void ";
 				}
 
-			} else(!$objectCharge->getAuthorised()) {
+			} elseif(!$objectCharge->getAuthorised()) {
 				if($orders_status_id->info['orders_status_id'] != ORDERS_STATUS_PAID) {
 					$data = array (
 						'status_id' => ORDERS_STATUS_CANCELLED ,
