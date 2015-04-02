@@ -41,7 +41,7 @@ abstract class Model_Methods_Abstract extends ControllerResponsesExtensionChecko
         }
 
         $this->load->library('json');
-        $this->response->setOutput(AJson::encode($json));;
+        $this->response->setOutput(AJson::encode($json));
     }
 
     protected function _createCharge($order_info)
@@ -53,7 +53,7 @@ abstract class Model_Methods_Abstract extends ControllerResponsesExtensionChecko
         $productsLoad = $this->cart->getProducts();
         $scretKey = $this->config->get('checkoutapipayment_secret_key');
         $orderId = $this->session->data['order_id'];
-        $amountCents = (int) $order_info['total'] * 100;
+        $amountCents = (int) ($order_info['total'] * 100);
         $config['authorization'] = $scretKey;
         $config['mode'] = $this->config->get('checkoutapipayment_mode');
         $config['timeout'] = $this->config->get('checkoutapipayment_timeout');
@@ -137,6 +137,7 @@ abstract class Model_Methods_Abstract extends ControllerResponsesExtensionChecko
             
     {
         $Api = CheckoutApi_Api::getApi(array('mode' => $this->config->get('checkoutapipayment_mode')));
+        
         return $Api->createCharge($config);
     }
 

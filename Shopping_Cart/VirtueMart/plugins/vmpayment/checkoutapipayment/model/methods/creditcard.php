@@ -34,30 +34,22 @@ class model_methods_creditcard extends model_methods_Abstract
             
             if ($cart->getDataValidated()){
                 vmJsApi::addJScript('vm.checkoutApiFormSubmit','
-                //<![CDATA[
-                        jQuery(document).ready(function($) {
+                    jQuery(document).ready(function($) {
+                        jQuery(this).vm2front("stopVmLoading");
+                        jQuery("#checkoutFormSubmit").bind("click dblclick",function(e){
+                            jQuery("#checkoutForm").one("submit",function(e){
                                 jQuery(this).vm2front("stopVmLoading");
-                                jQuery("#checkoutFormSubmit").bind("click dblclick", function(e){
-                                    jQuery("#checkoutForm").submit(function(e){
-                                        jQuery(this).vm2front("stopVmLoading");
-                                        e.preventDefault();
-                                        CheckoutIntegration.open();
-                                        
-                                    });
-                                        
-                                });
+                                e.preventDefault();
+                                CheckoutIntegration.open(); 
+                            });
                         });
-                //]]>
+                    });
                 ');
             }
             
         }
         $paymentId = $currentMethod->virtuemart_paymentmethod_id;
         
-        if(!empty($this->cko_paymentToken)){
-            $_SESSION['paymenTokenData'] = $this->cko_paymentToken;
-        }
-
         $Api = CheckoutApi_Api::getApi(array('mode' => $obj->getCurrentMethod()->sandbox));
 
         $amountCents = ceil((float) ($cart->pricesUnformatted['billTotal']) * 100.00);
@@ -81,17 +73,17 @@ class model_methods_creditcard extends model_methods_Abstract
         
         $config['widgetSelector'] = '.widget-container';
         $config['cardChargedEvent'] = "
-                        document.getElementById('cko_paymentToken').value = event.data.paymentToken;
+                        document.getElementById('checkoutForm').submit();
                       ";
         $config['widgetRenderedEvent'] = "";
 
         $config['readyEvent'] = '';
+        $config['lightboxDeactivated'] = 'jQuery("#checkoutFormSubmit")
+                                            .removeClass("vm-button")
+                                            .addClass("vm-button-correct")
+                                            .prop("disabled", false);
+                                         ';
         
-//        if ($obj->getCurrentMethod()->sandbox == 'preprod') {
-//            $config['url'] = 'http://preprod.checkout.com/api2/v2/';
-//        }
-
-
         $jsConfig = $this->getJsConfig($config);
 
         $html[] = '<br/>';
@@ -188,9 +180,13 @@ class model_methods_creditcard extends model_methods_Abstract
                 },
 
                 ready: function() {
-                     {$config['readyEvent']};
+                    {$config['readyEvent']};
 
+                },
+                lightboxDeactivated: function() {
+                    {$config['lightboxDeactivated']};
                 }
+                
             } ";
         return $script;
     }
