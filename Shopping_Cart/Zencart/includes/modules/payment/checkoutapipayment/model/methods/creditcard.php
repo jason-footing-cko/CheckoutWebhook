@@ -100,15 +100,7 @@ EOD;
                     fireEvent(document.getElementById('checkout_confirmation'),'submit');
                 }
            };
-//            (function($){
-//             $(function(){
-//                $('#btn_submit').click(function(event){
-//                 event.preventDefault();
-//                 CheckoutIntegration.open();
-//                });
-//             });
-//
-//            })(jQuery);
+
 
             window.addEventListener("load", function(event){
                 document.getElementById('btn_submit').addEventListener('click',function(event){

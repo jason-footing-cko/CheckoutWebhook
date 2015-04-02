@@ -48,6 +48,11 @@ class models_methods_creditcard extends models_methods_Abstract
     {
 
         $config['paymentToken']  = Tools::getValue('cko_cc_paymenToken');
+        $scretKey =  Configuration::get('CHECKOUTAPI_SECRET_KEY');
+        $config['authorization'] = $scretKey  ;
+
+        $config['mode'] = Configuration::get('CHECKOUTAPI_TEST_MODE');
+        $config['timeout'] =  Configuration::get('CHECKOUTAPI_GATEWAY_TIMEOUT');
         $Api = CheckoutApi_Api::getApi(array('mode'=> Configuration::get('CHECKOUTAPI_TEST_MODE')));
         return $Api->verifyChargePaymentToken($config);
     }

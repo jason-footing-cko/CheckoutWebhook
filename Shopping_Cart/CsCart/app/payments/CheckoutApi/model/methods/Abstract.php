@@ -77,12 +77,21 @@ abstract class model_methods_Abstract
     {
         //building charge
         $respondCharge = $this->_createCharge($config,$setting);
-        $pp_response = array();
+        $pp_response = array(
+                        'order_status'   => null,
+                        'transaction_id' => null,
+                        'reason_text'    => null
+                    );
 
         if( $respondCharge->isValid()) {
             if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
 
                 $pp_response['order_status'] = $this->getStatus($setting['order_complete']);
+                $Api = CheckoutApi_Api::getApi( array( 'mode'          => $setting['mode_type'],
+                                                       'authorization' => $setting['secret_key']
+                    )
+                );
+                $chargeUpdated = $Api->updateMetadata($respondCharge,array('trackId' => $order['order_id']));
 
             }else {
                 $pp_response['order_status'] = $this->getStatus($setting['Decline']);
@@ -90,32 +99,34 @@ abstract class model_methods_Abstract
             $pp_response['transaction_id'] = $respondCharge->getId();
             $pp_response['reason_text'] = $respondCharge->getResponseMessage();
 
+
         } else  {
 
-            $pp_response['order_status'] = $this->getStatus($setting['Fail']);
-            $pp_response['order_status'] = $respondCharge->getExceptionState()->getErrorMessage();
+            $pp_response['order_status'] = $this->getStatus($setting['order_pending']);
+            $pp_response['reason_text'] = $respondCharge->getExceptionState()->getErrorMessage();
          }
+
         return $pp_response;
     }
-    private function _createCharge($config,$setting)
+    protected function _createCharge($config,$setting)
     {
         $Api = CheckoutApi_Api::getApi(array('mode'=> $setting['mode_type']));
         return $Api->createCharge($config);
     }
-    private function _captureConfig($setting)
+    protected function _captureConfig($setting)
     {
         $to_return['postedParam'] = array (
-            'autoCapture' =>( $setting['transaction_type'] =='authorize_capture'),
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_CAPTURE,
             'autoCapTime' => $setting['autocaptime']
         );
 
         return $to_return;
     }
 
-    private function _authorizeConfig($setting)
+    protected function _authorizeConfig($setting)
     {
         $to_return['postedParam'] = array(
-            'autoCapture' => ( $setting['transaction_type'] =='authorize_only'),
+            'autoCapture' => CheckoutApi_Client_Constant::AUTOCAPUTURE_AUTH,
             'autoCapTime' => 0
         );
         return $to_return;
@@ -123,6 +134,7 @@ abstract class model_methods_Abstract
 
     public function getStatus($state)
     {
+
         return $this->_order_status[$state];
     }
     public function getExtraHtml($setting){}
