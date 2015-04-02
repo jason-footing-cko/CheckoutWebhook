@@ -61,9 +61,6 @@ EOD;
     {
 
         $config = parent::processRequest($order,$post,$setting);
-
-        $config['postedParam']['email'] = $post['cko_cc_email'];
-        $config['postedParam']['cardToken'] = $post['cko_cc_token'];
         return $this->_placeorder($config,$order,$setting);
     }
 

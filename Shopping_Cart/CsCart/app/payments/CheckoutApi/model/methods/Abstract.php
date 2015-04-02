@@ -77,12 +77,21 @@ abstract class model_methods_Abstract
     {
         //building charge
         $respondCharge = $this->_createCharge($config,$setting);
-        $pp_response = array();
+        $pp_response = array(
+                        'order_status'   => null,
+                        'transaction_id' => null,
+                        'reason_text'    => null
+                    );
 
         if( $respondCharge->isValid()) {
             if (preg_match('/^1[0-9]+$/', $respondCharge->getResponseCode())) {
 
                 $pp_response['order_status'] = $this->getStatus($setting['order_complete']);
+                $Api = CheckoutApi_Api::getApi( array( 'mode'          => $setting['mode_type'],
+                                                       'authorization' => $setting['secret_key']
+                    )
+                );
+                $chargeUpdated = $Api->updateMetadata($respondCharge,array('trackId' => $order['order_id']));
 
             }else {
                 $pp_response['order_status'] = $this->getStatus($setting['Decline']);
@@ -90,9 +99,10 @@ abstract class model_methods_Abstract
             $pp_response['transaction_id'] = $respondCharge->getId();
             $pp_response['reason_text'] = $respondCharge->getResponseMessage();
 
+
         } else  {
 
-            $pp_response['order_status'] = $this->getStatus($setting['Fail']);
+            $pp_response['order_status'] = $this->getStatus($setting['order_pending']);
             $pp_response['reason_text'] = $respondCharge->getExceptionState()->getErrorMessage();
          }
 
