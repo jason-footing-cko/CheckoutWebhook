@@ -62,7 +62,7 @@
 	path = Shopping_Cart/CsCart/app/payments/CheckoutApi/CheckoutApi
 	url = https://github.com/CKOTech/checkout-web-common.git
 	branch = CheckoutApi
-[submodule "Shopping_Cart/Cubecart/modules/gateway/CheckoutApi"]
-	path = Shopping_Cart/Cubecart/modules/gateway/CheckoutApi
+[submodule "Shopping_Cart/Cubecart/modules/gateway/CheckoutPayment/CheckoutApi"]
+	path = Shopping_Cart/Cubecart/modules/gateway/CheckoutPayment/CheckoutApi
 	url = https://github.com/CKOTech/checkout-web-common.git
 	branch = CheckoutApi
